@@ -2553,7 +2553,7 @@ body.record-view .app {
     #edit-date-input {
         display: block;
 
-        width: 60%;
+        width: 80%;
         max-width: 280px;
         min-width: 0;
 
@@ -2582,6 +2582,29 @@ body.record-view .app {
 
         margin: 0;
         padding: 0;
+
+        text-align: center;
+    }
+
+}
+
+/* 日付入力欄の内側にできる二重枠を消す */
+
+@media screen and (max-width: 600px) {
+
+    #edit-date-input::-webkit-date-and-time-value {
+        width: auto !important;
+        height: auto !important;
+
+        margin: 0 !important;
+        padding: 0 !important;
+
+        border: none !important;
+        border-radius: 0 !important;
+
+        background-color: transparent !important;
+
+        box-shadow: none !important;
 
         text-align: center;
     }
