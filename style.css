@@ -2610,3 +2610,16 @@ body.record-view .app {
     }
 
 }
+/* スマホの日付選択画面の外枠を消す */
+
+@media screen and (max-width: 600px) {
+
+    #date-menu {
+        border: none !important;
+
+        background-color: transparent !important;
+
+        box-shadow: none !important;
+    }
+
+}
