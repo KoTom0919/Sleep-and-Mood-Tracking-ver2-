@@ -2471,15 +2471,24 @@ body.record-view .app {
     }
 
 
-    /* 日付選択ポップアップの外枠を消す */
+/* 日付選択ポップアップ */
 
-    #date-menu {
-        border: none;
+#date-menu {
+    width: calc(100% - 30px);
+    max-width: 360px;
 
-        background-color: transparent;
+    padding: 14px;
 
-        box-shadow: none;
-    }
+    border: 1.5px solid #19365f;
+    border-radius: 18px;
+
+    background-color: #ffffff;
+
+    box-shadow:
+        0 8px 22px rgba(0, 0, 0, 0.18);
+
+    box-sizing: border-box;
+}
 
 
     /* 日付入力欄を細くして中央に配置 */
