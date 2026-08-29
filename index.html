@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>
+        睡眠＆体調記録アプリ
+    </title>
+
+    <link rel="stylesheet" href="style.css?v=2">
+</head>
+
+<body>
+
+    <main class="app">
+
+        <!-- ==================================================
+             ① 記録をつける
+        ================================================== -->
+
+        <section id="record-page" class="page">
+
+            <div class="record-title-row">
+
+                <h1 class="main-title">
+                    睡眠＆体調記録
+                </h1>
+
+                <button type="button" id="settings-button" class="settings-button">
+                    設定
+                </button>
+
+            </div>
+
+
+            <!-- 編集する日付 -->
+
+            <section class="date-section">
+
+                <h2>
+                    編集する日付
+                </h2>
+
+                <div class="date-navigation">
+
+                    <button type="button" id="previous-day" class="arrow-button previous-button" aria-label="前日">
+                    </button>
+
+                    <button type="button" id="edit-date-button" class="date-button">
+                    </button>
+
+                    <button type="button" id="next-day" class="arrow-button next-button" aria-label="翌日">
+                    </button>
+
+                </div>
+
+
+                <!-- 日付選択画面 -->
+
+                <div id="date-menu" class="popup" hidden>
+
+                    <label for="edit-date-input">
+                        日付を選択
+                    </label>
+
+                    <input type="date" id="edit-date-input">
+
+                    <div class="quick-date-buttons">
+
+                        <button type="button" id="today-button">
+                            今日
+                        </button>
+
+                        <button type="button" id="tomorrow-button">
+                            明日
+                        </button>
+
+                    </div>
+
+                    <div class="popup-actions">
+
+                        <button type="button" id="date-cancel" class="cancel-button">
+                            キャンセル
+                        </button>
+
+                        <button type="button" id="date-confirm" class="confirm-button">
+                            決定
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- 就寝・起床時刻 -->
+
+            <section class="sleep-section">
+
+                <div class="two-column">
+
+                    <!-- 就寝時刻 -->
+
+                    <div class="time-field">
+
+                        <h2>
+                            昨夜の就寝時刻
+                        </h2>
+
+                        <button type="button" id="bedtime-button" class="time-display-button bedtime-button">
+                            ○○：○○
+                        </button>
+
+                        <div id="bedtime-menu" class="time-popup" hidden>
+
+                            <label for="bedtime-input">
+                                就寝時刻を選択
+                            </label>
+
+                            <input type="text" id="bedtime-input" class="time-input" inputmode="numeric" maxlength="5"
+                                placeholder="例：23:00" autocomplete="off">
+
+                            <button type="button" id="bedtime-now" class="now-button">
+                                現在時刻を入力
+                            </button>
+
+                            <div class="time-popup-actions">
+
+                                <button type="button" id="bedtime-cancel" class="cancel-button">
+                                    キャンセル
+                                </button>
+
+                                <button type="button" id="bedtime-confirm" class="confirm-button">
+                                    決定
+                                </button>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- 起床時刻 -->
+
+                    <div class="time-field">
+
+                        <h2>
+                            本日の起床時刻
+                        </h2>
+
+                        <button type="button" id="wake-time-button" class="time-display-button wake-button">
+                            ○○：○○
+                        </button>
+
+                        <div id="wake-time-menu" class="time-popup" hidden>
+
+                            <label for="wake-time-input">
+                                起床時刻を選択
+                            </label>
+
+                            <input type="text" id="wake-time-input" class="time-input" inputmode="numeric" maxlength="5"
+                                placeholder="例：07:00" autocomplete="off">
+
+                            <button type="button" id="wake-time-now" class="now-button">
+                                現在時刻を入力
+                            </button>
+
+                            <div class="time-popup-actions">
+
+                                <button type="button" id="wake-time-cancel" class="cancel-button">
+                                    キャンセル
+                                </button>
+
+                                <button type="button" id="wake-time-confirm" class="confirm-button">
+                                    決定
+                                </button>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- 睡眠満足度・気分 -->
+
+            <div class="two-column status-row">
+
+                <!-- 睡眠満足度 -->
+
+                <section class="choice-section">
+
+                    <h2>
+                        睡眠満足度
+                    </h2>
+
+                    <button type="button" id="satisfaction-button" class="choice-button">
+                        －
+                    </button>
+
+                    <div id="satisfaction-menu" class="choice-menu" hidden>
+
+                        <button type="button" data-value="とてもよく眠れた">
+                            とてもよく眠れた
+                        </button>
+
+                        <button type="button" data-value="よく眠れた">
+                            よく眠れた
+                        </button>
+
+                        <button type="button" data-value="あまり眠れていない">
+                            あまり眠れていない
+                        </button>
+
+                        <button type="button" data-value="ほとんど眠れていない">
+                            ほとんど眠れていない
+                        </button>
+
+                    </div>
+
+                </section>
+
+
+                <!-- 気分 -->
+
+                <section class="choice-section">
+
+                    <h2>
+                        気分
+                    </h2>
+
+                    <button type="button" id="mood-button" class="choice-button">
+                        －
+                    </button>
+
+                    <div id="mood-menu" class="choice-menu mood-menu" hidden>
+
+                        <button type="button" data-value="3">
+                            3
+                        </button>
+
+                        <button type="button" data-value="2">
+                            2
+                        </button>
+
+                        <button type="button" data-value="1">
+                            1
+                        </button>
+
+                        <button type="button" data-value="0">
+                            0
+                        </button>
+
+                        <button type="button" data-value="-1">
+                            -1
+                        </button>
+
+                        <button type="button" data-value="-2">
+                            -2
+                        </button>
+
+                        <button type="button" data-value="-3">
+                            -3
+                        </button>
+
+                    </div>
+
+                </section>
+
+            </div>
+
+
+            <!-- 体調チェック -->
+
+            <!-- 体調チェック -->
+
+            <section class="condition-section">
+
+                <h2>
+                    体調チェック
+                </h2>
+
+                <div class="condition-categories">
+
+                    <!-- カテゴリーA -->
+
+                    <div class="condition-category">
+
+                        <h3 id="category-a-heading">
+                            カテゴリーA
+                        </h3>
+
+                        <div id="category-a-list" class="condition-checklist">
+                        </div>
+
+                    </div>
+
+
+                    <!-- カテゴリーB -->
+
+                    <div class="condition-category">
+
+                        <h3 id="category-b-heading">
+                            カテゴリーB
+                        </h3>
+
+                        <div id="category-b-list" class="condition-checklist">
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- メモ -->
+
+            <section class="memo-section">
+
+                <h2>
+                    メモ
+                </h2>
+
+                <textarea id="memo-input" placeholder="自由に入力してください"></textarea>
+
+            </section>
+
+
+            <!-- 保存・消去メッセージ -->
+
+            <p id="save-message" class="save-message" role="status" aria-live="polite">
+            </p>
+
+
+            <!-- クリア・記録ボタン -->
+
+            <div id="record-action-bar" class="record-action-bar">
+
+                <button type="button" id="clear-button" class="record-action-button clear-button">
+                    クリア
+                </button>
+
+                <button type="button" id="save-button" class="record-action-button save-button">
+                    記録
+                </button>
+
+            </div>
+
+        </section>
+
+
+        <!-- ==================================================
+             ② 一覧で確認
+        ================================================== -->
+
+        <section id="list-page" class="page" hidden>
+
+            <div class="records-header">
+
+                <h1 class="records-title">
+                    記録
+                </h1>
+
+                <button type="button" id="print-button" class="print-button">
+                    PDFで印刷
+                </button>
+
+            </div>
+
+
+            <!-- 表示期間 -->
+
+            <section class="list-period-section">
+
+                <h2>
+                    表示期間
+                </h2>
+
+                <div class="list-period-inputs">
+
+                    <label>
+
+                        開始日
+
+                        <input type="date" id="list-start-date">
+
+                    </label>
+
+                    <span class="period-symbol">
+                        ～
+                    </span>
+
+                    <label>
+
+                        終了日
+
+                        <input type="date" id="list-end-date">
+
+                    </label>
+
+                    <button type="button" id="update-list-button" class="update-list-button">
+                        表示
+                    </button>
+
+                </div>
+
+            </section>
+
+
+            <!-- 記録一覧表 -->
+
+            <div class="records-table-wrapper">
+
+                <table id="records-table" class="records-table">
+
+
+                    <colgroup>
+
+                        <col class="date-column">
+
+                        <col class="time-column">
+
+                        <col class="time-column">
+
+                        <col class="duration-column">
+
+                        <col class="satisfaction-column">
+
+                        <col class="mood-column">
+
+                        <col class="condition-column">
+
+                        <col class="condition-column">
+
+                        <col class="memo-column">
+
+                    </colgroup>
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                日付
+                            </th>
+
+                            <th>
+                                昨夜の<br>
+                                就寝時刻
+                            </th>
+
+                            <th>
+                                当日の<br>
+                                起床時刻
+                            </th>
+
+                            <th>
+                                睡眠時間
+                            </th>
+
+                            <th>
+                                睡眠<br>
+                                満足度
+                            </th>
+
+                            <th>
+                                気分
+                            </th>
+
+                            <th id="list-category-a-heading">
+                                カテゴリーA
+                            </th>
+
+                            <th id="list-category-b-heading">
+                                カテゴリーB
+                            </th>
+
+                            <th>
+                                メモ
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody id="records-table-body">
+                    </tbody>
+
+                </table>
+
+            </div>
+
+
+            <p id="no-records-message" class="no-records-message" hidden>
+                記録はありません
+            </p>
+
+        </section>
+
+
+        <!-- ==================================================
+             ③ 推移を確認
+        ================================================== -->
+
+        <section id="trend-page" class="page" hidden>
+
+            <div class="trend-header">
+
+                <h1 class="trend-main-title">
+                    睡眠＆体調の推移
+                </h1>
+
+                <button type="button" id="trend-print-button" class="trend-print-button">
+                    PDFで印刷
+                </button>
+
+            </div>
+
+
+            <!-- 表示期間 -->
+
+            <section class="trend-period-section">
+
+                <h2>
+                    表示期間
+                </h2>
+
+                <div class="trend-period-inputs">
+
+                    <label>
+
+                        開始日
+
+                        <input type="date" id="trend-start-date">
+
+                    </label>
+
+                    <span class="period-symbol">
+                        ～
+                    </span>
+
+                    <label>
+
+                        終了日
+
+                        <input type="date" id="trend-end-date">
+
+                    </label>
+
+                    <button type="button" id="update-trend-button" class="update-trend-button">
+                        表示
+                    </button>
+
+                </div>
+
+            </section>
+
+
+            <!-- 睡眠時間の推移 -->
+
+            <section class="trend-block">
+
+                <h2>
+                    睡眠時間の推移
+                </h2>
+
+                <div class="chart-area">
+
+                    <canvas id="sleep-chart">
+                    </canvas>
+
+                </div>
+
+            </section>
+
+
+            <!-- 気分の推移 -->
+
+            <section class="trend-block">
+
+                <h2>
+                    気分の推移
+                </h2>
+
+                <div class="chart-area">
+
+                    <canvas id="mood-chart">
+                    </canvas>
+
+                </div>
+
+            </section>
+
+            <!-- 睡眠満足度の推移 -->
+
+            <section class="trend-block">
+
+                <h2>
+                    睡眠満足度の推移
+                </h2>
+
+                <div class="chart-area">
+
+                    <canvas id="satisfaction-chart">
+                    </canvas>
+
+                </div>
+
+
+                <!-- 睡眠満足度の注釈 -->
+
+                <div class="satisfaction-note">
+
+                    <span>
+                        3：とてもよく眠れた
+                    </span>
+
+                    <span>
+                        2：よく眠れた
+                    </span>
+
+                    <span>
+                        1：あまり眠れていない
+                    </span>
+
+                    <span>
+                        0：ほとんど眠れていない
+                    </span>
+
+                </div>
+
+            </section>
+
+
+        </section>
+
+    </main>
+
+    <!-- ==================================================
+     体調チェック設定画面
+================================================== -->
+
+    <div id="settings-modal" class="settings-modal" hidden>
+
+        <div class="settings-panel" role="dialog" aria-modal="true" aria-labelledby="settings-title">
+
+            <h2 id="settings-title">
+                体調チェックの設定
+            </h2>
+
+            <div class="settings-categories">
+
+                <!-- カテゴリーAの設定 -->
+
+                <section class="settings-category">
+
+                    <label>
+
+                        カテゴリー名
+
+                        <input type="text" id="category-a-name" maxlength="30">
+
+                    </label>
+
+                    <div id="category-a-settings" class="item-settings">
+                    </div>
+
+                </section>
+
+
+                <!-- カテゴリーBの設定 -->
+
+                <section class="settings-category">
+
+                    <label>
+
+                        カテゴリー名
+
+                        <input type="text" id="category-b-name" maxlength="30">
+
+                    </label>
+
+                    <div id="category-b-settings" class="item-settings">
+                    </div>
+
+                </section>
+
+            </div>
+
+
+            <div class="settings-actions">
+
+                <button type="button" id="settings-cancel" class="cancel-button">
+                    キャンセル
+                </button>
+
+                <button type="button" id="settings-save" class="confirm-button">
+                    保存
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- ==================================================
+         下部ボタン
+    ================================================== -->
+
+    <nav class="bottom-nav">
+
+        <button type="button" id="record-nav-button" class="bottom-nav-button record-nav active">
+            記録をつける
+        </button>
+
+        <button type="button" id="list-nav-button" class="bottom-nav-button list-nav">
+            一覧で確認
+        </button>
+
+        <button type="button" id="trend-nav-button" class="bottom-nav-button trend-nav">
+            推移を確認
+        </button>
+
+    </nav>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script src="script.js"></script>
+
+
+</body>
+
+</html>
