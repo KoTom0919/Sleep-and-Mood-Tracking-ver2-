@@ -2546,16 +2546,24 @@ body.record-view .app {
     }
 
 }
+/* スマホの日付入力欄を中央寄せにする */
+
 @media screen and (max-width: 600px) {
 
-    .popup input[type="date"] {
+    #edit-date-input {
         display: block;
 
-        width: 100%;
+        width: 88%;
+        max-width: 280px;
+        min-width: 0;
+
         height: 44px;
 
-        margin: 0;
-        padding: 4px 8px;
+        margin:
+            0 auto;
+
+        padding:
+            2px 6px;
 
         border: 1.5px solid #19365f;
         border-radius: 10px;
@@ -2565,16 +2573,17 @@ body.record-view .app {
 
         box-shadow: none;
 
-        appearance: auto;
-        -webkit-appearance: auto;
+        text-align: center;
+        font-size: 15px;
     }
 
-    .popup input[type="date"]:focus {
-        outline: none;
+    #edit-date-input::-webkit-date-and-time-value {
+        min-width: 0;
 
-        background-color: #ffffff;
+        margin: 0;
+        padding: 0;
 
-        box-shadow: none;
+        text-align: center;
     }
 
 }
