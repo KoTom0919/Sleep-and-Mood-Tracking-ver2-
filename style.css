@@ -2558,3 +2558,207 @@ body.record-view .app {
     }
 
 }
+/* =========================================================
+   スマホ版：日付選択メニュー
+   「日付を選択」～「決定」までを白い背景で囲む
+========================================================= */
+
+@media screen and (max-width: 600px) {
+
+    #date-menu {
+        position: absolute;
+
+        top: calc(100% + 8px);
+        left: 50%;
+
+        z-index: 50;
+
+        /* メニュー全体の横幅 */
+        width: calc(100% - 30px);
+        max-width: 360px;
+
+        /* 中の余白 */
+        padding: 14px;
+
+        /* 中央配置 */
+        transform: translateX(-50%);
+
+        /* ここが今回の背景 */
+        background-color: #ffffff;
+
+        /* メニュー全体の外枠 */
+        border: 1.5px solid #19365f;
+        border-radius: 18px;
+
+        /* 少し浮いて見えるようにする */
+        box-shadow: 0 8px 22px rgba(0, 0, 0, 0.18);
+
+        box-sizing: border-box;
+    }
+
+
+    /* 「日付を選択」 */
+
+    #date-menu > label {
+        display: block;
+
+        margin:
+            0 0 10px;
+
+        text-align: center;
+
+        font-size: 16px;
+        font-weight: bold;
+    }
+
+
+    /* 日付入力欄 */
+
+    #edit-date-input {
+        display: block;
+
+        width: 70%;
+        max-width: 280px;
+        min-width: 0;
+
+        height: 44px;
+
+        margin:
+            0 auto;
+
+        padding:
+            2px 6px;
+
+        box-sizing: border-box;
+
+        border: 1.5px solid #19365f;
+        border-radius: 10px;
+
+        background-color: #ffffff;
+        color: #111111;
+
+        box-shadow: none;
+
+        text-align: center;
+
+        font-size: 15px;
+    }
+
+
+    /* iPhoneの日付表示部分 */
+
+    #edit-date-input::-webkit-date-and-time-value {
+        width: auto;
+        height: auto;
+
+        min-width: 0;
+
+        margin: 0;
+        padding: 0;
+
+        border: none;
+        border-radius: 0;
+
+        background-color: transparent;
+
+        box-shadow: none;
+
+        text-align: center;
+    }
+
+
+    /* カレンダーアイコン */
+
+    #edit-date-input::-webkit-calendar-picker-indicator {
+        margin: 0;
+
+        padding: 2px;
+    }
+
+
+    /* 今日・明日 */
+
+    #date-menu .quick-date-buttons {
+        display: grid;
+
+        grid-template-columns:
+            minmax(0, 1fr) minmax(0, 1fr);
+
+        width: 100%;
+
+        gap: 8px;
+
+        margin-top: 12px;
+    }
+
+
+    #date-menu .quick-date-buttons button {
+        width: 100%;
+        min-width: 0;
+        min-height: 42px;
+
+        padding:
+            3px 4px;
+
+        box-sizing: border-box;
+
+        border: 1.5px solid #19365f;
+        border-radius: 10px;
+
+        background-color: #d9eefa;
+
+        font-size: 13px;
+        font-weight: bold;
+    }
+
+
+    /* キャンセル・決定 */
+
+    #date-menu .popup-actions {
+        display: grid;
+
+        grid-template-columns:
+            minmax(0, 1fr) minmax(0, 1fr);
+
+        width: 100%;
+
+        gap: 8px;
+
+        margin-top: 10px;
+    }
+
+
+    #date-menu .popup-actions button {
+        width: 100%;
+        min-width: 0;
+        min-height: 42px;
+
+        padding:
+            3px 4px;
+
+        box-sizing: border-box;
+
+        border: 1.5px solid #19365f;
+        border-radius: 10px;
+
+        font-size: 13px;
+        font-weight: bold;
+
+        white-space: nowrap;
+    }
+
+
+    /* キャンセル */
+
+    #date-menu .cancel-button {
+        background-color: #e7e6e6;
+    }
+
+
+    /* 決定 */
+
+    #date-menu .confirm-button {
+        background-color: #ffc000;
+    }
+
+}
