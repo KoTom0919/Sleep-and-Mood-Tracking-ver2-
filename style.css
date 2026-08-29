@@ -2553,7 +2553,7 @@ body.record-view .app {
     #edit-date-input {
         display: block;
 
-        width: 88%;
+        width: 60%;
         max-width: 280px;
         min-width: 0;
 
