@@ -2,196 +2,196 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const STORAGE_KEY = "sleepRecords";
     const SETTINGS_KEY =
-    "conditionChecklistSettings";
+        "conditionChecklistSettings";
 
 
-const defaultChecklistSettings = {
+    const defaultChecklistSettings = {
 
-    categoryA: {
+        categoryA: {
 
-        name:
-            "カテゴリーA",
+            name:
+                "カテゴリーA",
 
-        items:
-            Array.from(
-                {
-                    length: 10
-                },
-                function (_, index) {
+            items:
+                Array.from(
+                    {
+                        length: 10
+                    },
+                    function (_, index) {
 
-                    return (
-                        `項目${index + 1}`
-                    );
+                        return (
+                            `項目${index + 1}`
+                        );
 
-                }
-            )
-
-    },
-
-    categoryB: {
-
-        name:
-            "カテゴリーB",
-
-        items:
-            Array.from(
-                {
-                    length: 10
-                },
-                function (_, index) {
-
-                    return (
-                        `項目${index + 1}`
-                    );
-
-                }
-            )
-
-    }
-
-};
-
-
-function readChecklistSettings() {
-
-    try {
-
-        const saved =
-            JSON.parse(
-                localStorage.getItem(
-                    SETTINGS_KEY
+                    }
                 )
-            );
 
+        },
 
-        if (
-            saved &&
-            saved.categoryA &&
-            saved.categoryB
-        ) {
+        categoryB: {
 
-            return saved;
+            name:
+                "カテゴリーB",
+
+            items:
+                Array.from(
+                    {
+                        length: 10
+                    },
+                    function (_, index) {
+
+                        return (
+                            `項目${index + 1}`
+                        );
+
+                    }
+                )
 
         }
 
-    } catch (error) {
+    };
 
-        console.error(
-            "設定を読み込めませんでした。",
-            error
+
+    function readChecklistSettings() {
+
+        try {
+
+            const saved =
+                JSON.parse(
+                    localStorage.getItem(
+                        SETTINGS_KEY
+                    )
+                );
+
+
+            if (
+                saved &&
+                saved.categoryA &&
+                saved.categoryB
+            ) {
+
+                return saved;
+
+            }
+
+        } catch (error) {
+
+            console.error(
+                "設定を読み込めませんでした。",
+                error
+            );
+
+        }
+
+
+        return JSON.parse(
+            JSON.stringify(
+                defaultChecklistSettings
+            )
         );
 
     }
 
 
-    return JSON.parse(
-        JSON.stringify(
-            defaultChecklistSettings
-        )
-    );
-
-}
+    let checklistSettings =
+        readChecklistSettings();
 
 
-let checklistSettings =
-    readChecklistSettings();
+    function renderChecklist() {
 
+        [
+            "A",
+            "B"
+        ].forEach(
+            function (letter) {
 
-function renderChecklist() {
+                const lowerLetter =
+                    letter.toLowerCase();
 
-    [
-        "A",
-        "B"
-    ].forEach(
-        function (letter) {
+                const categoryKey =
+                    `category${letter}`;
 
-            const lowerLetter =
-                letter.toLowerCase();
-
-            const categoryKey =
-                `category${letter}`;
-
-            const category =
-                checklistSettings[
+                const category =
+                    checklistSettings[
                     categoryKey
-                ];
+                    ];
 
-            const list =
+                const list =
+                    document.getElementById(
+                        `category-${lowerLetter}-list`
+                    );
+
+
                 document.getElementById(
-                    `category-${lowerLetter}-list`
+                    `category-${lowerLetter}-heading`
+                ).textContent =
+                    category.name;
+
+
+                document.getElementById(
+                    `list-category-${lowerLetter}-heading`
+                ).textContent =
+                    category.name;
+
+
+                list.innerHTML = "";
+
+
+                category.items.forEach(
+                    function (
+                        itemName,
+                        index
+                    ) {
+
+                        const label =
+                            document.createElement(
+                                "label"
+                            );
+
+                        label.className =
+                            "symptom-item";
+
+
+                        const span =
+                            document.createElement(
+                                "span"
+                            );
+
+                        span.textContent =
+                            itemName;
+
+
+                        const input =
+                            document.createElement(
+                                "input"
+                            );
+
+                        input.type =
+                            "checkbox";
+
+                        input.dataset.condition =
+                            `${lowerLetter}${index + 1}`;
+
+
+                        label.append(
+                            span,
+                            input
+                        );
+
+                        list.appendChild(
+                            label
+                        );
+
+                    }
                 );
 
+            }
+        );
 
-            document.getElementById(
-                `category-${lowerLetter}-heading`
-            ).textContent =
-                category.name;
-
-
-            document.getElementById(
-                `list-category-${lowerLetter}-heading`
-            ).textContent =
-                category.name;
+    }
 
 
-            list.innerHTML = "";
-
-
-            category.items.forEach(
-                function (
-                    itemName,
-                    index
-                ) {
-
-                    const label =
-                        document.createElement(
-                            "label"
-                        );
-
-                    label.className =
-                        "symptom-item";
-
-
-                    const span =
-                        document.createElement(
-                            "span"
-                        );
-
-                    span.textContent =
-                        itemName;
-
-
-                    const input =
-                        document.createElement(
-                            "input"
-                        );
-
-                    input.type =
-                        "checkbox";
-
-                    input.dataset.condition =
-                        `${lowerLetter}${index + 1}`;
-
-
-                    label.append(
-                        span,
-                        input
-                    );
-
-                    list.appendChild(
-                        label
-                    );
-
-                }
-            );
-
-        }
-    );
-
-}
-
-
-renderChecklist();
+    renderChecklist();
 
     let records = readRecords();
     let selectedDate = formatDate(new Date());
@@ -289,44 +289,44 @@ renderChecklist();
     ];
 
     const settingsButton =
-    document.getElementById(
-        "settings-button"
-    );
+        document.getElementById(
+            "settings-button"
+        );
 
-const settingsModal =
-    document.getElementById(
-        "settings-modal"
-    );
+    const settingsModal =
+        document.getElementById(
+            "settings-modal"
+        );
 
-const settingsCancel =
-    document.getElementById(
-        "settings-cancel"
-    );
+    const settingsCancel =
+        document.getElementById(
+            "settings-cancel"
+        );
 
-const settingsSave =
-    document.getElementById(
-        "settings-save"
-    );
+    const settingsSave =
+        document.getElementById(
+            "settings-save"
+        );
 
-const categoryAName =
-    document.getElementById(
-        "category-a-name"
-    );
+    const categoryAName =
+        document.getElementById(
+            "category-a-name"
+        );
 
-const categoryBName =
-    document.getElementById(
-        "category-b-name"
-    );
+    const categoryBName =
+        document.getElementById(
+            "category-b-name"
+        );
 
-const categoryASettings =
-    document.getElementById(
-        "category-a-settings"
-    );
+    const categoryASettings =
+        document.getElementById(
+            "category-a-settings"
+        );
 
-const categoryBSettings =
-    document.getElementById(
-        "category-b-settings"
-    );
+    const categoryBSettings =
+        document.getElementById(
+            "category-b-settings"
+        );
 
     const memoInput =
         document.getElementById("memo-input");
@@ -735,121 +735,121 @@ const categoryBSettings =
     }
 
 
-function confirmTime(
-    menu,
-    input,
-    button
-) {
-
-    const time =
-        normalizeTimeInput(
-            input.value
-        );
-
-    if (
-        input.value.trim() !== "" &&
-        time === null
+    function confirmTime(
+        menu,
+        input,
+        button
     ) {
 
-        showMessage(
-            "時刻を00:00～23:59で入力してください",
-            "error"
-        );
-
-        input.focus();
-
-        return;
-
-    }
-
-    button.textContent =
-        time ||
-        "○○：○○";
-
-    input.value =
-        time || "";
-
-    menu.hidden = true;
-
-    hideMessage();
-
-}
-function normalizeTimeInput(value) {
-
-    const text =
-        value
-            .trim()
-            .replace(/[０-９]/g, function (digit) {
-
-                return String.fromCharCode(
-                    digit.charCodeAt(0) - 65248
-                );
-
-            })
-            .replace(/：/g, ":");
-
-    let hours;
-    let minutes;
-
-    /*
-     * 「700」「2300」のように
-     * 数字だけで入力した場合
-     */
-    if (/^\d{3,4}$/.test(text)) {
-
-        hours =
-            text.slice(0, -2);
-
-        minutes =
-            text.slice(-2);
-
-    } else {
-
-        /*
-         * 「7:00」「23:00」のように
-         * コロンを入れて入力した場合
-         */
-        const parts =
-            text.match(
-                /^(\d{1,2}):(\d{1,2})$/
+        const time =
+            normalizeTimeInput(
+                input.value
             );
 
-        if (!parts) {
-            return null;
+        if (
+            input.value.trim() !== "" &&
+            time === null
+        ) {
+
+            showMessage(
+                "時刻を00:00～23:59で入力してください",
+                "error"
+            );
+
+            input.focus();
+
+            return;
+
         }
 
-        hours =
-            parts[1];
+        button.textContent =
+            time ||
+            "○○：○○";
 
-        minutes =
-            parts[2];
+        input.value =
+            time || "";
 
-    }
+        menu.hidden = true;
 
-    const hourNumber =
-        Number(hours);
-
-    const minuteNumber =
-        Number(minutes);
-
-    if (
-        hourNumber < 0 ||
-        hourNumber > 23 ||
-        minuteNumber < 0 ||
-        minuteNumber > 59
-    ) {
-
-        return null;
+        hideMessage();
 
     }
+    function normalizeTimeInput(value) {
 
-    return (
-        String(hourNumber).padStart(2, "0") +
-        ":" +
-        String(minuteNumber).padStart(2, "0")
-    );
+        const text =
+            value
+                .trim()
+                .replace(/[０-９]/g, function (digit) {
 
-}
+                    return String.fromCharCode(
+                        digit.charCodeAt(0) - 65248
+                    );
+
+                })
+                .replace(/：/g, ":");
+
+        let hours;
+        let minutes;
+
+        /*
+         * 「700」「2300」のように
+         * 数字だけで入力した場合
+         */
+        if (/^\d{3,4}$/.test(text)) {
+
+            hours =
+                text.slice(0, -2);
+
+            minutes =
+                text.slice(-2);
+
+        } else {
+
+            /*
+             * 「7:00」「23:00」のように
+             * コロンを入れて入力した場合
+             */
+            const parts =
+                text.match(
+                    /^(\d{1,2}):(\d{1,2})$/
+                );
+
+            if (!parts) {
+                return null;
+            }
+
+            hours =
+                parts[1];
+
+            minutes =
+                parts[2];
+
+        }
+
+        const hourNumber =
+            Number(hours);
+
+        const minuteNumber =
+            Number(minutes);
+
+        if (
+            hourNumber < 0 ||
+            hourNumber > 23 ||
+            minuteNumber < 0 ||
+            minuteNumber > 59
+        ) {
+
+            return null;
+
+        }
+
+        return (
+            String(hourNumber).padStart(2, "0") +
+            ":" +
+            String(minuteNumber).padStart(2, "0")
+        );
+
+    }
 
     /* =================================================
        ポップアップ
@@ -870,65 +870,65 @@ function normalizeTimeInput(value) {
        メッセージ
     ================================================= */
 
-function showMessage(
-    message,
-    type = "save"
-) {
+    function showMessage(
+        message,
+        type = "save"
+    ) {
 
-    window.clearTimeout(
-        messageTimer
-    );
-
-    saveMessage.textContent =
-        message;
-
-    saveMessage.classList.toggle(
-        "clear-message",
-        type === "clear" ||
-        type === "error"
-    );
-
-    saveMessage.classList.add(
-        "show-message"
-    );
-
-    messageTimer =
-        window.setTimeout(
-            hideMessage,
-            3000
+        window.clearTimeout(
+            messageTimer
         );
 
-}
+        saveMessage.textContent =
+            message;
+
+        saveMessage.classList.toggle(
+            "clear-message",
+            type === "clear" ||
+            type === "error"
+        );
+
+        saveMessage.classList.add(
+            "show-message"
+        );
+
+        messageTimer =
+            window.setTimeout(
+                hideMessage,
+                3000
+            );
+
+    }
 
 
-function hideMessage() {
+    function hideMessage() {
 
-    saveMessage.classList.remove(
-        "show-message"
-    );
+        saveMessage.classList.remove(
+            "show-message"
+        );
 
-    window.setTimeout(
-        function () {
+        window.setTimeout(
+            function () {
 
-            if (
-                !saveMessage.classList.contains(
-                    "show-message"
-                )
-            ) {
+                if (
+                    !saveMessage.classList.contains(
+                        "show-message"
+                    )
+                ) {
 
-                saveMessage.textContent = "";
+                    saveMessage.textContent = "";
 
-                saveMessage.classList.remove(
-                    "clear-message"
-                );
+                    saveMessage.classList.remove(
+                        "clear-message"
+                    );
 
-            }
+                }
 
-        },
-        250
-    );
+            },
+            250
+        );
 
-}
+    }
 
 
     /* =================================================
@@ -1368,7 +1368,7 @@ function hideMessage() {
 
         listEndDate.value =
             dates[
-                dates.length - 1
+            dates.length - 1
             ];
 
     }
@@ -1484,72 +1484,72 @@ function hideMessage() {
                 createTableCell(
                     row,
                     record.mood === 0 ||
-                    record.mood
+                        record.mood
                         ? record.mood
                         : ""
                 );
 
                 const categoryACount =
 
-    Array.from(
-        {
-            length: 10
-        },
-        function (_, index) {
+                    Array.from(
+                        {
+                            length: 10
+                        },
+                        function (_, index) {
 
-            return (
-                `a${index + 1}`
-            );
+                            return (
+                                `a${index + 1}`
+                            );
 
-        }
-    )
-        .filter(
-            function (name) {
+                        }
+                    )
+                        .filter(
+                            function (name) {
 
-                return conditionIsChecked(
-                    condition[name]
+                                return conditionIsChecked(
+                                    condition[name]
+                                );
+
+                            }
+                        )
+                        .length;
+
+
+                const categoryBCount =
+
+                    Array.from(
+                        {
+                            length: 10
+                        },
+                        function (_, index) {
+
+                            return (
+                                `b${index + 1}`
+                            );
+
+                        }
+                    )
+                        .filter(
+                            function (name) {
+
+                                return conditionIsChecked(
+                                    condition[name]
+                                );
+
+                            }
+                        )
+                        .length;
+
+
+                createTableCell(
+                    row,
+                    categoryACount
                 );
 
-            }
-        )
-        .length;
-
-
-const categoryBCount =
-
-    Array.from(
-        {
-            length: 10
-        },
-        function (_, index) {
-
-            return (
-                `b${index + 1}`
-            );
-
-        }
-    )
-        .filter(
-            function (name) {
-
-                return conditionIsChecked(
-                    condition[name]
+                createTableCell(
+                    row,
+                    categoryBCount
                 );
-
-            }
-        )
-        .length;
-
-
-createTableCell(
-    row,
-    categoryACount
-);
-
-createTableCell(
-    row,
-    categoryBCount
-);
 
                 createTableCell(
                     row,
@@ -1591,7 +1591,7 @@ createTableCell(
 
         if (
             satisfactionValues[
-                satisfaction
+            satisfaction
             ] === undefined
         ) {
 
@@ -1653,11 +1653,92 @@ createTableCell(
 
         trendEndDate.value =
             dates[
-                dates.length - 1
+            dates.length - 1
             ];
 
     }
 
+    function convertTimeToHours(value) {
+
+        if (!value) {
+            return null;
+        }
+
+        const parts =
+            value
+                .split(":")
+                .map(Number);
+
+        if (
+            parts.length !== 2 ||
+            !Number.isFinite(parts[0]) ||
+            !Number.isFinite(parts[1])
+        ) {
+
+            return null;
+
+        }
+
+        let time =
+            parts[0] +
+            parts[1] / 60;
+
+        /*
+         * 0:00～11:59は、
+         * 翌日の時刻として24を加える
+         */
+
+        if (time < 12) {
+            time += 24;
+        }
+
+        return time;
+
+    }
+
+
+    function formatClockHours(value) {
+
+        if (
+            value === null ||
+            value === undefined ||
+            !Number.isFinite(Number(value))
+        ) {
+
+            return "";
+
+        }
+
+        let totalMinutes =
+            Math.round(
+                Number(value) * 60
+            );
+
+        /*
+         * 24時間を超えた数値を
+         * 通常の時刻表示へ戻す
+         */
+
+        totalMinutes =
+            (
+                totalMinutes % (24 * 60) +
+                24 * 60
+            ) % (24 * 60);
+
+        const hours =
+            Math.floor(
+                totalMinutes / 60
+            );
+
+        const minutes =
+            totalMinutes % 60;
+
+        return (
+            `${String(hours).padStart(2, "0")}:` +
+            `${String(minutes).padStart(2, "0")}`
+        );
+
+    }
 
     /* =================================================
        グラフの共通設定
@@ -1857,16 +1938,29 @@ createTableCell(
                 }
             );
 
-
-        const sleepValues =
+        const bedtimeValues =
             dates.map(
                 function (date) {
 
                     const record =
                         records[date] || {};
 
-                    return convertSleepTimeToHours(
-                        record.bedtime,
+                    return convertTimeToHours(
+                        record.bedtime
+                    );
+
+                }
+            );
+
+
+        const wakeTimeValues =
+            dates.map(
+                function (date) {
+
+                    const record =
+                        records[date] || {};
+
+                    return convertTimeToHours(
                         record.wakeTime
                     );
 
@@ -1917,16 +2011,34 @@ createTableCell(
 
         destroyTrendCharts();
 
-
-        /* 睡眠時間 */
+        /* 就寝・起床時刻 */
 
         const sleepOptions =
             createChartOptions(
-                0,
-                24,
-                2,
-                "睡眠時間"
+                12,
+                36,
+                1,
+                "時刻"
             );
+
+
+        sleepOptions
+            .plugins
+            .legend
+            .display = true;
+
+
+        sleepOptions
+            .scales
+            .y
+            .ticks
+            .callback = function (value) {
+
+                return formatClockHours(
+                    value
+                );
+
+            };
 
 
         sleepOptions
@@ -1934,16 +2046,19 @@ createTableCell(
             .tooltip
             .callbacks = {
 
-                label:
-                    function (context) {
+            label:
+                function (context) {
 
-                        return formatSleepHours(
+                    return (
+                        `${context.dataset.label}: ` +
+                        formatClockHours(
                             context.parsed.y
-                        );
+                        )
+                    );
 
-                    }
+                }
 
-            };
+        };
 
 
         sleepChart =
@@ -1961,14 +2076,48 @@ createTableCell(
 
                             {
 
+                                label:
+                                    "就寝時刻",
+
                                 data:
-                                    sleepValues,
+                                    bedtimeValues,
 
                                 borderColor:
                                     "#4472c4",
 
                                 backgroundColor:
                                     "#4472c4",
+
+                                borderWidth:
+                                    3,
+
+                                pointRadius:
+                                    4,
+
+                                pointHoverRadius:
+                                    6,
+
+                                tension:
+                                    0.15,
+
+                                spanGaps:
+                                    false
+
+                            },
+
+                            {
+
+                                label:
+                                    "起床時刻",
+
+                                data:
+                                    wakeTimeValues,
+
+                                borderColor:
+                                    "#ed7d31",
+
+                                backgroundColor:
+                                    "#ed7d31",
 
                                 borderWidth:
                                     3,
@@ -2241,261 +2390,261 @@ createTableCell(
         );
 
     }
-/* =================================================
-   体調チェックの設定
-================================================= */
+    /* =================================================
+       体調チェックの設定
+    ================================================= */
 
-function fillSettingsForm() {
+    function fillSettingsForm() {
 
-    categoryAName.value =
-        checklistSettings
-            .categoryA
-            .name;
+        categoryAName.value =
+            checklistSettings
+                .categoryA
+                .name;
 
-    categoryBName.value =
-        checklistSettings
-            .categoryB
-            .name;
-
-
-    const categories = [
-
-        [
-            categoryASettings,
-            checklistSettings.categoryA
-        ],
-
-        [
-            categoryBSettings,
-            checklistSettings.categoryB
-        ]
-
-    ];
+        categoryBName.value =
+            checklistSettings
+                .categoryB
+                .name;
 
 
-    categories.forEach(
-        function (categoryData) {
+        const categories = [
 
-            const container =
-                categoryData[0];
+            [
+                categoryASettings,
+                checklistSettings.categoryA
+            ],
 
-            const category =
-                categoryData[1];
+            [
+                categoryBSettings,
+                checklistSettings.categoryB
+            ]
+
+        ];
 
 
-            container.innerHTML = "";
+        categories.forEach(
+            function (categoryData) {
+
+                const container =
+                    categoryData[0];
+
+                const category =
+                    categoryData[1];
 
 
-            category.items.forEach(
-                function (
-                    itemName,
-                    index
-                ) {
+                container.innerHTML = "";
 
-                    const label =
-                        document.createElement(
-                            "label"
+
+                category.items.forEach(
+                    function (
+                        itemName,
+                        index
+                    ) {
+
+                        const label =
+                            document.createElement(
+                                "label"
+                            );
+
+                        label.className =
+                            "item-setting";
+
+
+                        const number =
+                            document.createElement(
+                                "span"
+                            );
+
+                        number.textContent =
+                            `${index + 1}.`;
+
+
+                        const input =
+                            document.createElement(
+                                "input"
+                            );
+
+                        input.type =
+                            "text";
+
+                        input.maxLength =
+                            40;
+
+                        input.value =
+                            itemName;
+
+
+                        label.append(
+                            number,
+                            input
                         );
 
-                    label.className =
-                        "item-setting";
-
-
-                    const number =
-                        document.createElement(
-                            "span"
+                        container.appendChild(
+                            label
                         );
 
-                    number.textContent =
-                        `${index + 1}.`;
+                    }
+                );
+
+            }
+        );
+
+    }
 
 
-                    const input =
-                        document.createElement(
-                            "input"
-                        );
+    function closeSettings() {
 
-                    input.type =
-                        "text";
+        settingsModal.hidden =
+            true;
 
-                    input.maxLength =
-                        40;
-
-                    input.value =
-                        itemName;
+    }
 
 
-                    label.append(
-                        number,
-                        input
-                    );
+    settingsButton.addEventListener(
+        "click",
+        function () {
 
-                    container.appendChild(
-                        label
-                    );
+            fillSettingsForm();
 
-                }
-            );
+            settingsModal.hidden =
+                false;
 
         }
     );
 
-}
+
+    settingsCancel.addEventListener(
+        "click",
+        closeSettings
+    );
 
 
-function closeSettings() {
+    settingsModal.addEventListener(
+        "click",
+        function (event) {
 
-    settingsModal.hidden =
-        true;
+            if (
+                event.target ===
+                settingsModal
+            ) {
 
-}
-
-
-settingsButton.addEventListener(
-    "click",
-    function () {
-
-        fillSettingsForm();
-
-        settingsModal.hidden =
-            false;
-
-    }
-);
-
-
-settingsCancel.addEventListener(
-    "click",
-    closeSettings
-);
-
-
-settingsModal.addEventListener(
-    "click",
-    function (event) {
-
-        if (
-            event.target ===
-            settingsModal
-        ) {
-
-            closeSettings();
-
-        }
-
-    }
-);
-
-
-settingsSave.addEventListener(
-    "click",
-    function () {
-
-        function getItems(
-            container
-        ) {
-
-            return [
-                ...container
-                    .querySelectorAll(
-                        "input"
-                    )
-            ].map(
-                function (
-                    input,
-                    index
-                ) {
-
-                    return (
-                        input
-                            .value
-                            .trim() ||
-                        `項目${index + 1}`
-                    );
-
-                }
-            );
-
-        }
-
-
-        checklistSettings = {
-
-            categoryA: {
-
-                name:
-                    categoryAName
-                        .value
-                        .trim() ||
-                    "カテゴリーA",
-
-                items:
-                    getItems(
-                        categoryASettings
-                    )
-
-            },
-
-            categoryB: {
-
-                name:
-                    categoryBName
-                        .value
-                        .trim() ||
-                    "カテゴリーB",
-
-                items:
-                    getItems(
-                        categoryBSettings
-                    )
+                closeSettings();
 
             }
 
-        };
+        }
+    );
 
 
-        try {
+    settingsSave.addEventListener(
+        "click",
+        function () {
 
-            localStorage.setItem(
-                SETTINGS_KEY,
-                JSON.stringify(
-                    checklistSettings
+            function getItems(
+                container
+            ) {
+
+                return [
+                    ...container
+                        .querySelectorAll(
+                            "input"
+                        )
+                ].map(
+                    function (
+                        input,
+                        index
+                    ) {
+
+                        return (
+                            input
+                                .value
+                                .trim() ||
+                            `項目${index + 1}`
+                        );
+
+                    }
+                );
+
+            }
+
+
+            checklistSettings = {
+
+                categoryA: {
+
+                    name:
+                        categoryAName
+                            .value
+                            .trim() ||
+                        "カテゴリーA",
+
+                    items:
+                        getItems(
+                            categoryASettings
+                        )
+
+                },
+
+                categoryB: {
+
+                    name:
+                        categoryBName
+                            .value
+                            .trim() ||
+                        "カテゴリーB",
+
+                    items:
+                        getItems(
+                            categoryBSettings
+                        )
+
+                }
+
+            };
+
+
+            try {
+
+                localStorage.setItem(
+                    SETTINGS_KEY,
+                    JSON.stringify(
+                        checklistSettings
+                    )
+                );
+
+            } catch (error) {
+
+                showMessage(
+                    "設定を保存できませんでした",
+                    "error"
+                );
+
+                return;
+
+            }
+
+
+            renderChecklist();
+
+
+            conditionInputs = [
+                ...document.querySelectorAll(
+                    "[data-condition]"
                 )
-            );
+            ];
 
-        } catch (error) {
+
+            loadSelectedRecord();
+
+            closeSettings();
+
 
             showMessage(
-                "設定を保存できませんでした",
-                "error"
+                "設定を保存しました"
             );
 
-            return;
-
         }
-
-
-        renderChecklist();
-
-
-        conditionInputs = [
-            ...document.querySelectorAll(
-                "[data-condition]"
-            )
-        ];
-
-
-        loadSelectedRecord();
-
-        closeSettings();
-
-
-        showMessage(
-            "設定を保存しました"
-        );
-
-    }
-);
+    );
 
     /* =================================================
        日付イベント
@@ -3078,15 +3227,15 @@ settingsSave.addEventListener(
 
             const clickedButton =
                 event.target ===
-                    editDateButton ||
+                editDateButton ||
                 event.target ===
-                    bedtimeButton ||
+                bedtimeButton ||
                 event.target ===
-                    wakeTimeButton ||
+                wakeTimeButton ||
                 event.target ===
-                    satisfactionButton ||
+                satisfactionButton ||
                 event.target ===
-                    moodButton;
+                moodButton;
 
 
             if (

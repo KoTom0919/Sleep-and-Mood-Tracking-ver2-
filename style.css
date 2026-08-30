@@ -2771,3 +2771,109 @@ body.record-view .app {
     }
 
 }
+/* =========================================================
+   推移グラフをA4縦1ページに印刷
+========================================================= */
+
+@media print {
+
+    body.trend-print {
+        width: 100%;
+
+        margin: 0;
+        padding: 0;
+
+        background-color: #ffffff;
+    }
+
+
+    body.trend-print #trend-page {
+        display: block !important;
+
+        width: 100%;
+
+        margin: 0;
+        padding: 0;
+
+        break-inside: avoid;
+        page-break-inside: avoid;
+    }
+
+
+    body.trend-print .trend-header {
+        margin:
+            0 0 2mm;
+    }
+
+
+    body.trend-print .trend-main-title {
+        margin: 0;
+
+        font-size: 16px;
+        line-height: 1.2;
+    }
+
+
+    body.trend-print .trend-block {
+        width: 100%;
+
+        margin:
+            0 0 2mm;
+
+        padding: 0;
+
+        break-inside: avoid;
+        page-break-inside: avoid;
+    }
+
+
+    body.trend-print .trend-block h2 {
+        margin:
+            0 0 1mm;
+
+        font-size: 11px;
+        line-height: 1.2;
+    }
+
+
+    body.trend-print .chart-area {
+        width: 100% !important;
+        height: 52mm !important;
+
+        margin: 0;
+        padding: 2px;
+
+        border:
+            0.5px solid #777777;
+    }
+
+
+    body.trend-print .chart-area canvas {
+        width: 100% !important;
+        height: 100% !important;
+
+        max-width: 100% !important;
+        max-height: 100% !important;
+    }
+
+
+    body.trend-print .satisfaction-note {
+        display: grid;
+
+        grid-template-columns:
+            repeat(4, 1fr);
+
+        gap: 2mm;
+
+        margin:
+            1mm 0 0;
+
+        padding: 0;
+
+        border: none;
+
+        font-size: 7px;
+        line-height: 1.2;
+    }
+
+}
