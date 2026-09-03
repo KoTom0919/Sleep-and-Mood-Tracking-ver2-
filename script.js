@@ -202,6 +202,7 @@ document.addEventListener("DOMContentLoaded", function () {
     let sleepChart = null;
     let moodChart = null;
     let satisfactionChart = null;
+    let categoryChart = null;
 
 
     /* =================================================
@@ -390,6 +391,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const satisfactionChartCanvas =
         document.getElementById("satisfaction-chart");
+
+    const categoryChartCanvas =
+        document.getElementById("category-chart");
 
 
     /* =================================================
@@ -1866,6 +1870,15 @@ document.addEventListener("DOMContentLoaded", function () {
 
         }
 
+
+        if (categoryChart) {
+
+            categoryChart.destroy();
+
+            categoryChart = null;
+
+        }
+
     }
 
 
@@ -2006,6 +2019,84 @@ document.addEventListener("DOMContentLoaded", function () {
                     );
 
                 }
+            );
+
+
+        const categoryAValues =
+            dates.map(
+                function (date) {
+
+                    const record =
+                        records[date] || {};
+
+                    const condition =
+                        record.condition || {};
+
+                    return checklistSettings
+                        .categoryA
+                        .items
+                        .reduce(
+                            function (total, itemName, index) {
+
+                                const key =
+                                    `a${index + 1}`;
+
+                                return total +
+                                    (
+                                        conditionIsChecked(condition[key])
+                                            ? 1
+                                            : 0
+                                    );
+
+                            },
+                            0
+                        );
+
+                }
+            );
+
+
+        const categoryBValues =
+            dates.map(
+                function (date) {
+
+                    const record =
+                        records[date] || {};
+
+                    const condition =
+                        record.condition || {};
+
+                    return checklistSettings
+                        .categoryB
+                        .items
+                        .reduce(
+                            function (total, itemName, index) {
+
+                                const key =
+                                    `b${index + 1}`;
+
+                                return total +
+                                    (
+                                        conditionIsChecked(condition[key])
+                                            ? 1
+                                            : 0
+                                    );
+
+                            },
+                            0
+                        );
+
+                }
+            );
+
+
+        const categoryMaximum =
+            Math.max(
+                1,
+                checklistSettings.categoryA.items.length,
+                checklistSettings.categoryB.items.length,
+                ...categoryAValues,
+                ...categoryBValues
             );
 
 
@@ -2260,6 +2351,115 @@ document.addEventListener("DOMContentLoaded", function () {
                             1,
                             "睡眠満足度"
                         )
+
+                }
+            );
+
+
+        /* カテゴリーA・Bの合計値 */
+
+        const categoryOptions =
+            createChartOptions(
+                0,
+                categoryMaximum,
+                1,
+                "チェック数"
+            );
+
+
+        categoryOptions
+            .plugins
+            .legend
+            .display = true;
+
+
+        categoryOptions
+            .plugins
+            .tooltip
+            .displayColors = true;
+
+
+        categoryChart =
+            new Chart(
+                categoryChartCanvas,
+                {
+
+                    type: "line",
+
+                    data: {
+
+                        labels: labels,
+
+                        datasets: [
+
+                            {
+
+                                label:
+                                    checklistSettings.categoryA.name,
+
+                                data:
+                                    categoryAValues,
+
+                                borderColor:
+                                    "#4472c4",
+
+                                backgroundColor:
+                                    "#4472c4",
+
+                                borderWidth:
+                                    3,
+
+                                pointRadius:
+                                    4,
+
+                                pointHoverRadius:
+                                    6,
+
+                                tension:
+                                    0.15,
+
+                                spanGaps:
+                                    false
+
+                            },
+
+                            {
+
+                                label:
+                                    checklistSettings.categoryB.name,
+
+                                data:
+                                    categoryBValues,
+
+                                borderColor:
+                                    "#ed7d31",
+
+                                backgroundColor:
+                                    "#ed7d31",
+
+                                borderWidth:
+                                    3,
+
+                                pointRadius:
+                                    4,
+
+                                pointHoverRadius:
+                                    6,
+
+                                tension:
+                                    0.15,
+
+                                spanGaps:
+                                    false
+
+                            }
+
+                        ]
+
+                    },
+
+                    options:
+                        categoryOptions
 
                 }
             );
@@ -3130,6 +3330,10 @@ document.addEventListener("DOMContentLoaded", function () {
                             satisfactionChart.resize();
                         }
 
+                        if (categoryChart) {
+                            categoryChart.resize();
+                        }
+
 
                         window.setTimeout(
                             function () {
@@ -3189,6 +3393,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
                     if (satisfactionChart) {
                         satisfactionChart.resize();
+                    }
+
+                    if (categoryChart) {
+                        categoryChart.resize();
                     }
 
                 },
