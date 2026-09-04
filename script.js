@@ -3323,11 +3323,94 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
 
 
-                pageStyle.textContent =
-                    "@page {" +
-                    "size: A4 portrait;" +
-                    "margin: 5mm;" +
-                    "}";
+pageStyle.textContent = `
+    @page {
+        size: A4 portrait;
+        margin: 4mm;
+    }
+
+    @media print {
+        body.trend-print.mobile-trend-print,
+        body.trend-print.mobile-trend-print .app,
+        body.trend-print.mobile-trend-print #trend-page {
+            width: 100% !important;
+            height: auto !important;
+            min-height: 0 !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            overflow: visible !important;
+        }
+
+        body.trend-print.mobile-trend-print #trend-page {
+            display: block !important;
+        }
+
+        body.trend-print.mobile-trend-print .trend-header {
+            margin: 0 0 0.5mm !important;
+            padding: 0 !important;
+        }
+
+        body.trend-print.mobile-trend-print .trend-main-title {
+            margin: 0 !important;
+            font-size: 12px !important;
+            line-height: 1 !important;
+        }
+
+        body.trend-print.mobile-trend-print .trend-block {
+            width: 100% !important;
+            margin: 0 0 0.5mm !important;
+            padding: 0 !important;
+
+            break-inside: avoid !important;
+            page-break-inside: avoid !important;
+        }
+
+        body.trend-print.mobile-trend-print .trend-block:last-child {
+            margin-bottom: 0 !important;
+        }
+
+        body.trend-print.mobile-trend-print .trend-block h2 {
+            margin: 0 0 0.25mm !important;
+            font-size: 8px !important;
+            line-height: 1 !important;
+        }
+
+        body.trend-print.mobile-trend-print .chart-area {
+            display: block !important;
+
+            width: 100% !important;
+            height: 44mm !important;
+            min-height: 44mm !important;
+            max-height: 44mm !important;
+
+            margin: 0 !important;
+            padding: 1px !important;
+            overflow: hidden !important;
+        }
+
+        body.trend-print.mobile-trend-print .chart-area canvas {
+            display: block !important;
+
+            width: 100% !important;
+            height: 100% !important;
+
+            max-width: 100% !important;
+            max-height: 100% !important;
+        }
+
+        body.trend-print.mobile-trend-print .satisfaction-note {
+            display: grid !important;
+            grid-template-columns: repeat(4, 1fr) !important;
+
+            gap: 0.5mm !important;
+            margin: 0.25mm 0 0 !important;
+            padding: 0 !important;
+
+            font-size: 5px !important;
+            line-height: 1 !important;
+        }
+    }
+`;
 
 
                 window.setTimeout(
