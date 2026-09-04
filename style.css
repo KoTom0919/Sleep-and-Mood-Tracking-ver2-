@@ -3267,3 +3267,31 @@ body.record-view .app {
     }
 
 }
+/* =========================================================
+   スマホ印刷：4つの推移グラフをA4縦1ページに収める
+========================================================= */
+
+@media print {
+
+    body.trend-print.mobile-trend-print .trend-header {
+        margin-bottom: 0.3mm !important;
+    }
+
+    body.trend-print.mobile-trend-print .trend-block {
+        margin-bottom: 0.3mm !important;
+    }
+
+    body.trend-print.mobile-trend-print .trend-block h2 {
+        margin-bottom: 0.2mm !important;
+    }
+
+    body.trend-print.mobile-trend-print .chart-area {
+        height: 44mm !important;
+        min-height: 44mm !important;
+        max-height: 44mm !important;
+    }
+
+    body.trend-print.mobile-trend-print .satisfaction-note {
+        margin-top: 0.2mm !important;
+    }
+}
