@@ -3068,7 +3068,7 @@ body.record-view .app {
 
     body.trend-print .chart-area {
         width: 100% !important;
-        height: 58mm !important;
+        height: 50mm !important;
 
         margin: 0;
         padding: 1px;
