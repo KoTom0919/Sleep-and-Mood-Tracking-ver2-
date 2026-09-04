@@ -3389,8 +3389,27 @@ body.record-view .app {
 @media print {
 
     body.trend-print.mobile-trend-print .chart-area {
-        height: 76mm !important;
-        min-height: 76mm !important;
-        max-height: 76mm !important;
+        height: 60mm !important;
+        min-height: 60mm !important;
+        max-height: 60mm !important;
+    }
+}
+/* =========================================================
+   スマホ印刷時のグラフサイズ
+========================================================= */
+
+@media print {
+
+    body.trend-print.mobile-trend-print .chart-area {
+        height: 74mm !important;
+        min-height: 74mm !important;
+        max-height: 74mm !important;
+        flex: none !important;
+    }
+
+    body.trend-print.mobile-trend-print .chart-area canvas {
+        width: 100% !important;
+        height: 100% !important;
+        max-height: 74mm !important;
     }
 }

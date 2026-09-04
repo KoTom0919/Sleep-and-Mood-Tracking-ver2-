@@ -3282,14 +3282,20 @@ document.addEventListener("DOMContentLoaded", function () {
 /*
  * スマホからの印刷かどうかを判定
  */
-document.body
-    .classList
-    .toggle(
-        "mobile-trend-print",
-        window.matchMedia(
-            "(max-width: 768px)"
-        ).matches
+/*
+ * スマホ・タブレットからの印刷かどうかを判定
+ */
+const isMobileTrendPrint =
+    window.innerWidth <= 768 ||
+    navigator.maxTouchPoints > 1 ||
+    /Android|iPhone|iPad|iPod/i.test(
+        navigator.userAgent
     );
+
+document.body.classList.toggle(
+    "mobile-trend-print",
+    isMobileTrendPrint
+);
 
                 /*
                  * 推移グラフはA4縦向き
