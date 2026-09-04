@@ -589,8 +589,7 @@ body.record-view .app {
 
     margin: 0;
     padding:
-        14px
-        24px;
+        14px 24px;
 
     box-sizing: border-box;
 
@@ -601,10 +600,7 @@ body.record-view .app {
     color: #237a36;
 
     box-shadow:
-        0
-        4px
-        14px
-        rgba(0, 0, 0, 0.22);
+        0 4px 14px rgba(0, 0, 0, 0.22);
 
     text-align: center;
 
@@ -2179,6 +2175,7 @@ body.record-view .app {
     }
 
 }
+
 /* =========================================================
    タイトル・設定ボタン
 ========================================================= */
@@ -2255,13 +2252,11 @@ body.record-view .app {
     font-weight: bold;
 }
 
-.condition-checklist
-.symptom-item:nth-child(even) {
+.condition-checklist .symptom-item:nth-child(even) {
     background-color: #fff5eb;
 }
 
-.condition-checklist
-.symptom-item span {
+.condition-checklist .symptom-item span {
     display: flex;
 
     align-items: center;
@@ -2273,8 +2268,7 @@ body.record-view .app {
         1px solid #ffffff;
 }
 
-.condition-checklist
-.symptom-item input {
+.condition-checklist .symptom-item input {
     width: 28px;
     height: 28px;
 
@@ -2325,11 +2319,10 @@ body.record-view .app {
     background-color: #ffffff;
 
     box-shadow:
-        0 10px 35px
-        rgb(0 0 0 / 25%);
+        0 10px 35px rgb(0 0 0 / 25%);
 }
 
-.settings-panel > h2 {
+.settings-panel>h2 {
     margin-bottom: 22px;
 
     font-size: 24px;
@@ -2344,7 +2337,7 @@ body.record-view .app {
     gap: 24px;
 }
 
-.settings-category > label {
+.settings-category>label {
     display: grid;
 
     gap: 6px;
@@ -2434,8 +2427,7 @@ body.record-view .app {
         gap: 18px;
     }
 
-    .condition-checklist
-    .symptom-item {
+    .condition-checklist .symptom-item {
         grid-template-columns:
             1fr 55px;
 
@@ -2444,14 +2436,12 @@ body.record-view .app {
         font-size: 14px;
     }
 
-    .condition-checklist
-    .symptom-item span {
+    .condition-checklist .symptom-item span {
         padding:
             5px 8px;
     }
 
-    .condition-checklist
-    .symptom-item input {
+    .condition-checklist .symptom-item input {
         width: 24px;
         height: 24px;
     }
@@ -2471,24 +2461,24 @@ body.record-view .app {
     }
 
 
-/* 日付選択ポップアップ */
+    /* 日付選択ポップアップ */
 
-#date-menu {
-    width: calc(100% - 30px);
-    max-width: 360px;
+    #date-menu {
+        width: calc(100% - 30px);
+        max-width: 360px;
 
-    padding: 14px;
+        padding: 14px;
 
-    border: 1.5px solid #19365f;
-    border-radius: 18px;
+        border: 1.5px solid #19365f;
+        border-radius: 18px;
 
-    background-color: #ffffff;
+        background-color: #ffffff;
 
-    box-shadow:
-        0 8px 22px rgba(0, 0, 0, 0.18);
+        box-shadow:
+            0 8px 22px rgba(0, 0, 0, 0.18);
 
-    box-sizing: border-box;
-}
+        box-sizing: border-box;
+    }
 
 
     /* 日付入力欄を細くして中央に配置 */
@@ -2567,6 +2557,7 @@ body.record-view .app {
     }
 
 }
+
 /* =========================================================
    スマホ版：日付選択メニュー
    「日付を選択」～「決定」までを白い背景で囲む
@@ -2608,7 +2599,7 @@ body.record-view .app {
 
     /* 「日付を選択」 */
 
-    #date-menu > label {
+    #date-menu>label {
         display: block;
 
         margin:
@@ -2771,6 +2762,7 @@ body.record-view .app {
     }
 
 }
+
 /* =========================================================
    推移グラフをA4縦1ページに印刷
 ========================================================= */
@@ -2877,6 +2869,7 @@ body.record-view .app {
     }
 
 }
+
 /* =========================================================
    4つの推移グラフをA4縦1ページに印刷
 ========================================================= */
@@ -2974,6 +2967,7 @@ body.record-view .app {
     }
 
 }
+
 /* =========================================================
    一覧表の列幅調整
    日付・睡眠満足度を約1文字分広げる
@@ -3105,6 +3099,7 @@ body.record-view .app {
     }
 
 }
+
 /* =========================================================
    推移グラフをA4縦1ページに収める微調整
 ========================================================= */
@@ -3121,6 +3116,7 @@ body.record-view .app {
     }
 
 }
+
 /* =========================================================
    スマホからのPDF印刷をA4縦1ページに収める
 ========================================================= */
@@ -3173,6 +3169,7 @@ body.record-view .app {
     }
 
 }
+
 /* =========================================================
    推移グラフをスマホからA4縦1ページで印刷
 ========================================================= */
@@ -3267,6 +3264,7 @@ body.record-view .app {
     }
 
 }
+
 /* =========================================================
    スマホ印刷：4つの推移グラフをA4縦1ページに収める
 ========================================================= */
@@ -3293,5 +3291,96 @@ body.record-view .app {
 
     body.trend-print.mobile-trend-print .satisfaction-note {
         margin-top: 0.2mm !important;
+    }
+}
+
+/* =========================================================
+   睡眠満足度グラフを非表示
+========================================================= */
+
+.satisfaction-trend-block {
+    display: none !important;
+}
+
+
+/* =========================================================
+   3つの推移グラフをA4縦1ページに印刷
+========================================================= */
+
+@media print {
+
+    body.trend-print {
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+    body.trend-print #trend-page,
+    body.trend-print .app {
+        height: auto !important;
+        min-height: 0 !important;
+
+        margin: 0 !important;
+        padding: 0 !important;
+
+        overflow: visible !important;
+    }
+
+    body.trend-print .satisfaction-trend-block {
+        display: none !important;
+    }
+
+    body.trend-print .trend-header {
+        margin: 0 0 1mm !important;
+    }
+
+    body.trend-print .trend-main-title {
+        margin: 0 !important;
+
+        font-size: 15px !important;
+        line-height: 1.1 !important;
+    }
+
+    body.trend-print .trend-block {
+        width: 100% !important;
+
+        margin: 0 0 1mm !important;
+        padding: 0 !important;
+
+        break-inside: avoid !important;
+        page-break-inside: avoid !important;
+    }
+
+    body.trend-print .trend-block:last-child {
+        margin-bottom: 0 !important;
+    }
+
+    body.trend-print .trend-block h2 {
+        margin: 0 0 0.5mm !important;
+
+        font-size: 9px !important;
+        line-height: 1.1 !important;
+    }
+
+    body.trend-print .chart-area,
+    body.trend-print.mobile-trend-print .chart-area {
+        width: 100% !important;
+
+        height: 84mm !important;
+        min-height: 84mm !important;
+        max-height: 84mm !important;
+
+        margin: 0 !important;
+        padding: 1px !important;
+
+        border: 0.5px solid #777777 !important;
+    }
+
+    body.trend-print .chart-area canvas,
+    body.trend-print.mobile-trend-print .chart-area canvas {
+        width: 100% !important;
+        height: 100% !important;
+
+        max-width: 100% !important;
+        max-height: 100% !important;
     }
 }
