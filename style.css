@@ -3384,3 +3384,13 @@ body.record-view .app {
         max-height: 100% !important;
     }
 }
+/* スマホから印刷するときだけグラフを少し小さくする */
+
+@media print {
+
+    body.trend-print.mobile-trend-print .chart-area {
+        height: 76mm !important;
+        min-height: 76mm !important;
+        max-height: 76mm !important;
+    }
+}
