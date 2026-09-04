@@ -3292,10 +3292,61 @@ const isMobileTrendPrint =
         navigator.userAgent
     );
 
+/*
+ * スマホ・タブレットかどうかを判定
+ */
+const isMobileTrendPrint =
+    window.innerWidth <= 768 ||
+    /Android|iPhone|iPad|iPod/i.test(
+        navigator.userAgent
+    );
+
+/*
+ * 印刷用クラスを追加
+ */
 document.body.classList.toggle(
     "mobile-trend-print",
     isMobileTrendPrint
 );
+
+/*
+ * 印刷するグラフの高さを直接指定
+ *
+ * パソコン：84mm
+ * スマホ：72mm
+ */
+const printChartHeight =
+    isMobileTrendPrint
+        ? "68mm"
+        : "84mm";
+
+document
+    .querySelectorAll(
+        "#trend-page .trend-block:not(.satisfaction-trend-block) .chart-area"
+    )
+    .forEach(
+        function (chartArea) {
+
+            chartArea.style.setProperty(
+                "height",
+                printChartHeight,
+                "important"
+            );
+
+            chartArea.style.setProperty(
+                "min-height",
+                printChartHeight,
+                "important"
+            );
+
+            chartArea.style.setProperty(
+                "max-height",
+                printChartHeight,
+                "important"
+            );
+
+        }
+    );
 
                 /*
                  * 推移グラフはA4縦向き
@@ -3384,6 +3435,30 @@ document.body
     .classList
     .remove(
         "mobile-trend-print"
+    );
+    /*
+ * 印刷用に直接指定したグラフの高さを解除
+ */
+document
+    .querySelectorAll(
+        "#trend-page .chart-area"
+    )
+    .forEach(
+        function (chartArea) {
+
+            chartArea.style.removeProperty(
+                "height"
+            );
+
+            chartArea.style.removeProperty(
+                "min-height"
+            );
+
+            chartArea.style.removeProperty(
+                "max-height"
+            );
+
+        }
     );
 
             const pageStyle =
