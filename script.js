@@ -3317,12 +3317,11 @@ document.body
 
                 }
 
-
-                pageStyle.textContent =
-                    "@page {" +
-                    "size: A4 portrait;" +
-                    "margin: 8mm;" +
-                    "}";
+pageStyle.textContent =
+    "@page {" +
+    "size: A4 portrait;" +
+    "margin: 5mm;" +
+    "}";
 
 
                 window.setTimeout(

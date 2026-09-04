@@ -3173,3 +3173,97 @@ body.record-view .app {
     }
 
 }
+/* =========================================================
+   推移グラフをスマホからA4縦1ページで印刷
+========================================================= */
+
+@media print {
+
+    body.trend-print {
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+    body.trend-print #trend-page,
+    body.trend-print .app {
+        height: auto !important;
+        min-height: 0 !important;
+
+        margin: 0 !important;
+        padding: 0 !important;
+
+        overflow: visible !important;
+    }
+
+    body.trend-print .trend-header {
+        margin:
+            0 0 0.5mm !important;
+    }
+
+    body.trend-print .trend-main-title {
+        margin: 0 !important;
+
+        font-size: 14px !important;
+        line-height: 1 !important;
+    }
+
+    body.trend-print .trend-block {
+        width: 100% !important;
+
+        margin:
+            0 0 0.5mm !important;
+
+        padding: 0 !important;
+
+        break-inside: avoid !important;
+        page-break-inside: avoid !important;
+    }
+
+    body.trend-print .trend-block:last-child {
+        margin-bottom: 0 !important;
+    }
+
+    body.trend-print .trend-block h2 {
+        margin:
+            0 0 0.25mm !important;
+
+        font-size: 8px !important;
+        line-height: 1 !important;
+    }
+
+    body.trend-print .chart-area,
+    body.trend-print.mobile-trend-print .chart-area {
+        width: 100% !important;
+        height: 50mm !important;
+        min-height: 0 !important;
+
+        margin: 0 !important;
+        padding: 1px !important;
+
+        border:
+            0.5px solid #777777 !important;
+    }
+
+    body.trend-print .chart-area canvas,
+    body.trend-print.mobile-trend-print .chart-area canvas {
+        width: 100% !important;
+        height: 100% !important;
+
+        max-width: 100% !important;
+        max-height: 100% !important;
+    }
+
+    body.trend-print .satisfaction-note,
+    body.trend-print.mobile-trend-print .satisfaction-note {
+        gap: 0.5mm !important;
+
+        margin:
+            0.25mm 0 0 !important;
+
+        padding: 0 !important;
+
+        font-size: 5px !important;
+        line-height: 1 !important;
+    }
+
+}
