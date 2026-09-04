@@ -2974,3 +2974,134 @@ body.record-view .app {
     }
 
 }
+/* =========================================================
+   一覧表の列幅調整
+   日付・睡眠満足度を約1文字分広げる
+========================================================= */
+
+.date-column {
+    width: 86px;
+}
+
+.satisfaction-column {
+    width: 86px;
+}
+
+.memo-column {
+    width: 303px;
+}
+
+
+/* =========================================================
+   PDF・印刷時の一覧表の列幅
+========================================================= */
+
+@media print {
+
+    .date-column {
+        width: 9.8%;
+    }
+
+    .time-column {
+        width: 9%;
+    }
+
+    .duration-column {
+        width: 9%;
+    }
+
+    .satisfaction-column {
+        width: 9.8%;
+    }
+
+    .mood-column {
+        width: 7.5%;
+    }
+
+    .condition-column {
+        width: 9%;
+    }
+
+    .memo-column {
+        width: 27.9%;
+    }
+
+}
+
+
+/* =========================================================
+   4つの推移グラフをA4縦いっぱいに近づける
+========================================================= */
+
+@media print {
+
+    body.trend-print .trend-header {
+        margin-bottom: 1.5mm;
+    }
+
+    body.trend-print .trend-main-title {
+        margin: 0;
+
+        font-size: 15px;
+        line-height: 1.1;
+    }
+
+    body.trend-print .trend-block {
+        width: 100%;
+
+        margin:
+            0 0 1.5mm;
+
+        padding: 0;
+
+        break-inside: avoid;
+        page-break-inside: avoid;
+    }
+
+    body.trend-print .trend-block h2 {
+        margin:
+            0 0 0.5mm;
+
+        font-size: 9px;
+        line-height: 1.1;
+    }
+
+    body.trend-print .chart-area {
+        width: 100% !important;
+        height: 58mm !important;
+
+        margin: 0;
+        padding: 1px;
+
+        border:
+            0.5px solid #777777;
+    }
+
+    body.trend-print .chart-area canvas {
+        width: 100% !important;
+        height: 100% !important;
+
+        max-width: 100% !important;
+        max-height: 100% !important;
+    }
+
+    body.trend-print .satisfaction-note {
+        display: grid;
+
+        grid-template-columns:
+            repeat(4, 1fr);
+
+        gap: 1mm;
+
+        margin:
+            0.5mm 0 0;
+
+        padding: 0;
+
+        border: none;
+
+        font-size: 6px;
+        line-height: 1.1;
+    }
+
+}
