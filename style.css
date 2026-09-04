@@ -3105,3 +3105,19 @@ body.record-view .app {
     }
 
 }
+/* =========================================================
+   推移グラフをA4縦1ページに収める微調整
+========================================================= */
+
+@media print {
+
+    body.trend-print .trend-block {
+        margin:
+            0 0 1mm;
+    }
+
+    body.trend-print .chart-area {
+        height: 55mm !important;
+    }
+
+}
