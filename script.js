@@ -3256,134 +3256,151 @@ document.addEventListener("DOMContentLoaded", function () {
 
     }
 
-/* =================================================
-   推移グラフをPDF印刷
-================================================= */
 
-if (trendPrintButton) {
+    /* =================================================
+       推移グラフをPDF印刷
+    ================================================= */
 
-    trendPrintButton.addEventListener(
-        "click",
+    if (trendPrintButton) {
+
+        trendPrintButton.addEventListener(
+            "click",
+            function () {
+
+                const rendered =
+                    renderTrendCharts();
+
+
+                if (!rendered) {
+                    return;
+                }
+
+
+                document.body
+                    .classList
+                    .add("trend-print");
+
+
+                /*
+                 * スマホからの印刷では、
+                 * 1ページ用の専用サイズを使用する
+                 */
+
+                document.body
+                    .classList
+                    .toggle(
+                        "mobile-trend-print",
+                        window.matchMedia(
+                            "(max-width: 768px)"
+                        ).matches
+                    );
+
+
+                /*
+                 * 推移グラフはA4縦向き
+                 */
+
+                let pageStyle =
+                    document.getElementById(
+                        "trend-print-page-style"
+                    );
+
+
+                if (!pageStyle) {
+
+                    pageStyle =
+                        document.createElement(
+                            "style"
+                        );
+
+                    pageStyle.id =
+                        "trend-print-page-style";
+
+                    document.head.appendChild(
+                        pageStyle
+                    );
+
+                }
+
+
+                pageStyle.textContent =
+                    "@page {" +
+                    "size: A4 portrait;" +
+                    "margin: 5mm;" +
+                    "}";
+
+
+                window.setTimeout(
+                    function () {
+
+                        if (sleepChart) {
+                            sleepChart.resize();
+                        }
+
+                        if (moodChart) {
+                            moodChart.resize();
+                        }
+
+                        if (satisfactionChart) {
+                            satisfactionChart.resize();
+                        }
+
+                        if (categoryChart) {
+                            categoryChart.resize();
+                        }
+
+
+                        window.setTimeout(
+                            function () {
+
+                                window.print();
+
+                            },
+                            150
+                        );
+
+                    },
+                    150
+                );
+
+            }
+        );
+
+    }
+
+
+    /* =================================================
+       印刷後に通常表示へ戻す
+    ================================================= */
+
+    window.addEventListener(
+        "afterprint",
         function () {
 
-            const rendered =
-                renderTrendCharts();
-
-
-            if (!rendered) {
-                return;
-            }
+            document.body
+                .classList
+                .remove("trend-print");
 
 
             document.body
                 .classList
-                .add("trend-print");
-
-
-            /*
-             * スマホ・タブレットからの印刷かどうかを判定
-             */
-
-            const isMobileTrendPrint =
-                window.innerWidth <= 768 ||
-                navigator.maxTouchPoints > 1 ||
-                /Android|iPhone|iPad|iPod/i.test(
-                    navigator.userAgent
+                .remove(
+                    "mobile-trend-print"
                 );
 
 
-            document.body
-                .classList
-                .toggle(
-                    "mobile-trend-print",
-                    isMobileTrendPrint
-                );
-
-
-            /*
-             * 印刷時のグラフの高さ
-             *
-             * パソコン：84mm
-             * スマホ：68mm
-             */
-
-            const printChartHeight =
-                isMobileTrendPrint
-                    ? "68mm"
-                    : "84mm";
-
-
-            /*
-             * 睡眠満足度以外の3つのグラフへ
-             * 印刷用の高さを直接設定
-             */
-
-            document
-                .querySelectorAll(
-                    "#trend-page .trend-block:not(.satisfaction-trend-block) .chart-area"
-                )
-                .forEach(
-                    function (chartArea) {
-
-                        chartArea.style.setProperty(
-                            "height",
-                            printChartHeight,
-                            "important"
-                        );
-
-                        chartArea.style.setProperty(
-                            "min-height",
-                            printChartHeight,
-                            "important"
-                        );
-
-                        chartArea.style.setProperty(
-                            "max-height",
-                            printChartHeight,
-                            "important"
-                        );
-
-                    }
-                );
-
-
-            /*
-             * A4縦向きの印刷設定
-             */
-
-            let pageStyle =
+            const pageStyle =
                 document.getElementById(
                     "trend-print-page-style"
                 );
 
 
-            if (!pageStyle) {
+            if (pageStyle) {
 
-                pageStyle =
-                    document.createElement(
-                        "style"
-                    );
-
-                pageStyle.id =
-                    "trend-print-page-style";
-
-                document.head.appendChild(
-                    pageStyle
-                );
+                pageStyle.remove();
 
             }
 
-
-            pageStyle.textContent =
-                "@page {" +
-                "size: A4 portrait;" +
-                "margin: 5mm;" +
-                "}";
-
-
-            /*
-             * 高さ変更後にグラフを再描画して印刷
-             */
 
             window.setTimeout(
                 function () {
@@ -3396,121 +3413,20 @@ if (trendPrintButton) {
                         moodChart.resize();
                     }
 
+                    if (satisfactionChart) {
+                        satisfactionChart.resize();
+                    }
+
                     if (categoryChart) {
                         categoryChart.resize();
                     }
 
-
-                    window.setTimeout(
-                        function () {
-
-                            window.print();
-
-                        },
-                        150
-                    );
-
                 },
-                150
+                100
             );
 
         }
     );
-
-}
-
-
-/* =================================================
-   印刷後に通常表示へ戻す
-================================================= */
-
-window.addEventListener(
-    "afterprint",
-    function () {
-
-        document.body
-            .classList
-            .remove("trend-print");
-
-
-        document.body
-            .classList
-            .remove("mobile-trend-print");
-
-
-        /*
-         * JavaScriptで指定した高さを解除
-         */
-
-        document
-            .querySelectorAll(
-                "#trend-page .chart-area"
-            )
-            .forEach(
-                function (chartArea) {
-
-                    chartArea.style.removeProperty(
-                        "height"
-                    );
-
-                    chartArea.style.removeProperty(
-                        "min-height"
-                    );
-
-                    chartArea.style.removeProperty(
-                        "max-height"
-                    );
-
-                }
-            );
-
-
-        /*
-         * 印刷用のページ設定を削除
-         */
-
-        const pageStyle =
-            document.getElementById(
-                "trend-print-page-style"
-            );
-
-
-        if (pageStyle) {
-
-            pageStyle.remove();
-
-        }
-
-
-        /*
-         * 通常画面の大きさでグラフを再描画
-         */
-
-        window.setTimeout(
-            function () {
-
-                if (sleepChart) {
-                    sleepChart.resize();
-                }
-
-                if (moodChart) {
-                    moodChart.resize();
-                }
-
-                if (satisfactionChart) {
-                    satisfactionChart.resize();
-                }
-
-                if (categoryChart) {
-                    categoryChart.resize();
-                }
-
-            },
-            100
-        );
-
-    }
-);
 
 
     /* =================================================
