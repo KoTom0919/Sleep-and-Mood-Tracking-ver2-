@@ -3121,3 +3121,55 @@ body.record-view .app {
     }
 
 }
+/* =========================================================
+   スマホからのPDF印刷をA4縦1ページに収める
+========================================================= */
+
+@media print {
+
+    body.trend-print.mobile-trend-print .trend-header {
+        margin-bottom: 0.5mm;
+    }
+
+    body.trend-print.mobile-trend-print .trend-main-title {
+        font-size: 14px;
+        line-height: 1.05;
+    }
+
+    body.trend-print.mobile-trend-print .trend-block {
+        margin-bottom: 0.5mm;
+    }
+
+    body.trend-print.mobile-trend-print .trend-block h2 {
+        margin-bottom: 0.25mm;
+
+        font-size: 8px;
+        line-height: 1.05;
+    }
+
+    body.trend-print.mobile-trend-print .chart-area {
+        width: 100% !important;
+        height: 52mm !important;
+
+        margin: 0;
+        padding: 1px;
+    }
+
+    body.trend-print.mobile-trend-print .chart-area canvas {
+        width: 100% !important;
+        height: 100% !important;
+
+        max-width: 100% !important;
+        max-height: 100% !important;
+    }
+
+    body.trend-print.mobile-trend-print .satisfaction-note {
+        gap: 0.5mm;
+
+        margin-top: 0.25mm;
+
+        font-size: 5.5px;
+        line-height: 1.05;
+    }
+
+}

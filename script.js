@@ -3279,7 +3279,17 @@ document.addEventListener("DOMContentLoaded", function () {
                 document.body
                     .classList
                     .add("trend-print");
-
+/*
+ * スマホからの印刷かどうかを判定
+ */
+document.body
+    .classList
+    .toggle(
+        "mobile-trend-print",
+        window.matchMedia(
+            "(max-width: 768px)"
+        ).matches
+    );
 
                 /*
                  * 推移グラフはA4縦向き
@@ -3365,7 +3375,11 @@ document.addEventListener("DOMContentLoaded", function () {
             document.body
                 .classList
                 .remove("trend-print");
-
+document.body
+    .classList
+    .remove(
+        "mobile-trend-print"
+    );
 
             const pageStyle =
                 document.getElementById(
