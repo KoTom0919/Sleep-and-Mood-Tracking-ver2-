@@ -3355,15 +3355,16 @@ pageStyle.textContent = `
             font-size: 12px !important;
             line-height: 1 !important;
         }
-
         body.trend-print.mobile-trend-print .trend-block {
-            width: 100% !important;
-            margin: 0 0 0.5mm !important;
-            padding: 0 !important;
+    width: 100% !important;
+    margin: 0 0 4mm !important;
+    padding: 0 !important;
 
-            break-inside: avoid !important;
-            page-break-inside: avoid !important;
-        }
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+}
+
+
 
         body.trend-print.mobile-trend-print .trend-block:last-child {
             margin-bottom: 0 !important;
@@ -3375,18 +3376,20 @@ pageStyle.textContent = `
             line-height: 1 !important;
         }
 
-        body.trend-print.mobile-trend-print .chart-area {
-            display: block !important;
 
-            width: 100% !important;
-            height: 44mm !important;
-            min-height: 44mm !important;
-            max-height: 44mm !important;
+body.trend-print.mobile-trend-print .chart-area {
+    display: block !important;
 
-            margin: 0 !important;
-            padding: 1px !important;
-            overflow: hidden !important;
-        }
+    width: 100% !important;
+
+    height: 68mm !important;
+    min-height: 68mm !important;
+    max-height: 68mm !important;
+
+    margin: 0 !important;
+    padding: 1px !important;
+    overflow: hidden !important;
+}
 
         body.trend-print.mobile-trend-print .chart-area canvas {
             display: block !important;
