@@ -589,7 +589,8 @@ body.record-view .app {
 
     margin: 0;
     padding:
-        14px 24px;
+        14px
+        24px;
 
     box-sizing: border-box;
 
@@ -600,7 +601,10 @@ body.record-view .app {
     color: #237a36;
 
     box-shadow:
-        0 4px 14px rgba(0, 0, 0, 0.22);
+        0
+        4px
+        14px
+        rgba(0, 0, 0, 0.22);
 
     text-align: center;
 
@@ -2177,200 +2181,212 @@ body.record-view .app {
 }
 
 /* =========================================================
-   タイトル・設定ボタン
+   iPhoneの日付・時刻入力を強制的に枠内へ収める
 ========================================================= */
 
-.record-title-row {
-    display: grid;
+@media screen and (max-width: 600px) {
 
-    grid-template-columns:
-        1fr auto 1fr;
+    .popup,
+    .time-popup {
+        width: 100%;
+        max-width: 100%;
 
-    align-items: center;
+        padding:
+            10px;
+
+        box-sizing: border-box;
+
+        overflow: hidden;
+    }
+
+
+    .popup input[type="date"]::-webkit-date-and-time-value {
+        display: block;
+
+        /*
+         * iPhone Safari向けの幅指定
+         */
+
+        width:
+            -webkit-fill-available;
+
+        width:
+            stretch;
+
+        min-width: 0;
+        max-width: 100%;
+
+        height: 44px;
+
+        margin:
+            8px 0;
+
+        padding:
+            2px 6px;
+
+        box-sizing: border-box;
+
+        -webkit-appearance: none;
+        appearance: none;
+
+        border: 1.5px solid #19365f;
+        border-radius: 10px;
+
+        background-color: #ffffff;
+
+        font-size: 16px;
+        text-align: center;
+    }
+
+
+    .popup input[type="date"]::-webkit-date-and-time-value,
+    .time-popup input[type="time"]::-webkit-date-and-time-value {
+        min-width: 0;
+
+        margin: 0;
+
+        padding: 0;
+
+        text-align: center;
+    }
+
+
+    /*
+     * 日付選択用のカレンダー部分
+     */
+
+    .popup input[type="date"]::-webkit-calendar-picker-indicator {
+        margin: 0;
+
+        padding: 2px;
+    }
+
+}
+/* =========================================================
+   記録画面のタイトルと設定ボタン
+========================================================= */
+
+.record-header {
+    position: relative;
 }
 
-.record-title-row .main-title {
-    grid-column: 2;
+.record-header .main-title {
+    padding:
+        0 90px;
 }
 
 .settings-button {
-    grid-column: 3;
+    position: absolute;
+    top: 50%;
+    right: 0;
 
-    justify-self: end;
-
-    width: 100px;
-    height: 52px;
-
-    border: 1.5px solid #19365f;
-    border-radius: 14px;
-
-    background-color: #e7e6e6;
-
-    font-weight: bold;
-}
-
-
-/* =========================================================
-   カテゴリー別体調チェック
-========================================================= */
-
-.condition-categories {
-    display: grid;
-
-    grid-template-columns:
-        1fr 1fr;
-
-    gap: 20px;
-}
-
-.condition-category h3 {
-    margin:
-        0 0 8px;
-
-    text-align: center;
-
-    font-size: 18px;
-}
-
-.condition-checklist {
-    display: grid;
-
-    gap: 2px;
-}
-
-.condition-checklist .symptom-item {
-    display: grid;
-
-    grid-template-columns:
-        1fr 90px;
-
-    min-height: 55px;
-
-    background-color: #fce4cc;
-
-    font-size: 17px;
-    font-weight: bold;
-}
-
-.condition-checklist .symptom-item:nth-child(even) {
-    background-color: #fff5eb;
-}
-
-.condition-checklist .symptom-item span {
-    display: flex;
-
-    align-items: center;
+    min-width: 74px;
+    min-height: 44px;
 
     padding:
-        8px 12px;
+        6px 14px;
 
-    border-right:
-        1px solid #ffffff;
+    transform:
+        translateY(-50%);
+
+    border: 1.5px solid #19365f;
+    border-radius: 12px;
+
+    color: #19365f;
+    background-color: #d9eefa;
+
+    font-weight: bold;
 }
 
-.condition-checklist .symptom-item input {
-    width: 28px;
-    height: 28px;
-
-    margin: auto;
-
-    accent-color: #4472c4;
+.settings-button:hover {
+    background-color: #c4e4f6;
 }
 
 
 /* =========================================================
-   設定画面
+   体調チェックの設定画面
 ========================================================= */
 
-.settings-modal {
+.settings-overlay {
     position: fixed;
-
     inset: 0;
 
-    z-index: 10000;
+    z-index: 100;
 
     display: grid;
-
     place-items: center;
 
     padding: 20px;
 
     background-color:
-        rgb(0 0 0 / 45%);
+        rgb(0 0 0 / 38%);
 }
 
-.settings-modal[hidden] {
-    display: none !important;
-}
-
-.settings-panel {
+.settings-dialog {
     width:
-        min(820px, 100%);
+        min(440px, 100%);
 
     max-height:
         calc(100vh - 40px);
 
     overflow-y: auto;
 
-    padding: 24px;
+    padding: 22px;
 
+    border: 1.5px solid #19365f;
     border-radius: 18px;
 
     background-color: #ffffff;
 
     box-shadow:
-        0 10px 35px rgb(0 0 0 / 25%);
+        0 14px 40px rgb(0 0 0 / 25%);
 }
 
-.settings-panel>h2 {
-    margin-bottom: 22px;
+.settings-dialog h2 {
+    margin-bottom: 6px;
 
-    font-size: 24px;
+    font-size: 21px;
 }
 
-.settings-categories {
+.settings-description {
+    margin:
+        0 0 17px;
+
+    color: #555555;
+
+    text-align: center;
+    font-size: 14px;
+}
+
+.settings-inputs {
+    display: grid;
+    gap: 10px;
+}
+
+.settings-inputs label {
     display: grid;
 
     grid-template-columns:
-        1fr 1fr;
+        68px minmax(0, 1fr);
 
-    gap: 24px;
-}
-
-.settings-category>label {
-    display: grid;
-
-    gap: 6px;
+    align-items: center;
+    gap: 10px;
 
     font-weight: bold;
 }
 
-.settings-category input {
+.settings-inputs input {
     width: 100%;
-    height: 44px;
+    min-width: 0;
+    height: 46px;
 
     padding:
-        6px 10px;
+        7px 10px;
 
     border: 1.5px solid #19365f;
-    border-radius: 8px;
-}
+    border-radius: 10px;
 
-.item-settings {
-    display: grid;
-
-    gap: 7px;
-
-    margin-top: 12px;
-}
-
-.item-setting {
-    display: grid;
-
-    grid-template-columns:
-        30px 1fr;
-
-    align-items: center;
+    font-size: 16px;
 }
 
 .settings-actions {
@@ -2379,13 +2395,13 @@ body.record-view .app {
     grid-template-columns:
         1fr 1fr;
 
-    gap: 12px;
+    gap: 10px;
 
-    margin-top: 22px;
+    margin-top: 18px;
 }
 
 .settings-actions button {
-    height: 50px;
+    min-height: 48px;
 
     border: 1.5px solid #19365f;
     border-radius: 10px;
@@ -2395,1021 +2411,44 @@ body.record-view .app {
 
 
 /* =========================================================
-   スマートフォン
+   スマホ表示
 ========================================================= */
 
 @media screen and (max-width: 600px) {
 
-    /* タイトルと設定ボタン */
+    .record-header .main-title {
+        padding:
+            0 62px 0 0;
 
-    .record-title-row {
-        grid-template-columns:
-            1fr auto 1fr;
+        text-align: left;
     }
 
     .settings-button {
-        width: 64px;
-        height: 42px;
+        min-width: 58px;
+        min-height: 38px;
 
         padding:
-            2px 5px;
-
-        font-size: 14px;
-    }
-
-
-    /* カテゴリー別チェックリスト */
-
-    .condition-categories {
-        grid-template-columns:
-            1fr;
-
-        gap: 18px;
-    }
-
-    .condition-checklist .symptom-item {
-        grid-template-columns:
-            1fr 55px;
-
-        min-height: 48px;
-
-        font-size: 14px;
-    }
-
-    .condition-checklist .symptom-item span {
-        padding:
-            5px 8px;
-    }
-
-    .condition-checklist .symptom-item input {
-        width: 24px;
-        height: 24px;
-    }
-
-
-    /* 設定画面 */
-
-    .settings-panel {
-        padding: 16px;
-    }
-
-    .settings-categories {
-        grid-template-columns:
-            1fr;
-
-        gap: 25px;
-    }
-
-
-    /* 日付選択ポップアップ */
-
-    #date-menu {
-        width: calc(100% - 30px);
-        max-width: 360px;
-
-        padding: 14px;
-
-        border: 1.5px solid #19365f;
-        border-radius: 18px;
-
-        background-color: #ffffff;
-
-        box-shadow:
-            0 8px 22px rgba(0, 0, 0, 0.18);
-
-        box-sizing: border-box;
-    }
-
-
-    /* 日付入力欄を細くして中央に配置 */
-
-    #edit-date-input {
-        display: block;
-
-        width: 70%;
-        max-width: 280px;
-        min-width: 0;
-
-        height: 44px;
-
-        margin:
-            0 auto;
-
-        padding:
-            2px 6px;
-
-        border: 1.5px solid #19365f;
-        border-radius: 10px;
-
-        background-color: #ffffff;
-        color: #111111;
-
-        box-shadow: none;
-
-        text-align: center;
-
-        font-size: 15px;
-    }
-
-
-    /* iPhoneで日付欄が二重枠になるのを防ぐ */
-
-    #edit-date-input::-webkit-date-and-time-value {
-        width: auto;
-        height: auto;
-
-        min-width: 0;
-
-        margin: 0;
-        padding: 0;
-
-        border: none;
-        border-radius: 0;
-
-        background-color: transparent;
-
-        box-shadow: none;
-
-        text-align: center;
-    }
-
-
-    /* カレンダーアイコン */
-
-    #edit-date-input::-webkit-calendar-picker-indicator {
-        margin: 0;
-
-        padding: 2px;
-    }
-
-
-    /* 時刻入力ポップアップ */
-
-    .time-popup {
-        width: 100%;
-        max-width: 100%;
-
-        padding: 10px;
-
-        box-sizing: border-box;
-
-        overflow: hidden;
-    }
-
-}
-
-/* =========================================================
-   スマホ版：日付選択メニュー
-   「日付を選択」～「決定」までを白い背景で囲む
-========================================================= */
-
-@media screen and (max-width: 600px) {
-
-    #date-menu {
-        position: absolute;
-
-        top: calc(100% + 8px);
-        left: 50%;
-
-        z-index: 50;
-
-        /* メニュー全体の横幅 */
-        width: calc(100% - 30px);
-        max-width: 360px;
-
-        /* 中の余白 */
-        padding: 14px;
-
-        /* 中央配置 */
-        transform: translateX(-50%);
-
-        /* ここが今回の背景 */
-        background-color: #ffffff;
-
-        /* メニュー全体の外枠 */
-        border: 1.5px solid #19365f;
-        border-radius: 18px;
-
-        /* 少し浮いて見えるようにする */
-        box-shadow: 0 8px 22px rgba(0, 0, 0, 0.18);
-
-        box-sizing: border-box;
-    }
-
-
-    /* 「日付を選択」 */
-
-    #date-menu>label {
-        display: block;
-
-        margin:
-            0 0 10px;
-
-        text-align: center;
-
-        font-size: 16px;
-        font-weight: bold;
-    }
-
-
-    /* 日付入力欄 */
-
-    #edit-date-input {
-        display: block;
-
-        width: 70%;
-        max-width: 280px;
-        min-width: 0;
-
-        height: 44px;
-
-        margin:
-            0 auto;
-
-        padding:
-            2px 6px;
-
-        box-sizing: border-box;
-
-        border: 1.5px solid #19365f;
-        border-radius: 10px;
-
-        background-color: #ffffff;
-        color: #111111;
-
-        box-shadow: none;
-
-        text-align: center;
-
-        font-size: 15px;
-    }
-
-
-    /* iPhoneの日付表示部分 */
-
-    #edit-date-input::-webkit-date-and-time-value {
-        width: auto;
-        height: auto;
-
-        min-width: 0;
-
-        margin: 0;
-        padding: 0;
-
-        border: none;
-        border-radius: 0;
-
-        background-color: transparent;
-
-        box-shadow: none;
-
-        text-align: center;
-    }
-
-
-    /* カレンダーアイコン */
-
-    #edit-date-input::-webkit-calendar-picker-indicator {
-        margin: 0;
-
-        padding: 2px;
-    }
-
-
-    /* 今日・明日 */
-
-    #date-menu .quick-date-buttons {
-        display: grid;
-
-        grid-template-columns:
-            minmax(0, 1fr) minmax(0, 1fr);
-
-        width: 100%;
-
-        gap: 8px;
-
-        margin-top: 12px;
-    }
-
-
-    #date-menu .quick-date-buttons button {
-        width: 100%;
-        min-width: 0;
-        min-height: 42px;
-
-        padding:
-            3px 4px;
-
-        box-sizing: border-box;
-
-        border: 1.5px solid #19365f;
-        border-radius: 10px;
-
-        background-color: #d9eefa;
+            4px 8px;
 
         font-size: 13px;
-        font-weight: bold;
     }
 
-
-    /* キャンセル・決定 */
-
-    #date-menu .popup-actions {
-        display: grid;
-
-        grid-template-columns:
-            minmax(0, 1fr) minmax(0, 1fr);
-
-        width: 100%;
-
-        gap: 8px;
-
-        margin-top: 10px;
+    .settings-overlay {
+        padding: 12px;
     }
 
-
-    #date-menu .popup-actions button {
-        width: 100%;
-        min-width: 0;
-        min-height: 42px;
-
+    .settings-dialog {
         padding:
-            3px 4px;
+            18px 14px;
+    }
 
-        box-sizing: border-box;
+    .settings-inputs label {
+        grid-template-columns:
+            58px minmax(0, 1fr);
 
-        border: 1.5px solid #19365f;
-        border-radius: 10px;
+        gap: 7px;
 
         font-size: 13px;
-        font-weight: bold;
-
-        white-space: nowrap;
-    }
-
-
-    /* キャンセル */
-
-    #date-menu .cancel-button {
-        background-color: #e7e6e6;
-    }
-
-
-    /* 決定 */
-
-    #date-menu .confirm-button {
-        background-color: #ffc000;
-    }
-
-}
-
-/* =========================================================
-   推移グラフをA4縦1ページに印刷
-========================================================= */
-
-@media print {
-
-    body.trend-print {
-        width: 100%;
-
-        margin: 0;
-        padding: 0;
-
-        background-color: #ffffff;
-    }
-
-
-    body.trend-print #trend-page {
-        display: block !important;
-
-        width: 100%;
-
-        margin: 0;
-        padding: 0;
-
-        break-inside: avoid;
-        page-break-inside: avoid;
-    }
-
-
-    body.trend-print .trend-header {
-        margin:
-            0 0 2mm;
-    }
-
-
-    body.trend-print .trend-main-title {
-        margin: 0;
-
-        font-size: 16px;
-        line-height: 1.2;
-    }
-
-
-    body.trend-print .trend-block {
-        width: 100%;
-
-        margin:
-            0 0 2mm;
-
-        padding: 0;
-
-        break-inside: avoid;
-        page-break-inside: avoid;
-    }
-
-
-    body.trend-print .trend-block h2 {
-        margin:
-            0 0 1mm;
-
-        font-size: 11px;
-        line-height: 1.2;
-    }
-
-
-    body.trend-print .chart-area {
-        width: 100% !important;
-        height: 52mm !important;
-
-        margin: 0;
-        padding: 2px;
-
-        border:
-            0.5px solid #777777;
-    }
-
-
-    body.trend-print .chart-area canvas {
-        width: 100% !important;
-        height: 100% !important;
-
-        max-width: 100% !important;
-        max-height: 100% !important;
-    }
-
-
-    body.trend-print .satisfaction-note {
-        display: grid;
-
-        grid-template-columns:
-            repeat(4, 1fr);
-
-        gap: 2mm;
-
-        margin:
-            1mm 0 0;
-
-        padding: 0;
-
-        border: none;
-
-        font-size: 7px;
-        line-height: 1.2;
-    }
-
-}
-
-/* =========================================================
-   4つの推移グラフをA4縦1ページに印刷
-========================================================= */
-
-@media print {
-
-    body.trend-print {
-        width: 100%;
-        margin: 0;
-        padding: 0;
-
-        background-color: #ffffff;
-    }
-
-
-    body.trend-print #trend-page {
-        display: block !important;
-
-        width: 100%;
-        margin: 0;
-        padding: 0;
-
-        break-inside: avoid;
-        page-break-inside: avoid;
-    }
-
-
-    body.trend-print .trend-header {
-        margin: 0 0 1.5mm;
-    }
-
-
-    body.trend-print .trend-main-title {
-        margin: 0;
-
-        font-size: 15px;
-        line-height: 1.1;
-    }
-
-
-    body.trend-print .trend-block {
-        width: 100%;
-
-        margin: 0 0 1.5mm;
-        padding: 0;
-
-        break-inside: avoid;
-        page-break-inside: avoid;
-    }
-
-
-    body.trend-print .trend-block h2 {
-        margin: 0 0 0.5mm;
-
-        font-size: 9px;
-        line-height: 1.1;
-    }
-
-
-    body.trend-print .chart-area {
-        width: 100% !important;
-        height: 42mm !important;
-
-        margin: 0;
-        padding: 1px;
-
-        border: 0.5px solid #777777;
-    }
-
-
-    body.trend-print .chart-area canvas {
-        width: 100% !important;
-        height: 100% !important;
-
-        max-width: 100% !important;
-        max-height: 100% !important;
-    }
-
-
-    body.trend-print .satisfaction-note {
-        display: grid;
-
-        grid-template-columns:
-            repeat(4, 1fr);
-
-        gap: 1mm;
-
-        margin: 0.5mm 0 0;
-        padding: 0;
-
-        border: none;
-
-        font-size: 6px;
-        line-height: 1.1;
-    }
-
-}
-
-/* =========================================================
-   一覧表の列幅調整
-   日付・睡眠満足度を約1文字分広げる
-========================================================= */
-
-.date-column {
-    width: 86px;
-}
-
-.satisfaction-column {
-    width: 86px;
-}
-
-.memo-column {
-    width: 303px;
-}
-
-
-/* =========================================================
-   PDF・印刷時の一覧表の列幅
-========================================================= */
-
-@media print {
-
-    .date-column {
-        width: 9.8%;
-    }
-
-    .time-column {
-        width: 9%;
-    }
-
-    .duration-column {
-        width: 9%;
-    }
-
-    .satisfaction-column {
-        width: 9.8%;
-    }
-
-    .mood-column {
-        width: 7.5%;
-    }
-
-    .condition-column {
-        width: 9%;
-    }
-
-    .memo-column {
-        width: 27.9%;
-    }
-
-}
-
-
-/* =========================================================
-   4つの推移グラフをA4縦いっぱいに近づける
-========================================================= */
-
-@media print {
-
-    body.trend-print .trend-header {
-        margin-bottom: 1.5mm;
-    }
-
-    body.trend-print .trend-main-title {
-        margin: 0;
-
-        font-size: 15px;
-        line-height: 1.1;
-    }
-
-    body.trend-print .trend-block {
-        width: 100%;
-
-        margin:
-            0 0 1.5mm;
-
-        padding: 0;
-
-        break-inside: avoid;
-        page-break-inside: avoid;
     }
 
-    body.trend-print .trend-block h2 {
-        margin:
-            0 0 0.5mm;
-
-        font-size: 9px;
-        line-height: 1.1;
-    }
-
-    body.trend-print .chart-area {
-        width: 100% !important;
-        height: 50mm !important;
-
-        margin: 0;
-        padding: 1px;
-
-        border:
-            0.5px solid #777777;
-    }
-
-    body.trend-print .chart-area canvas {
-        width: 100% !important;
-        height: 100% !important;
-
-        max-width: 100% !important;
-        max-height: 100% !important;
-    }
-
-    body.trend-print .satisfaction-note {
-        display: grid;
-
-        grid-template-columns:
-            repeat(4, 1fr);
-
-        gap: 1mm;
-
-        margin:
-            0.5mm 0 0;
-
-        padding: 0;
-
-        border: none;
-
-        font-size: 6px;
-        line-height: 1.1;
-    }
-
-}
-
-/* =========================================================
-   推移グラフをA4縦1ページに収める微調整
-========================================================= */
-
-@media print {
-
-    body.trend-print .trend-block {
-        margin:
-            0 0 1mm;
-    }
-
-    body.trend-print .chart-area {
-        height: 55mm !important;
-    }
-
-}
-
-/* =========================================================
-   スマホからのPDF印刷をA4縦1ページに収める
-========================================================= */
-
-@media print {
-
-    body.trend-print.mobile-trend-print .trend-header {
-        margin-bottom: 0.5mm;
-    }
-
-    body.trend-print.mobile-trend-print .trend-main-title {
-        font-size: 14px;
-        line-height: 1.05;
-    }
-
-    body.trend-print.mobile-trend-print .trend-block {
-        margin-bottom: 0.5mm;
-    }
-
-    body.trend-print.mobile-trend-print .trend-block h2 {
-        margin-bottom: 0.25mm;
-
-        font-size: 8px;
-        line-height: 1.05;
-    }
-
-    body.trend-print.mobile-trend-print .chart-area {
-        width: 100% !important;
-        height: 52mm !important;
-
-        margin: 0;
-        padding: 1px;
-    }
-
-    body.trend-print.mobile-trend-print .chart-area canvas {
-        width: 100% !important;
-        height: 100% !important;
-
-        max-width: 100% !important;
-        max-height: 100% !important;
-    }
-
-    body.trend-print.mobile-trend-print .satisfaction-note {
-        gap: 0.5mm;
-
-        margin-top: 0.25mm;
-
-        font-size: 5.5px;
-        line-height: 1.05;
-    }
-
-}
-
-/* =========================================================
-   推移グラフをスマホからA4縦1ページで印刷
-========================================================= */
-
-@media print {
-
-    body.trend-print {
-        margin: 0 !important;
-        padding: 0 !important;
-    }
-
-    body.trend-print #trend-page,
-    body.trend-print .app {
-        height: auto !important;
-        min-height: 0 !important;
-
-        margin: 0 !important;
-        padding: 0 !important;
-
-        overflow: visible !important;
-    }
-
-    body.trend-print .trend-header {
-        margin:
-            0 0 0.5mm !important;
-    }
-
-    body.trend-print .trend-main-title {
-        margin: 0 !important;
-
-        font-size: 14px !important;
-        line-height: 1 !important;
-    }
-
-    body.trend-print .trend-block {
-        width: 100% !important;
-
-        margin:
-            0 0 0.5mm !important;
-
-        padding: 0 !important;
-
-        break-inside: avoid !important;
-        page-break-inside: avoid !important;
-    }
-
-    body.trend-print .trend-block:last-child {
-        margin-bottom: 0 !important;
-    }
-
-    body.trend-print .trend-block h2 {
-        margin:
-            0 0 0.25mm !important;
-
-        font-size: 8px !important;
-        line-height: 1 !important;
-    }
-
-    body.trend-print .chart-area,
-    body.trend-print.mobile-trend-print .chart-area {
-        width: 100% !important;
-        height: 50mm !important;
-        min-height: 0 !important;
-
-        margin: 0 !important;
-        padding: 1px !important;
-
-        border:
-            0.5px solid #777777 !important;
-    }
-
-    body.trend-print .chart-area canvas,
-    body.trend-print.mobile-trend-print .chart-area canvas {
-        width: 100% !important;
-        height: 100% !important;
-
-        max-width: 100% !important;
-        max-height: 100% !important;
-    }
-
-    body.trend-print .satisfaction-note,
-    body.trend-print.mobile-trend-print .satisfaction-note {
-        gap: 0.5mm !important;
-
-        margin:
-            0.25mm 0 0 !important;
-
-        padding: 0 !important;
-
-        font-size: 5px !important;
-        line-height: 1 !important;
-    }
-
-}
-
-/* =========================================================
-   スマホ印刷：4つの推移グラフをA4縦1ページに収める
-========================================================= */
-
-@media print {
-
-    body.trend-print.mobile-trend-print .trend-header {
-        margin-bottom: 0.3mm !important;
-    }
-
-    body.trend-print.mobile-trend-print .trend-block {
-        margin-bottom: 0.3mm !important;
-    }
-
-    body.trend-print.mobile-trend-print .trend-block h2 {
-        margin-bottom: 0.2mm !important;
-    }
-
-    body.trend-print.mobile-trend-print .chart-area {
-        height: 44mm !important;
-        min-height: 44mm !important;
-        max-height: 44mm !important;
-    }
-
-    body.trend-print.mobile-trend-print .satisfaction-note {
-        margin-top: 0.2mm !important;
-    }
-}
-
-/* =========================================================
-   睡眠満足度グラフを非表示
-========================================================= */
-
-.satisfaction-trend-block {
-    display: none !important;
-}
-
-
-/* =========================================================
-   3つの推移グラフをA4縦1ページに印刷
-========================================================= */
-
-@media print {
-
-    body.trend-print {
-        margin: 0 !important;
-        padding: 0 !important;
-    }
-
-    body.trend-print #trend-page,
-    body.trend-print .app {
-        height: auto !important;
-        min-height: 0 !important;
-
-        margin: 0 !important;
-        padding: 0 !important;
-
-        overflow: visible !important;
-    }
-
-    body.trend-print .satisfaction-trend-block {
-        display: none !important;
-    }
-
-    body.trend-print .trend-header {
-        margin: 0 0 1mm !important;
-    }
-
-    body.trend-print .trend-main-title {
-        margin: 0 !important;
-
-        font-size: 15px !important;
-        line-height: 1.1 !important;
-    }
-
-    body.trend-print .trend-block {
-        width: 100% !important;
-
-        margin: 0 0 1mm !important;
-        padding: 0 !important;
-
-        break-inside: avoid !important;
-        page-break-inside: avoid !important;
-    }
-
-    body.trend-print .trend-block:last-child {
-        margin-bottom: 0 !important;
-    }
-
-    body.trend-print .trend-block h2 {
-        margin: 0 0 0.5mm !important;
-
-        font-size: 9px !important;
-        line-height: 1.1 !important;
-    }
-
-    body.trend-print .chart-area,
-    body.trend-print.mobile-trend-print .chart-area {
-        width: 100% !important;
-
-        height: 84mm !important;
-        min-height: 84mm !important;
-        max-height: 84mm !important;
-
-        margin: 0 !important;
-        padding: 1px !important;
-
-        border: 0.5px solid #777777 !important;
-    }
-
-    body.trend-print .chart-area canvas,
-    body.trend-print.mobile-trend-print .chart-area canvas {
-        width: 100% !important;
-        height: 100% !important;
-
-        max-width: 100% !important;
-        max-height: 100% !important;
-    }
-}
-/* スマホから印刷するときだけグラフを少し小さくする */
-
-@media print {
-
-    body.trend-print.mobile-trend-print .chart-area {
-        height: 60mm !important;
-        min-height: 60mm !important;
-        max-height: 60mm !important;
-    }
-}
-/* =========================================================
-   スマホ印刷時のグラフサイズ
-========================================================= */
-
-@media print {
-
-    body.trend-print.mobile-trend-print .chart-area {
-        height: 74mm !important;
-        min-height: 74mm !important;
-        max-height: 74mm !important;
-        flex: none !important;
-    }
-
-    body.trend-print.mobile-trend-print .chart-area canvas {
-        width: 100% !important;
-        height: 100% !important;
-        max-height: 74mm !important;
-    }
 }
