@@ -4,23 +4,30 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>睡眠＆体調記録アプリ</title>
-    <link rel="stylesheet" href="style.css?v=4">
+    <link rel="stylesheet" href="style.css?v=20261005-design">
 </head>
 <body>
     <main class="app">
 
-        <!-- ① 記録をつける -->
+        <!-- 記録ページ -->
         <section id="record-page" class="page">
             <div class="record-title-row">
                 <h1 class="main-title">睡眠＆体調記録</h1>
                 <button type="button" id="settings-button" class="settings-button">
-                    設定
+                    <svg class="button-icon" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="1.8"
+                        stroke-linecap="round" stroke-linejoin="round"
+                        aria-hidden="true">
+                        <path d="m9 3-1 3-3 1v4l-2 1 2 2v3l3 1 1 3h6l1-3 3-1v-3l2-2-2-1V7l-3-1-1-3Z"/>
+                        <circle cx="12" cy="12" r="3"/>
+                    </svg>
+                    <span>設定</span>
                 </button>
             </div>
 
-            <!-- 編集する日付 -->
             <section class="date-section">
                 <h2>編集する日付</h2>
+
                 <div class="date-navigation">
                     <button type="button" id="previous-day"
                         class="arrow-button previous-button" aria-label="前日">
@@ -55,7 +62,6 @@
             <!-- 就寝・起床時刻 -->
             <section class="sleep-section">
                 <div class="two-column">
-
                     <div class="time-field">
                         <h2>昨夜の就寝時刻</h2>
                         <button type="button" id="bedtime-button"
@@ -115,7 +121,6 @@
                             </div>
                         </div>
                     </div>
-
                 </div>
             </section>
 
@@ -164,6 +169,7 @@
             <!-- 体調チェック -->
             <section class="condition-section">
                 <h2>体調チェック</h2>
+
                 <div class="condition-categories">
                     <div class="condition-category">
                         <h3 id="category-a-heading">カテゴリーA</h3>
@@ -187,29 +193,53 @@
                 role="status" aria-live="polite">
             </p>
 
+            <!-- クリア・更新 -->
             <div id="record-action-bar" class="record-action-bar">
                 <button type="button" id="clear-button"
                     class="record-action-button clear-button">
-                    クリア
+                    <svg class="button-icon" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="1.8"
+                        stroke-linecap="round" stroke-linejoin="round"
+                        aria-hidden="true">
+                        <path d="m16 3 5 5-12 12H5l-3-3Z"/>
+                        <path d="m8 11 5 5M9 20h12"/>
+                    </svg>
+                    <span>クリア</span>
                 </button>
+
                 <button type="button" id="save-button"
                     class="record-action-button save-button">
-                    記録
+                    <svg class="button-icon" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="1.8"
+                        stroke-linecap="round" stroke-linejoin="round"
+                        aria-hidden="true">
+                        <path d="M20 7v5h-5M4 17v-5h5"/>
+                        <path d="M6 7a7 7 0 0 1 12-2l2 2M18 17a7 7 0 0 1-12 2l-2-2"/>
+                    </svg>
+                    <span>更新</span>
                 </button>
             </div>
         </section>
 
-        <!-- ② 一覧で確認 -->
+        <!-- 一覧ページ -->
         <section id="list-page" class="page" hidden>
             <div class="records-header">
-                <h1 class="records-title">記録</h1>
+                <h1 class="records-title">一覧</h1>
+
                 <button type="button" id="print-button" class="print-button">
-                    PDFで印刷
+                    <svg class="button-icon" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="1.8"
+                        stroke-linecap="round" stroke-linejoin="round"
+                        aria-hidden="true">
+                        <path d="M6 9V3h12v6M6 18H3V9h18v9h-3M6 14h12v7H6Z"/>
+                    </svg>
+                    <span>PDFで印刷</span>
                 </button>
             </div>
 
             <section class="list-period-section">
                 <h2>表示期間</h2>
+
                 <div class="list-period-inputs">
                     <label>
                         開始日
@@ -267,17 +297,26 @@
             </p>
         </section>
 
-        <!-- ③ 推移を確認 -->
+        <!-- 推移ページ -->
         <section id="trend-page" class="page" hidden>
             <div class="trend-header">
-                <h1 class="trend-main-title">睡眠＆体調の推移</h1>
-                <button type="button" id="trend-print-button" class="trend-print-button">
-                    PDFで印刷
+                <h1 class="trend-main-title">推移</h1>
+
+                <button type="button" id="trend-print-button"
+                    class="trend-print-button">
+                    <svg class="button-icon" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="1.8"
+                        stroke-linecap="round" stroke-linejoin="round"
+                        aria-hidden="true">
+                        <path d="M6 9V3h12v6M6 18H3V9h18v9h-3M6 14h12v7H6Z"/>
+                    </svg>
+                    <span>PDFで印刷</span>
                 </button>
             </div>
 
             <section class="trend-period-section">
                 <h2>表示期間</h2>
+
                 <div class="trend-period-inputs">
                     <label>
                         開始日
@@ -305,7 +344,6 @@
                 </div>
             </section>
 
-            <!-- 睡眠満足度グラフは非表示 -->
             <section class="trend-block satisfaction-trend-block" hidden>
                 <canvas id="satisfaction-chart"></canvas>
             </section>
@@ -326,7 +364,7 @@
         </section>
     </main>
 
-    <!-- 体調チェック設定画面 -->
+    <!-- 体調チェック設定 -->
     <div id="settings-modal" class="settings-modal" hidden>
         <div class="settings-panel" role="dialog"
             aria-modal="true" aria-labelledby="settings-title">
@@ -361,23 +399,45 @@
         </div>
     </div>
 
-    <!-- 下部ボタン -->
+    <!-- 下部ナビゲーション -->
     <nav class="bottom-nav">
         <button type="button" id="record-nav-button"
             class="bottom-nav-button record-nav active">
-            記録をつける
+            <svg class="button-icon" viewBox="0 0 24 24"
+                fill="none" stroke="currentColor" stroke-width="1.8"
+                stroke-linecap="round" stroke-linejoin="round"
+                aria-hidden="true">
+                <path d="M12 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                <path d="m16 3 5 5-10 10-5 1 1-5Z"/>
+            </svg>
+            <span>記録</span>
         </button>
+
         <button type="button" id="list-nav-button"
             class="bottom-nav-button list-nav">
-            一覧で確認
+            <svg class="button-icon" viewBox="0 0 24 24"
+                fill="none" stroke="currentColor" stroke-width="1.8"
+                stroke-linecap="round" stroke-linejoin="round"
+                aria-hidden="true">
+                <path d="M8 6h13M8 12h13M8 18h13"/>
+                <path d="M3 6h.01M3 12h.01M3 18h.01"/>
+            </svg>
+            <span>一覧</span>
         </button>
+
         <button type="button" id="trend-nav-button"
             class="bottom-nav-button trend-nav">
-            推移を確認
+            <svg class="button-icon" viewBox="0 0 24 24"
+                fill="none" stroke="currentColor" stroke-width="1.8"
+                stroke-linecap="round" stroke-linejoin="round"
+                aria-hidden="true">
+                <path d="M3 3v18h18M6 15l5-5 4 3 5-8"/>
+            </svg>
+            <span>推移</span>
         </button>
     </nav>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="script.js?v=20261005-4"></script>
+    <script src="script.js?v=20261005-design"></script>
 </body>
 </html>

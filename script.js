@@ -120,7 +120,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const memoInput = document.getElementById("memo-input");
 
-    /* メモの表示と高さの自動調整 */
+    /* メモの文字表示と高さの自動調整 */
     function updateMemoLayout() {
         memoInput.closest(".memo-section").classList.toggle(
             "has-memo",
@@ -566,7 +566,6 @@ document.addEventListener("DOMContentLoaded", function () {
         row.appendChild(cell);
     }
 
-    /* 表の初期表示期間：今日を含む直近14日間 */
     function setDefaultListPeriod() {
         if (listStartDate.value && listEndDate.value) {
             return;
@@ -672,7 +671,6 @@ document.addEventListener("DOMContentLoaded", function () {
         return satisfactionValues[satisfaction];
     }
 
-    /* グラフの初期表示期間：今日を含む直近14日間 */
     function setDefaultTrendPeriod() {
         if (trendStartDate.value && trendEndDate.value) {
             return;
@@ -898,11 +896,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
         const sleepOptions = createChartOptions(12, 36, 1, "時刻");
         sleepOptions.plugins.legend.display = true;
-
         sleepOptions.scales.y.ticks.callback = function (value) {
             return formatClockHours(value);
         };
-
         sleepOptions.plugins.tooltip.callbacks = {
             label: function (context) {
                 return (
