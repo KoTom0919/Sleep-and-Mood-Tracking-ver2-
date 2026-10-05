@@ -120,7 +120,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const memoInput = document.getElementById("memo-input");
 
-    /* メモの文字表示と高さの自動調整 */
+    /* メモの表示と高さの自動調整 */
     function updateMemoLayout() {
         memoInput.closest(".memo-section").classList.toggle(
             "has-memo",
@@ -566,23 +566,18 @@ document.addEventListener("DOMContentLoaded", function () {
         row.appendChild(cell);
     }
 
+    /* 表の初期表示期間：今日を含む直近14日間 */
     function setDefaultListPeriod() {
-        records = readRecords();
-        const dates = Object.keys(records).sort();
-
         if (listStartDate.value && listEndDate.value) {
             return;
         }
 
-        if (dates.length === 0) {
-            const today = formatDate(new Date());
-            listStartDate.value = today;
-            listEndDate.value = today;
-            return;
-        }
+        const today = new Date();
+        const startDate = new Date(today);
+        startDate.setDate(startDate.getDate() - 13);
 
-        listStartDate.value = dates[0];
-        listEndDate.value = dates[dates.length - 1];
+        listStartDate.value = formatDate(startDate);
+        listEndDate.value = formatDate(today);
     }
 
     function renderRecordsTable() {
@@ -677,23 +672,18 @@ document.addEventListener("DOMContentLoaded", function () {
         return satisfactionValues[satisfaction];
     }
 
+    /* グラフの初期表示期間：今日を含む直近14日間 */
     function setDefaultTrendPeriod() {
-        records = readRecords();
-        const dates = Object.keys(records).sort();
-
         if (trendStartDate.value && trendEndDate.value) {
             return;
         }
 
-        if (dates.length === 0) {
-            const today = formatDate(new Date());
-            trendStartDate.value = today;
-            trendEndDate.value = today;
-            return;
-        }
+        const today = new Date();
+        const startDate = new Date(today);
+        startDate.setDate(startDate.getDate() - 13);
 
-        trendStartDate.value = dates[0];
-        trendEndDate.value = dates[dates.length - 1];
+        trendStartDate.value = formatDate(startDate);
+        trendEndDate.value = formatDate(today);
     }
 
     function convertTimeToHours(value) {
@@ -908,9 +898,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
         const sleepOptions = createChartOptions(12, 36, 1, "時刻");
         sleepOptions.plugins.legend.display = true;
+
         sleepOptions.scales.y.ticks.callback = function (value) {
             return formatClockHours(value);
         };
+
         sleepOptions.plugins.tooltip.callbacks = {
             label: function (context) {
                 return (
