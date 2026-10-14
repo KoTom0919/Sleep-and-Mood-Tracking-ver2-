@@ -1512,3 +1512,18 @@ document.addEventListener("DOMContentLoaded", function () {
     changeSelectedDate(selectedDate);
     showRecordPage();
 });
+
+
+async function loadNotices() {
+  const response = await fetch(
+    "./notices.json?t=" + Date.now(),
+    { cache: "no-store" }
+  );
+
+  if (!response.ok) {
+    throw new Error("お知らせの取得に失敗しました");
+  }
+
+  const data = await response.json();
+  return data.notices;
+}
