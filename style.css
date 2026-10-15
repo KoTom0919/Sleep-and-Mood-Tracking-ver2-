@@ -1436,3 +1436,25 @@ body.record-view .app {
     display: none !important;
   }
 }
+
+/* 体調チェックの見出し位置を調整 */
+
+.condition-heading-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 8px;
+}
+
+.condition-heading-row h2 {
+    grid-column: 1;
+    text-align: center;
+    margin: 0;
+}
+
+.item-settings-button {
+    position: static;
+    transform: none;
+    grid-column: 2;
+    justify-self: end;
+}
