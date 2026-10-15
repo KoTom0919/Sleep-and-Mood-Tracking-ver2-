@@ -1300,3 +1300,139 @@ body.record-view .app {
         max-height: 74mm !important;
     }
 }
+
+/* ===== 体調チェック右側の項目設定 ===== */
+
+.condition-heading-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  min-height: 48px;
+  margin-bottom: 8px;
+}
+
+.condition-heading-row h2 {
+  margin: 0;
+}
+
+.item-settings-button {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  border: 1.5px solid #19365f;
+  border-radius: 10px;
+  background: #e7e6e6;
+  padding: 9px 12px;
+  font-size: 14px;
+  font-weight: bold;
+  white-space: nowrap;
+}
+
+@media (max-width: 420px) {
+  .condition-heading-row {
+    justify-content: flex-start;
+  }
+
+  .condition-heading-row h2 {
+    font-size: 18px;
+  }
+
+  .item-settings-button {
+    font-size: 12px;
+    padding: 8px 10px;
+  }
+}
+
+/* ===== 共通設定ダイアログ ===== */
+
+.app-common-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 10010;
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  background: rgba(0, 0, 0, 0.45);
+}
+
+.app-common-panel {
+  width: min(440px, 100%);
+  max-height: 85dvh;
+  overflow: auto;
+  background: white;
+  border-radius: 18px;
+  padding: 20px;
+  box-shadow: 0 8px 30px #0003;
+}
+
+.app-common-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.app-common-heading h2 {
+  margin: 0;
+  font-size: 23px;
+}
+
+.app-common-heading button {
+  border: 0;
+  background: #f1f1f1;
+  border-radius: 8px;
+  font-size: 24px;
+  width: 40px;
+  height: 40px;
+}
+
+.app-common-option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  min-height: 54px;
+  padding: 12px 14px;
+  margin: 9px 0;
+  border: 1px solid #bcc9db;
+  border-radius: 10px;
+  background: #f8fbff;
+  text-align: left;
+  font-weight: bold;
+}
+
+.app-common-option span {
+  font-size: 22px;
+}
+
+#app-share-url {
+  width: 100%;
+  min-height: 42px;
+  padding: 8px;
+  border: 1px solid #9faec3;
+  border-radius: 8px;
+  font-size: 13px;
+}
+
+.app-common-qr {
+  display: block;
+  width: 200px;
+  height: 200px;
+  max-width: 100%;
+  margin: 14px auto;
+  object-fit: contain;
+}
+
+/* 共通アプリ一覧の右下固定ボタンを隠す */
+#shared-app-menu-button {
+  display: none !important;
+}
+
+@media print {
+  .app-common-modal,
+  #shared-app-menu-root {
+    display: none !important;
+  }
+}

@@ -1527,3 +1527,219 @@ async function loadNotices() {
   const data = await response.json();
   return data.notices;
 }
+
+/* ===== 共通設定：データ移行・シェア・アプリ一覧 ===== */
+
+document.addEventListener("DOMContentLoaded", function () {
+  const byId = id => document.getElementById(id);
+
+  const open = id => {
+    byId(id).hidden = false;
+  };
+
+  const close = id => {
+    byId(id).hidden = true;
+  };
+
+  const homeUrl =
+    "https://kotom0919.github.io/Sleep-and-Mood-Tracking-ver2-/";
+
+  // 設定を開く・閉じる
+  byId("app-settings-button").addEventListener("click", () => {
+    open("app-settings-modal");
+  });
+
+  byId("app-settings-close").addEventListener("click", () => {
+    close("app-settings-modal");
+  });
+
+  document.querySelectorAll("[data-close-app-modal]").forEach(button => {
+    button.addEventListener("click", () => {
+      close(button.dataset.closeAppModal);
+    });
+  });
+
+  ["app-settings-modal", "app-transfer-modal", "app-share-modal"].forEach(id => {
+    byId(id).addEventListener("click", event => {
+      if (event.target === byId(id)) close(id);
+    });
+  });
+
+  // データ移行を開く
+  byId("app-data-transfer").addEventListener("click", () => {
+    close("app-settings-modal");
+    open("app-transfer-modal");
+  });
+
+  // アプリ共有を開く
+  byId("app-share-open").addEventListener("click", () => {
+    close("app-settings-modal");
+
+    byId("app-share-url").value = homeUrl;
+
+    byId("app-share-qr").src =
+      "https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=" +
+      encodeURIComponent(homeUrl);
+
+    open("app-share-modal");
+  });
+
+  // ほかのアプリを探す
+  byId("app-other-apps").addEventListener("click", () => {
+    close("app-settings-modal");
+
+    const button = byId("shared-app-menu-button");
+
+    if (button) {
+      button.click();
+    } else {
+      alert(
+        "アプリ一覧を読み込めませんでした。" +
+        "App-menuの公開状態を確認してください。"
+      );
+    }
+  });
+
+  // データを書き出す
+  byId("app-export").addEventListener("click", () => {
+    try {
+      const payload = {
+        app: "Sleep-and-Mood-Tracking-ver2-",
+        version: 1,
+        exportedAt: new Date().toISOString(),
+        sleepRecords: JSON.parse(
+          localStorage.getItem("sleepRecords") || "{}"
+        ),
+        conditionChecklistSettings: JSON.parse(
+          localStorage.getItem("conditionChecklistSettings") || "null"
+        )
+      };
+
+      const blob = new Blob(
+        [JSON.stringify(payload, null, 2)],
+        { type: "application/json" }
+      );
+
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+
+      a.href = url;
+      a.download =
+        "sleep-records-backup-" +
+        new Date().toISOString().slice(0, 10) +
+        ".json";
+
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+
+      setTimeout(() => URL.revokeObjectURL(url), 2000);
+
+      byId("app-transfer-status").textContent =
+        "バックアップファイルを作成しました。";
+    } catch (error) {
+      byId("app-transfer-status").textContent =
+        "書き出しに失敗しました：" + error.message;
+    }
+  });
+
+  // データを読み込む
+  byId("app-import").addEventListener("click", () => {
+    byId("app-import-file").click();
+  });
+
+  byId("app-import-file").addEventListener("change", async event => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    try {
+      const data = JSON.parse(await file.text());
+
+      if (
+        data.app !== "Sleep-and-Mood-Tracking-ver2-" ||
+        !data.sleepRecords ||
+        typeof data.sleepRecords !== "object" ||
+        Array.isArray(data.sleepRecords) ||
+        (
+          data.conditionChecklistSettings !== null &&
+          (
+            typeof data.conditionChecklistSettings !== "object" ||
+            !data.conditionChecklistSettings.categoryA ||
+            !data.conditionChecklistSettings.categoryB
+          )
+        )
+      ) {
+        throw new Error(
+          "このアプリのバックアップファイルではありません。"
+        );
+      }
+
+      const confirmed = confirm(
+        "現在の睡眠・体調記録と項目設定を" +
+        "バックアップの内容で置き換えます。" +
+        "元に戻せません。続けますか？"
+      );
+
+      if (!confirmed) return;
+
+      localStorage.setItem(
+        "sleepRecords",
+        JSON.stringify(data.sleepRecords)
+      );
+
+      if (data.conditionChecklistSettings) {
+        localStorage.setItem(
+          "conditionChecklistSettings",
+          JSON.stringify(data.conditionChecklistSettings)
+        );
+      } else {
+        localStorage.removeItem("conditionChecklistSettings");
+      }
+
+      alert("読み込みました。画面を更新します。");
+      location.reload();
+
+    } catch (error) {
+      byId("app-transfer-status").textContent =
+        "読み込みに失敗しました：" + error.message;
+    } finally {
+      event.target.value = "";
+    }
+  });
+
+  // URLコピー
+  byId("app-copy-url").addEventListener("click", async () => {
+    try {
+      await navigator.clipboard.writeText(homeUrl);
+
+      byId("app-share-status").textContent =
+        "URLをコピーしました。";
+    } catch {
+      byId("app-share-url").select();
+
+      byId("app-share-status").textContent =
+        "URLを選択しました。コピーしてください。";
+    }
+  });
+
+  // iPhoneなどの共有機能
+  byId("app-native-share").addEventListener("click", async () => {
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: "睡眠＆体調記録",
+          url: homeUrl
+        });
+      } catch (error) {
+        if (error.name !== "AbortError") {
+          byId("app-share-status").textContent =
+            "共有できませんでした。";
+        }
+      }
+    } else {
+      byId("app-share-status").textContent =
+        "この環境では共有機能が使えません。" +
+        "URLコピーを利用してください。";
+    }
+  });
+});

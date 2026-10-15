@@ -1,11 +1,15 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>睡眠＆体調記録アプリ</title>
-    <link rel="stylesheet" href="style.css?v=20261005-design">
+
+    <link rel="stylesheet" href="style.css?v=20261015-settings">
+
 </head>
+
 <body>
     <main class="app">
 
@@ -13,13 +17,13 @@
         <section id="record-page" class="page">
             <div class="record-title-row">
                 <h1 class="main-title">睡眠＆体調記録</h1>
-                <button type="button" id="settings-button" class="settings-button">
-                    <svg class="button-icon" viewBox="0 0 24 24"
-                        fill="none" stroke="currentColor" stroke-width="1.8"
-                        stroke-linecap="round" stroke-linejoin="round"
-                        aria-hidden="true">
-                        <path d="m9 3-1 3-3 1v4l-2 1 2 2v3l3 1 1 3h6l1-3 3-1v-3l2-2-2-1V7l-3-1-1-3Z"/>
-                        <circle cx="12" cy="12" r="3"/>
+
+                <button type="button" id="app-settings-button" class="settings-button">
+
+                    <svg class="button-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                        stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="m9 3-1 3-3 1v4l-2 1 2 2v3l3 1 1 3h6l1-3 3-1v-3l2-2-2-1V7l-3-1-1-3Z" />
+                        <circle cx="12" cy="12" r="3" />
                     </svg>
                     <span>設定</span>
                 </button>
@@ -29,13 +33,11 @@
                 <h2>編集する日付</h2>
 
                 <div class="date-navigation">
-                    <button type="button" id="previous-day"
-                        class="arrow-button previous-button" aria-label="前日">
+                    <button type="button" id="previous-day" class="arrow-button previous-button" aria-label="前日">
                     </button>
                     <button type="button" id="edit-date-button" class="date-button">
                     </button>
-                    <button type="button" id="next-day"
-                        class="arrow-button next-button" aria-label="翌日">
+                    <button type="button" id="next-day" class="arrow-button next-button" aria-label="翌日">
                     </button>
                 </div>
 
@@ -64,15 +66,13 @@
                 <div class="two-column">
                     <div class="time-field">
                         <h2>昨夜の就寝時刻</h2>
-                        <button type="button" id="bedtime-button"
-                            class="time-display-button bedtime-button">
+                        <button type="button" id="bedtime-button" class="time-display-button bedtime-button">
                             ○○：○○
                         </button>
 
                         <div id="bedtime-menu" class="time-popup" hidden>
                             <label for="bedtime-input">就寝時刻を選択</label>
-                            <input type="text" id="bedtime-input" class="time-input"
-                                inputmode="numeric" maxlength="5"
+                            <input type="text" id="bedtime-input" class="time-input" inputmode="numeric" maxlength="5"
                                 placeholder="例：23:00" autocomplete="off">
 
                             <button type="button" id="bedtime-now" class="now-button">
@@ -80,12 +80,10 @@
                             </button>
 
                             <div class="time-popup-actions">
-                                <button type="button" id="bedtime-cancel"
-                                    class="cancel-button">
+                                <button type="button" id="bedtime-cancel" class="cancel-button">
                                     キャンセル
                                 </button>
-                                <button type="button" id="bedtime-confirm"
-                                    class="confirm-button">
+                                <button type="button" id="bedtime-confirm" class="confirm-button">
                                     決定
                                 </button>
                             </div>
@@ -94,15 +92,13 @@
 
                     <div class="time-field">
                         <h2>本日の起床時刻</h2>
-                        <button type="button" id="wake-time-button"
-                            class="time-display-button wake-button">
+                        <button type="button" id="wake-time-button" class="time-display-button wake-button">
                             ○○：○○
                         </button>
 
                         <div id="wake-time-menu" class="time-popup" hidden>
                             <label for="wake-time-input">起床時刻を選択</label>
-                            <input type="text" id="wake-time-input" class="time-input"
-                                inputmode="numeric" maxlength="5"
+                            <input type="text" id="wake-time-input" class="time-input" inputmode="numeric" maxlength="5"
                                 placeholder="例：07:00" autocomplete="off">
 
                             <button type="button" id="wake-time-now" class="now-button">
@@ -110,12 +106,10 @@
                             </button>
 
                             <div class="time-popup-actions">
-                                <button type="button" id="wake-time-cancel"
-                                    class="cancel-button">
+                                <button type="button" id="wake-time-cancel" class="cancel-button">
                                     キャンセル
                                 </button>
-                                <button type="button" id="wake-time-confirm"
-                                    class="confirm-button">
+                                <button type="button" id="wake-time-confirm" class="confirm-button">
                                     決定
                                 </button>
                             </div>
@@ -168,7 +162,14 @@
 
             <!-- 体調チェック -->
             <section class="condition-section">
-                <h2>体調チェック</h2>
+
+                <div class="condition-heading-row">
+                    <h2>体調チェック</h2>
+                    <button type="button" id="settings-button" class="item-settings-button">
+                        項目設定
+                    </button>
+                </div>
+
 
                 <div class="condition-categories">
                     <div class="condition-category">
@@ -189,32 +190,25 @@
                 <textarea id="memo-input" aria-label="メモ"></textarea>
             </section>
 
-            <p id="save-message" class="save-message"
-                role="status" aria-live="polite">
+            <p id="save-message" class="save-message" role="status" aria-live="polite">
             </p>
 
             <!-- クリア・更新 -->
             <div id="record-action-bar" class="record-action-bar">
-                <button type="button" id="clear-button"
-                    class="record-action-button clear-button">
-                    <svg class="button-icon" viewBox="0 0 24 24"
-                        fill="none" stroke="currentColor" stroke-width="1.8"
-                        stroke-linecap="round" stroke-linejoin="round"
-                        aria-hidden="true">
-                        <path d="m16 3 5 5-12 12H5l-3-3Z"/>
-                        <path d="m8 11 5 5M9 20h12"/>
+                <button type="button" id="clear-button" class="record-action-button clear-button">
+                    <svg class="button-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                        stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="m16 3 5 5-12 12H5l-3-3Z" />
+                        <path d="m8 11 5 5M9 20h12" />
                     </svg>
                     <span>クリア</span>
                 </button>
 
-                <button type="button" id="save-button"
-                    class="record-action-button save-button">
-                    <svg class="button-icon" viewBox="0 0 24 24"
-                        fill="none" stroke="currentColor" stroke-width="1.8"
-                        stroke-linecap="round" stroke-linejoin="round"
-                        aria-hidden="true">
-                        <path d="M20 7v5h-5M4 17v-5h5"/>
-                        <path d="M6 7a7 7 0 0 1 12-2l2 2M18 17a7 7 0 0 1-12 2l-2-2"/>
+                <button type="button" id="save-button" class="record-action-button save-button">
+                    <svg class="button-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                        stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M20 7v5h-5M4 17v-5h5" />
+                        <path d="M6 7a7 7 0 0 1 12-2l2 2M18 17a7 7 0 0 1-12 2l-2-2" />
                     </svg>
                     <span>更新</span>
                 </button>
@@ -227,11 +221,9 @@
                 <h1 class="records-title">一覧</h1>
 
                 <button type="button" id="print-button" class="print-button">
-                    <svg class="button-icon" viewBox="0 0 24 24"
-                        fill="none" stroke="currentColor" stroke-width="1.8"
-                        stroke-linecap="round" stroke-linejoin="round"
-                        aria-hidden="true">
-                        <path d="M6 9V3h12v6M6 18H3V9h18v9h-3M6 14h12v7H6Z"/>
+                    <svg class="button-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                        stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M6 9V3h12v6M6 18H3V9h18v9h-3M6 14h12v7H6Z" />
                     </svg>
                     <span>PDFで印刷</span>
                 </button>
@@ -253,8 +245,7 @@
                         <input type="date" id="list-end-date">
                     </label>
 
-                    <button type="button" id="update-list-button"
-                        class="update-list-button">
+                    <button type="button" id="update-list-button" class="update-list-button">
                         表示
                     </button>
                 </div>
@@ -302,13 +293,10 @@
             <div class="trend-header">
                 <h1 class="trend-main-title">推移</h1>
 
-                <button type="button" id="trend-print-button"
-                    class="trend-print-button">
-                    <svg class="button-icon" viewBox="0 0 24 24"
-                        fill="none" stroke="currentColor" stroke-width="1.8"
-                        stroke-linecap="round" stroke-linejoin="round"
-                        aria-hidden="true">
-                        <path d="M6 9V3h12v6M6 18H3V9h18v9h-3M6 14h12v7H6Z"/>
+                <button type="button" id="trend-print-button" class="trend-print-button">
+                    <svg class="button-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                        stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M6 9V3h12v6M6 18H3V9h18v9h-3M6 14h12v7H6Z" />
                     </svg>
                     <span>PDFで印刷</span>
                 </button>
@@ -330,8 +318,7 @@
                         <input type="date" id="trend-end-date">
                     </label>
 
-                    <button type="button" id="update-trend-button"
-                        class="update-trend-button">
+                    <button type="button" id="update-trend-button" class="update-trend-button">
                         表示
                     </button>
                 </div>
@@ -366,8 +353,7 @@
 
     <!-- 体調チェック設定 -->
     <div id="settings-modal" class="settings-modal" hidden>
-        <div class="settings-panel" role="dialog"
-            aria-modal="true" aria-labelledby="settings-title">
+        <div class="settings-panel" role="dialog" aria-modal="true" aria-labelledby="settings-title">
             <h2 id="settings-title">体調チェックの設定</h2>
 
             <div class="settings-categories">
@@ -399,45 +385,97 @@
         </div>
     </div>
 
+    <!-- 共通設定 -->
+    <div id="app-settings-modal" class="app-common-modal" hidden>
+        <div class="app-common-panel" role="dialog" aria-modal="true" aria-labelledby="app-settings-title">
+            <div class="app-common-heading">
+                <h2 id="app-settings-title">設定</h2>
+                <button type="button" id="app-settings-close" aria-label="閉じる">×</button>
+            </div>
+            <button type="button" id="app-data-transfer" class="app-common-option">
+                データの移行 <span>›</span>
+            </button>
+            <button type="button" id="app-share-open" class="app-common-option">
+                アプリをシェア <span>›</span>
+            </button>
+            <button type="button" id="app-other-apps" class="app-common-option">
+                ほかのアプリを探す <span>›</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- データ移行 -->
+    <div id="app-transfer-modal" class="app-common-modal" hidden>
+        <div class="app-common-panel" role="dialog" aria-modal="true" aria-labelledby="app-transfer-title">
+            <div class="app-common-heading">
+                <h2 id="app-transfer-title">データの移行</h2>
+                <button type="button" data-close-app-modal="app-transfer-modal" aria-label="閉じる">×</button>
+            </div>
+            <p>睡眠・体調の記録と体調チェックの項目設定をまとめて移行します。</p>
+            <button type="button" id="app-export" class="app-common-option">
+                データを書き出す
+            </button>
+            <button type="button" id="app-import" class="app-common-option">
+                データを読み込む
+            </button>
+            <input type="file" id="app-import-file" accept=".json,application/json" hidden>
+            <p id="app-transfer-status" role="status"></p>
+        </div>
+    </div>
+
+    <!-- アプリ共有 -->
+    <div id="app-share-modal" class="app-common-modal" hidden>
+        <div class="app-common-panel" role="dialog" aria-modal="true" aria-labelledby="app-share-title">
+            <div class="app-common-heading">
+                <h2 id="app-share-title">アプリをシェア</h2>
+                <button type="button" data-close-app-modal="app-share-modal" aria-label="閉じる">×</button>
+            </div>
+            <input id="app-share-url" type="text" readonly aria-label="共有URL">
+            <button type="button" id="app-copy-url" class="app-common-option">
+                URLをコピー
+            </button>
+            <button type="button" id="app-native-share" class="app-common-option">
+                共有する
+            </button>
+            <img id="app-share-qr" class="app-common-qr" alt="アプリのQRコード">
+            <p id="app-share-status" role="status"></p>
+        </div>
+    </div>
+
     <!-- 下部ナビゲーション -->
     <nav class="bottom-nav">
-        <button type="button" id="record-nav-button"
-            class="bottom-nav-button record-nav active">
-            <svg class="button-icon" viewBox="0 0 24 24"
-                fill="none" stroke="currentColor" stroke-width="1.8"
-                stroke-linecap="round" stroke-linejoin="round"
-                aria-hidden="true">
-                <path d="M12 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
-                <path d="m16 3 5 5-10 10-5 1 1-5Z"/>
+        <button type="button" id="record-nav-button" class="bottom-nav-button record-nav active">
+            <svg class="button-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M12 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                <path d="m16 3 5 5-10 10-5 1 1-5Z" />
             </svg>
             <span>記録</span>
         </button>
 
-        <button type="button" id="list-nav-button"
-            class="bottom-nav-button list-nav">
-            <svg class="button-icon" viewBox="0 0 24 24"
-                fill="none" stroke="currentColor" stroke-width="1.8"
-                stroke-linecap="round" stroke-linejoin="round"
-                aria-hidden="true">
-                <path d="M8 6h13M8 12h13M8 18h13"/>
-                <path d="M3 6h.01M3 12h.01M3 18h.01"/>
+        <button type="button" id="list-nav-button" class="bottom-nav-button list-nav">
+            <svg class="button-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M8 6h13M8 12h13M8 18h13" />
+                <path d="M3 6h.01M3 12h.01M3 18h.01" />
             </svg>
             <span>一覧</span>
         </button>
 
-        <button type="button" id="trend-nav-button"
-            class="bottom-nav-button trend-nav">
-            <svg class="button-icon" viewBox="0 0 24 24"
-                fill="none" stroke="currentColor" stroke-width="1.8"
-                stroke-linecap="round" stroke-linejoin="round"
-                aria-hidden="true">
-                <path d="M3 3v18h18M6 15l5-5 4 3 5-8"/>
+        <button type="button" id="trend-nav-button" class="bottom-nav-button trend-nav">
+            <svg class="button-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M3 3v18h18M6 15l5-5 4 3 5-8" />
             </svg>
             <span>推移</span>
         </button>
     </nav>
 
+
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="script.js?v=20261005-design"></script>
+    <script src="https://kotom0919.github.io/App-menu/app-menu.js?v=4"></script>
+    <script src="script.js?v=20261015-settings"></script>
+
 </body>
+
 </html>
