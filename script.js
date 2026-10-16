@@ -1743,20 +1743,34 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   });
 });
-/* 現在時刻を表示 */
+/* 日付と現在時刻を表示 */
 (function () {
     function startClock() {
         const clock = document.getElementById("current-clock");
         if (!clock) return;
 
+        const dateLine = document.createElement("span");
+        dateLine.className = "clock-date";
+
+        const timeLine = document.createElement("span");
+        timeLine.className = "clock-time";
+
+        clock.replaceChildren(dateLine, timeLine);
+
         function updateClock() {
             const now = new Date();
+            const weekdays = ["日", "月", "火", "水", "木", "金", "土"];
+
+            dateLine.textContent =
+                `${now.getFullYear()}年` +
+                `${now.getMonth() + 1}月` +
+                `${now.getDate()}日（${weekdays[now.getDay()]}）`;
 
             const hours = String(now.getHours()).padStart(2, "0");
             const minutes = String(now.getMinutes()).padStart(2, "0");
             const seconds = String(now.getSeconds()).padStart(2, "0");
 
-            clock.textContent = `${hours}:${minutes}:${seconds}`;
+            timeLine.textContent = `${hours}:${minutes}:${seconds}`;
         }
 
         updateClock();
