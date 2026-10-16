@@ -1743,3 +1743,29 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   });
 });
+/* 現在時刻を表示 */
+(function () {
+    function startClock() {
+        const clock = document.getElementById("current-clock");
+        if (!clock) return;
+
+        function updateClock() {
+            const now = new Date();
+
+            const hours = String(now.getHours()).padStart(2, "0");
+            const minutes = String(now.getMinutes()).padStart(2, "0");
+            const seconds = String(now.getSeconds()).padStart(2, "0");
+
+            clock.textContent = `${hours}:${minutes}:${seconds}`;
+        }
+
+        updateClock();
+        setInterval(updateClock, 1000);
+    }
+
+    if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", startClock);
+    } else {
+        startClock();
+    }
+})();
