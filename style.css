@@ -1543,3 +1543,20 @@ body.record-view .app {
         font-size: 12px;
     }
 }
+/* 日付と時刻を横一列に表示 */
+.record-title-row #current-clock {
+    flex-direction: row;
+    flex-wrap: nowrap;
+    gap: 8px;
+    padding: 12px 10px;
+    white-space: nowrap;
+}
+
+#current-clock .clock-date {
+    font-size: clamp(10px, 2.5vw, 16px);
+}
+
+#current-clock .clock-time {
+    font-size: clamp(16px, 4vw, 32px);
+    letter-spacing: 0;
+}
