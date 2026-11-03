@@ -1,1562 +1,2347 @@
-/* ===== 共通設定 ===== */
-* { box-sizing: border-box; }
-
-html, body { margin: 0; padding: 0; }
-
-body {
-    background: #fff;
-    color: #111;
-    font-family: "Noto Sans JP", "Yu Gothic", Meiryo, sans-serif;
+:root {
+  --main: #58a98a;
+  --main-dark: #397c65;
+  --main-light: #e9f5f0;
+  --text: #26332e;
+  --muted: #68756f;
+  --border: #d6e1dc;
+  --danger: #c64b4b;
+  --shadow: 0 5px 18px rgba(45, 85, 69, 0.09);
 }
 
-button, input, textarea { font: inherit; }
-button { cursor: pointer; }
+* {
+  box-sizing: border-box;
+}
 
-[hidden], .page[hidden] { display: none !important; }
+body {
+  margin: 0;
+  min-width: 320px;
+  color: var(--text);
+  background: #f4f8f6;
+  font-family:
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    "Noto Sans JP",
+    sans-serif;
+}
 
-.app {
-    width: 100%;
-    max-width: 900px;
-    min-height: 100vh;
-    margin: 0 auto;
-    padding: 25px 15px 125px;
+button,
+input,
+textarea {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+.app-header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  padding: 15px 20px;
+  color: white;
+  text-align: center;
+  background: var(--main);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+}
+
+.app-header h1 {
+  margin: 0;
+  font-size: 1.35rem;
+}
+
+main {
+  width: min(760px, 100%);
+  min-height: calc(100vh - 130px);
+  margin: 0 auto;
+  padding: 22px 16px 100px;
+}
+
+.page {
+  display: none;
+}
+
+.page.active {
+  display: block;
+  animation: fade 0.18s ease;
+}
+
+@keyframes fade {
+  from {
+    opacity: 0.35;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+.card {
+  padding: 22px;
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  box-shadow: var(--shadow);
 }
 
 h2 {
-    margin: 0 0 10px;
-    text-align: center;
-    font-size: 18px;
+  margin: 0 0 18px;
+  font-size: 1.25rem;
 }
 
-.two-column {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 30px;
+label,
+legend {
+  display: block;
+  margin: 15px 0 7px;
+  font-weight: 700;
 }
 
-.button-icon {
-    width: 20px;
-    height: 20px;
-    flex: 0 0 20px;
-    vertical-align: middle;
+input,
+textarea {
+  width: 100%;
+  min-width: 0;
+  padding: 12px;
+  color: var(--text);
+  background: white;
+  border: 1.5px solid #b9c9c2;
+  border-radius: 9px;
+  outline: none;
 }
 
-.settings-button,
-.record-action-button,
-.bottom-nav-button,
-.print-button,
-.trend-print-button {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 7px;
+input:focus,
+textarea:focus {
+  border-color: var(--main);
+  box-shadow:
+    0 0 0 3px rgba(88, 169, 138, 0.15);
 }
 
-.cancel-button { background: #e7e6e6; }
-.confirm-button { background: #ffc000; }
-
-
-/* ===== 記録：タイトル・設定 ===== */
-.record-title-row {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
-    align-items: center;
-    gap: 8px;
-}
-
-.main-title {
-    margin: 10px 0 20px;
-    color: #4472c4;
-    text-align: center;
-    font-size: 48px;
-    font-weight: 400;
-    text-shadow: 1px 2px 2px #ccc;
-}
-
-.record-title-row .main-title {
-    grid-column: 1;
-    min-width: 0;
-}
-
-.settings-button {
-    grid-column: 2;
-    justify-self: end;
-    width: 100px;
-    height: 52px;
-    border: 1.5px solid #19365f;
-    border-radius: 14px;
-    background: #e7e6e6;
-    font-weight: bold;
-}
-
-#record-page h2,
-.condition-category h3,
-.condition-checklist .symptom-item,
-.condition-checklist .symptom-item span {
-    color: #000;
-}
-
-
-/* ===== 記録：日付 ===== */
-.date-section {
-    position: relative;
-    margin-bottom: 30px;
-}
-
-.date-navigation {
-    display: grid;
-    grid-template-columns: 120px minmax(220px, 1fr) 120px;
-    align-items: center;
-    gap: 20px;
-}
-
-.arrow-button {
-    height: 60px;
-    border: 1.5px solid #19365f;
-    background: #5b9bd5;
-    font-size: 30px;
-}
-
-.previous-button {
-    clip-path: polygon(100% 0, 100% 100%, 0 50%);
-}
-
-.next-button {
-    clip-path: polygon(0 0, 100% 50%, 0 100%);
-}
-
-.date-button {
-    height: 70px;
-    border: 1.5px solid #19365f;
-    border-radius: 18px;
-    background: #e2f0d9;
-    font-size: 18px;
-    font-weight: bold;
-}
-
-.popup {
-    position: absolute;
-    top: calc(100% + 5px);
-    left: 50%;
-    z-index: 30;
-    width: min(370px, calc(100% - 30px));
-    padding: 18px;
-    transform: translateX(-50%);
-    border: 1.5px solid #19365f;
-    border-radius: 16px;
-    background: #fff;
-    box-shadow: 0 10px 30px rgb(0 0 0 / 18%);
-}
-
-.popup label {
-    display: block;
-    margin-bottom: 10px;
-    text-align: center;
-    font-weight: bold;
-}
-
-.popup input[type="date"] {
-    width: 100%;
-    height: 50px;
-    border: 1.5px solid #19365f;
-    border-radius: 10px;
-    text-align: center;
-    font-size: 18px;
-}
-
-.quick-date-buttons,
-.popup-actions {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-    margin-top: 12px;
-}
-
-.quick-date-buttons button,
-.popup-actions button {
-    min-height: 48px;
-    border: 1.5px solid #19365f;
-    border-radius: 10px;
-    font-weight: bold;
-}
-
-.quick-date-buttons button {
-    background: #d9eefa;
-}
-
-
-/* ===== 記録：就寝・起床時刻 ===== */
-.sleep-section { margin-bottom: 35px; }
-.time-field { position: relative; }
-
-.time-display-button {
-    width: 100%;
-    height: 70px;
-    border: 1.5px solid #19365f;
-    border-radius: 18px;
-    font-size: 18px;
-}
-
-.bedtime-button { background: #d9e2f3; }
-.wake-button { background: #fce4d6; }
-
-.time-popup {
-    position: absolute;
-    top: calc(100% + 8px);
-    left: 0;
-    right: 0;
-    z-index: 35;
-    padding: 16px;
-    border: 1.5px solid #19365f;
-    border-radius: 15px;
-    background: #fff;
-    box-shadow: 0 10px 30px rgb(0 0 0 / 18%);
-}
-
-.time-popup label {
-    display: block;
-    text-align: center;
-    font-weight: bold;
-}
-
-.time-popup .time-input {
-    width: 100%;
-    height: 52px;
-    margin: 12px 0;
-    border: 1.5px solid #19365f;
-    border-radius: 10px;
-    text-align: center;
-    font-size: 20px;
-}
-
-.now-button {
-    width: 100%;
-    min-height: 48px;
-    border: 1.5px solid #19365f;
-    border-radius: 10px;
-    background: #d9eefa;
-    font-weight: bold;
-}
-
-.time-popup-actions {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-    margin-top: 10px;
-}
-
-.time-popup-actions button {
-    min-height: 46px;
-    border: 1.5px solid #19365f;
-    border-radius: 10px;
-    font-weight: bold;
-}
-
-
-/* ===== 記録：睡眠満足度・気分 ===== */
-.status-row { margin-bottom: 35px; }
-.choice-section { position: relative; }
-
-.choice-button {
-    width: 100%;
-    height: 70px;
-    border: 1.5px solid #19365f;
-    border-radius: 18px;
-    background: #eee4f7;
-    color: #000;
-    font-size: 18px;
-    font-weight: bold;
-}
-
-.choice-menu {
-    position: absolute;
-    top: calc(100% + 5px);
-    left: 0;
-    right: 0;
-    z-index: 30;
-    overflow: hidden;
-    border: 1.5px solid #19365f;
-    border-radius: 12px;
-    background: #fff;
-    box-shadow: 0 10px 30px rgb(0 0 0 / 18%);
-}
-
-.choice-menu button {
-    display: block;
-    width: 100%;
-    min-height: 46px;
-    border: none;
-    border-bottom: 1px solid #ddd;
-    background: #fff;
-}
-
-.choice-menu button:hover {
-    background: #eef5ff;
-}
-
-.mood-menu {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-}
-
-.mood-menu button {
-    border-right: 1px solid #ddd;
-}
-
-
-/* ===== 記録：体調チェック ===== */
-.condition-section {
-    margin-bottom: 35px;
-    padding: 0;
-    background: transparent;
-}
-
-.condition-categories {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
-    padding: 18px 12px;
-    border-radius: 14px;
-    background: #edf7e8;
-}
-
-.condition-category h3 {
-    margin: 0 0 8px;
-    text-align: center;
-    font-size: 18px;
-}
-
-.condition-checklist {
-    display: grid;
-    gap: 2px;
-}
-
-.condition-checklist .symptom-item {
-    display: grid;
-    grid-template-columns: 1fr 90px;
-    min-height: 55px;
-    background: #fce4cc;
-    font-size: 17px;
-    font-weight: bold;
-}
-
-.condition-checklist .symptom-item:nth-child(even) {
-    background: #fff5eb;
-}
-
-.condition-checklist .symptom-item span {
-    display: flex;
-    align-items: center;
-    padding: 8px 12px;
-    border-right: 1px solid #fff;
-}
-
-.condition-checklist .symptom-item input {
-    width: 28px;
-    height: 28px;
-    margin: auto;
-}
-
-.condition-checklist input[type="checkbox"] {
-    appearance: none;
-    -webkit-appearance: none;
-    position: relative;
-    background: #fff;
-    color: #000;
-    border: 1.5px solid #19365f;
-    border-radius: 3px;
-    flex-shrink: 0;
-}
-
-.condition-checklist input[type="checkbox"]:checked::after {
-    content: "";
-    position: absolute;
-    left: 50%;
-    top: 45%;
-    width: 25%;
-    height: 50%;
-    border: solid #000;
-    border-width: 0 2px 2px 0;
-    transform: translate(-50%, -50%) rotate(45deg);
-}
-
-
-/* ===== 記録：メモ ===== */
-.memo-section {
-    position: relative;
-    margin-bottom: 20px;
-}
-
-.memo-section h2 {
-    margin: 0 0 10px;
-    padding-left: 20px;
-    text-align: left;
-    color: #000;
-    font-size: 24px;
-    pointer-events: none;
-}
-
-.memo-section:focus-within h2 { display: block; }
-.memo-section.has-memo h2 { display: none; }
-
-.memo-section textarea {
-    display: block;
-    width: 100%;
-    height: 120px;
-    min-height: 120px;
-    max-height: none;
-    padding: 20px;
-    border: 3px double #19365f;
-    border-radius: 0;
-    background: #f0f7df;
-    color: #000;
-    font-size: 18px;
-    line-height: 1.5;
-    resize: none;
-    overflow-y: hidden;
-}
-
-
-/* ===== 記録：操作・通知 ===== */
-body.record-view .app {
-    padding-bottom: 220px;
-}
-
-.record-action-bar {
-    position: fixed;
-    left: 50%;
-    bottom: 65px;
-    z-index: 95;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    width: min(900px, 100%);
-    transform: translateX(-50%);
-    background: #fff;
-}
-
-.record-action-button {
-    height: 76px;
-    border: none;
-    color: #000;
-    font-size: 22px;
-    font-weight: 600;
-}
-
-.clear-button { background: #f4cccc; }
-.save-button { background: #ffc000; }
-
-.save-message {
-    position: fixed;
-    top: 30px;
-    left: 50%;
-    z-index: 9999;
-    width: max-content;
-    max-width: calc(100% - 40px);
-    margin: 0;
-    padding: 14px 24px;
-    border: 2px solid #63a871;
-    border-radius: 12px;
-    background: #eaf7ed;
-    color: #237a36;
-    box-shadow: 0 4px 14px rgb(0 0 0 / 22%);
-    text-align: center;
-    font-size: 18px;
-    font-weight: bold;
-    opacity: 0;
-    visibility: hidden;
-    transform: translate(-50%, -15px);
-    transition: opacity .25s, transform .25s, visibility .25s;
-    pointer-events: none;
-}
-
-.save-message.show-message {
-    opacity: 1;
-    visibility: visible;
-    transform: translate(-50%, 0);
-}
-
-.save-message.clear-message {
-    border-color: #d98670;
-    background: #fff0ec;
-    color: #b7472a;
-}
-
-
-/* ===== 一覧・推移：タイトルと印刷ボタン ===== */
-.records-header,
-.trend-header {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 22px;
-}
-
-.records-title,
-.trend-main-title {
-    grid-column: 1;
-    justify-self: stretch;
-    margin: 0;
-    color: #4472c4;
-    text-align: center;
-    font-size: 27px;
-    font-weight: 400;
-    line-height: 1.2;
-}
-
-.print-button,
-.trend-print-button {
-    grid-column: 2;
-    justify-self: end;
-    width: 140px;
-    height: 46px;
-    min-height: 46px;
-    padding: 8px 12px;
-    border: 1.5px solid #19365f;
-    border-radius: 12px;
-    background: #e7e6e6;
-    font-size: 15px;
-    font-weight: 500;
-}
-
-
-/* ===== 一覧・推移：表示期間 ===== */
-.list-period-section {
-    width: 85%;
-    margin: 0 auto 30px;
-    padding: 18px;
-    border: 1.5px solid #19365f;
-    border-radius: 18px;
-    background: #e6f4fc;
-}
-
-.list-period-section h2 {
-    margin-bottom: 14px;
-}
-
-.trend-period-section {
-    width: 85%;
-    margin: 0 auto 40px;
-    padding: 20px;
-    border: 1.5px solid #19365f;
-    border-radius: 20px;
-    background: #f0f7df;
-}
-
-.list-period-inputs,
-.trend-period-inputs {
-    display: flex;
-    align-items: flex-end;
-    justify-content: center;
-    gap: 12px;
-}
-
-.list-period-inputs label,
-.trend-period-inputs label {
-    display: grid;
-    gap: 5px;
-    text-align: center;
-    font-weight: bold;
-}
-
-.list-period-inputs input,
-.trend-period-inputs input {
-    height: 45px;
-    padding: 5px 10px;
-    border: 1.5px solid #19365f;
-    border-radius: 10px;
-    background: #fff;
-    color: #000;
-    color-scheme: light;
-}
-
-.period-symbol {
-    padding-bottom: 11px;
-    font-weight: bold;
-}
-
-.update-list-button,
-.update-trend-button {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-width: 75px;
-    height: 45px;
-    padding: 0 25px;
-    border: 1.5px solid #19365f;
-    border-radius: 10px;
-    color: #000;
-    text-align: center;
-    font-weight: 600;
-    white-space: nowrap;
-}
-
-.update-list-button { background: #5b9bd5; }
-.update-trend-button { background: #a9d18e; }
-
-
-/* ===== 一覧：記録表 ===== */
-.records-table-wrapper {
-    width: 100%;
-    overflow-x: auto;
-    border: 1px solid #b7b7b7;
-    background: #fff;
-}
-
-.records-table {
-    width: auto;
-    min-width: 1260px;
-    border-collapse: collapse;
-    table-layout: fixed;
-    background: #fff;
-    color: #000;
-    font-family: "Yu Gothic", "游ゴシック", Meiryo, sans-serif;
-    font-size: 11px;
-}
-
-.records-table th,
-.records-table td {
-    height: 44px;
-    padding: 4px 5px;
-    border: 1px solid #d9d9d9;
-    text-align: center;
-    vertical-align: middle;
-    font-weight: normal;
-    overflow-wrap: anywhere;
-    background: #fff;
-}
-
-.records-table th {
-    white-space: normal;
-    line-height: 1.25;
-}
-
-.records-table td { min-height: 44px; }
-
-.records-table .memo-cell {
-    padding: 4px 8px;
-    text-align: left;
-    white-space: pre-wrap;
-}
-
-.date-column,
-.satisfaction-column { width: 86px; }
-
-.time-column,
-.duration-column,
-.mood-column,
-.condition-column { width: 75px; }
-
-.memo-column { width: 303px; }
-
-.no-records-message {
-    margin: 0;
-    padding: 50px 20px;
-    background: #fff;
-    text-align: center;
-    font-size: 16px;
-    font-weight: bold;
-}
-
-
-/* ===== 推移：グラフ ===== */
-.trend-block {
-    width: 85%;
-    margin: 0 auto 55px;
-}
-
-.trend-block h2 { text-align: left; }
-
-.chart-area {
-    position: relative;
-    width: 100%;
-    height: 320px;
-    padding: 15px;
-    border: 1.5px solid #19365f;
-    background: #fff;
-}
-
-.chart-area canvas {
-    width: 100% !important;
-    height: 100% !important;
-}
-
-.satisfaction-trend-block {
-    display: none !important;
-}
-
-.satisfaction-note {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 6px 20px;
-    margin-top: 10px;
-    padding: 12px 18px;
-    border: 1px solid #b7b7b7;
-    border-radius: 10px;
-    background: #fffdf4;
-    font-size: 14px;
-}
-
-
-/* ===== 下部ナビゲーション ===== */
-.bottom-nav {
-    position: fixed;
-    left: 50%;
-    bottom: 0;
-    z-index: 100;
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    width: min(900px, 100%);
-    padding-bottom: env(safe-area-inset-bottom);
-    transform: translateX(-50%);
-    background: #fff;
-}
-
-.bottom-nav-button {
-    height: 65px;
-    padding: 5px;
-    border: none;
-    color: #000;
-    font-size: 21px;
-    font-weight: 600;
-}
-
-.record-nav { background: #fff8ae; }
-.list-nav { background: #97deff; }
-.trend-nav { background: #a9d18e; }
-
-.bottom-nav-button.active { box-shadow: none; }
-.bottom-nav-button:not(.active) { filter: brightness(.94); }
-
-
-/* ===== 体調チェック設定画面 ===== */
-.settings-modal {
-    position: fixed;
-    inset: 0;
-    z-index: 10000;
-    display: grid;
-    place-items: center;
-    padding: 20px;
-    background: rgb(0 0 0 / 45%);
-}
-
-.settings-panel {
-    width: min(820px, 100%);
-    max-height: calc(100vh - 40px);
-    overflow-y: auto;
-    padding: 24px;
-    border-radius: 18px;
-    background: #fff;
-    box-shadow: 0 10px 35px rgb(0 0 0 / 25%);
-}
-
-.settings-panel > h2 {
-    margin-bottom: 22px;
-    font-size: 24px;
-}
-
-.settings-categories {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 24px;
-}
-
-.settings-category > label {
-    display: grid;
-    gap: 6px;
-    font-weight: bold;
-}
-
-.settings-category input {
-    width: 100%;
-    height: 44px;
-    padding: 6px 10px;
-    border: 1.5px solid #19365f;
-    border-radius: 8px;
-}
-
-.item-settings {
-    display: grid;
-    gap: 7px;
-    margin-top: 12px;
-}
-
-.item-setting {
-    display: grid;
-    grid-template-columns: 30px 1fr;
-    align-items: center;
-}
-
-.settings-actions {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-    margin-top: 22px;
-}
-
-.settings-actions button {
-    height: 50px;
-    border: 1.5px solid #19365f;
-    border-radius: 10px;
-    font-weight: bold;
-}
-
-
-/* ===== スマホ ===== */
-@media screen and (max-width: 600px) {
-    .app { padding: 8px 7px 105px; }
-
-    .main-title {
-        margin: 2px 0 10px;
-        font-size: 30px;
-        line-height: 1.2;
-    }
-
-    .settings-button {
-        width: 84px;
-        height: 42px;
-        padding: 2px 8px;
-        font-size: 14px;
-        white-space: nowrap;
-        flex-wrap: nowrap;
-    }
-
-    .date-section { margin-bottom: 18px; }
-    .sleep-section, .status-row { margin-bottom: 22px; }
-
-    .date-navigation {
-        grid-template-columns: 50px minmax(0, 1fr) 50px;
-        gap: 7px;
-    }
-
-    .arrow-button, .date-button {
-        height: 50px;
-        min-height: 50px;
-    }
-
-    .date-button {
-        min-width: 0;
-        padding: 2px 6px;
-        font-size: 15px;
-    }
-
-    .popup {
-        width: calc(100% - 14px);
-        max-width: 340px;
-        padding: 12px;
-    }
-
-    .popup input[type="date"] {
-        display: block;
-        max-width: 100%;
-        min-width: 0;
-        height: 44px;
-        padding: 2px 6px;
-        font-size: 15px;
-    }
-
-    .quick-date-buttons, .popup-actions {
-        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-        width: 100%;
-        gap: 7px;
-    }
-
-    .quick-date-buttons button, .popup-actions button {
-        width: 100%;
-        min-width: 0;
-        min-height: 42px;
-        padding: 3px 4px;
-        font-size: 13px;
-    }
-
-    .cancel-button {
-        white-space: nowrap;
-        font-size: 11px;
-    }
-
-    .two-column {
-        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-        gap: 7px;
-    }
-
-    .time-field, .choice-section { min-width: 0; }
-
-    .time-display-button, .choice-button {
-        height: 50px;
-        min-height: 50px;
-        min-width: 0;
-        padding: 2px 5px;
-        font-size: 15px;
-    }
-
-    .time-popup {
-        left: 0;
-        right: auto;
-        width: 100%;
-        max-width: 100%;
-        min-width: 0;
-        padding: 10px;
-        overflow: hidden;
-    }
-
-    .time-field:nth-child(2) .time-popup {
-        left: auto;
-        right: 0;
-    }
-
-    .time-popup .time-input {
-        display: block;
-        max-width: 100%;
-        min-width: 0;
-        height: 44px;
-        margin: 8px 0;
-        padding: 2px 4px;
-        font-size: 15px;
-    }
-
-    .now-button {
-        min-width: 0;
-        min-height: 40px;
-        padding: 3px;
-        font-size: 11px;
-        white-space: nowrap;
-    }
-
-    .time-popup-actions {
-        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-        width: 100%;
-        gap: 4px;
-    }
-
-    .time-popup-actions button {
-        width: 100%;
-        min-width: 0;
-        min-height: 40px;
-        padding: 2px;
-        font-size: 10px;
-        white-space: nowrap;
-    }
-
-    .choice-menu {
-        width: 100%;
-        min-width: 0;
-    }
-
-    .choice-menu button {
-        min-height: 42px;
-        padding: 3px;
-        font-size: 11px;
-    }
-
-    .mood-menu { grid-template-columns: repeat(4, 1fr); }
-
-    .condition-categories {
-        grid-template-columns: 1fr;
-        gap: 18px;
-    }
-
-    .condition-checklist .symptom-item {
-        grid-template-columns: 1fr 55px;
-        min-height: 48px;
-        font-size: 14px;
-    }
-
-    .condition-checklist .symptom-item span {
-        padding: 5px 8px;
-    }
-
-    .condition-checklist .symptom-item input {
-        width: 24px;
-        height: 24px;
-    }
-
-    .record-action-bar {
-        bottom: calc(58px + env(safe-area-inset-bottom));
-    }
-
-    .record-action-button {
-        height: 68px;
-        font-size: 18px;
-    }
-
-    body.record-view .app {
-        padding-bottom: calc(175px + env(safe-area-inset-bottom));
-    }
-
-    .bottom-nav-button {
-        padding: 3px;
-        font-size: 15px;
-    }
-
-    .list-period-section, .trend-period-section {
-        width: 100%;
-        padding: 10px 12px;
-    }
-
-    .trend-period-section { margin-bottom: 25px; }
-
-    .list-period-inputs, .trend-period-inputs {
-        display: grid;
-        grid-template-columns: 1fr;
-        align-items: center;
-        gap: 8px;
-    }
-
-    .list-period-inputs label, .trend-period-inputs label {
-        width: 100%;
-        justify-items: center;
-        font-size: 13px;
-    }
-
-    .list-period-inputs input, .trend-period-inputs input {
-        width: min(100%, 220px);
-        max-width: 220px;
-        min-width: 0;
-        height: 40px;
-        padding: 2px 6px;
-        font-size: 14px;
-    }
-
-    .list-period-inputs .period-symbol,
-    .trend-period-inputs .period-symbol {
-        display: none;
-    }
-
-    .update-list-button, .update-trend-button {
-        grid-column: 1;
-        width: 90px;
-        min-width: 90px;
-        height: 40px;
-        margin: 3px auto 0;
-        padding: 0 8px;
-    }
-
-    .trend-block { width: 95%; }
-
-    .chart-area {
-        height: 280px;
-        padding: 10px 5px;
-    }
-
-    .satisfaction-note {
-        grid-template-columns: 1fr;
-        gap: 4px;
-        padding: 10px 12px;
-        font-size: 12px;
-    }
-
-    .settings-panel { padding: 16px; }
-
-    .settings-categories {
-        grid-template-columns: 1fr;
-        gap: 25px;
-    }
-
-    #date-menu {
-        top: calc(100% + 8px);
-        z-index: 50;
-        width: calc(100% - 30px);
-        max-width: 360px;
-        padding: 14px;
-        border-radius: 18px;
-        box-shadow: 0 8px 22px rgb(0 0 0 / 18%);
-    }
-
-    #date-menu > label {
-        margin: 0 0 10px;
-        font-size: 16px;
-    }
-
-    #edit-date-input {
-        width: 70%;
-        max-width: 280px;
-        margin: 0 auto;
-        background: #fff;
-        color: #111;
-        box-shadow: none;
-    }
-
-    #edit-date-input::-webkit-date-and-time-value {
-        width: auto;
-        height: auto;
-        min-width: 0;
-        margin: 0;
-        padding: 0;
-        border: none;
-        border-radius: 0;
-        background: transparent;
-        box-shadow: none;
-        text-align: center;
-    }
-
-    #edit-date-input::-webkit-calendar-picker-indicator {
-        margin: 0;
-        padding: 2px;
-    }
-
-    #date-menu .quick-date-buttons {
-        gap: 8px;
-        margin-top: 12px;
-    }
-
-    #date-menu .popup-actions {
-        gap: 8px;
-        margin-top: 10px;
-    }
-
-    #date-menu .popup-actions button {
-        font-size: 13px;
-        white-space: nowrap;
-    }
-}
-
-
-/* ===== 印刷 ===== */
-@page {
-    size: A4 landscape;
-    margin: 8mm;
+textarea {
+  resize: vertical;
 }
-
-@media print {
-    .bottom-nav,
-    .record-action-bar,
-    .print-button,
-    .list-period-section,
-    #record-page,
-    #trend-page {
-        display: none !important;
-    }
-
-    #list-page { display: block !important; }
-
-    .app {
-        width: 100%;
-        max-width: none;
-        margin: 0;
-        padding: 0;
-    }
-
-    .records-header {
-        display: block;
-        margin-bottom: 22px;
-    }
-
-    .records-title {
-        color: #000;
-        font-size: 20px;
-    }
-
-    .records-table-wrapper { overflow: visible; }
-
-    .records-table {
-        width: 100%;
-        min-width: 0;
-        table-layout: fixed;
-        font-size: 8px;
-    }
-
-    .records-table th, .records-table td {
-        height: 32px;
-        padding: 2px 3px;
-        border: .5px solid #000;
-    }
-
-    .records-table tr { break-inside: avoid; }
-
-    .date-column, .satisfaction-column { width: 9.8%; }
-    .time-column, .duration-column, .condition-column { width: 9%; }
-    .mood-column { width: 7.5%; }
-    .memo-column { width: 27.9%; }
-
-    body.trend-print {
-        width: 100%;
-        margin: 0 !important;
-        padding: 0 !important;
-        background: #fff;
-    }
-
-    body.trend-print #record-page,
-    body.trend-print #list-page,
-    body.trend-print .bottom-nav,
-    body.trend-print .record-action-bar,
-    body.trend-print .trend-period-section,
-    body.trend-print .trend-print-button {
-        display: none !important;
-    }
-
-    body.trend-print #trend-page {
-        display: block !important;
-        width: 100%;
-        break-inside: avoid;
-        page-break-inside: avoid;
-    }
-
-    body.trend-print #trend-page,
-    body.trend-print .app {
-        height: auto !important;
-        min-height: 0 !important;
-        margin: 0 !important;
-        padding: 0 !important;
-        overflow: visible !important;
-    }
-
-    body.trend-print .trend-header {
-        display: block;
-        margin: 0 0 1mm !important;
-    }
-
-    body.trend-print .trend-main-title {
-        margin: 0 !important;
-        color: #000;
-        text-align: center;
-        font-size: 15px !important;
-        line-height: 1.1 !important;
-    }
-
-    body.trend-print .trend-block {
-        display: block;
-        width: 100% !important;
-        margin: 0 0 1mm !important;
-        padding: 0 !important;
-        break-inside: avoid !important;
-        page-break-inside: avoid !important;
-    }
-
-    body.trend-print .trend-block:last-child {
-        margin-bottom: 0 !important;
-    }
-
-    body.trend-print .satisfaction-trend-block {
-        display: none !important;
-    }
-
-    body.trend-print .trend-block h2 {
-        margin: 0 0 .5mm !important;
-        text-align: center;
-        font-size: 9px !important;
-        line-height: 1.1 !important;
-    }
-
-    body.trend-print .chart-area,
-    body.trend-print.mobile-trend-print .chart-area {
-        width: 100% !important;
-        height: 84mm !important;
-        min-height: 84mm !important;
-        max-height: 84mm !important;
-        margin: 0 !important;
-        padding: 1px !important;
-        border: .5px solid #777 !important;
-        background: #fff;
-    }
-
-    body.trend-print .chart-area canvas,
-    body.trend-print.mobile-trend-print .chart-area canvas {
-        width: 100% !important;
-        height: 100% !important;
-        max-width: 100% !important;
-        max-height: 100% !important;
-    }
-
-    body.trend-print .satisfaction-note {
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        border: none;
-        background: #fff;
-    }
-
-    body.trend-print .satisfaction-note,
-    body.trend-print.mobile-trend-print .satisfaction-note {
-        gap: .5mm !important;
-        margin: .25mm 0 0 !important;
-        padding: 0 !important;
-        font-size: 5px !important;
-        line-height: 1 !important;
-    }
-
-    body.trend-print.mobile-trend-print .trend-header {
-        margin-bottom: .3mm !important;
-    }
-
-    body.trend-print.mobile-trend-print .trend-block {
-        margin-bottom: .3mm !important;
-    }
-
-    body.trend-print.mobile-trend-print .trend-block h2 {
-        margin-bottom: .2mm !important;
-    }
-
-    body.trend-print.mobile-trend-print .satisfaction-note {
-        margin-top: .2mm !important;
-    }
-
-    body.trend-print.mobile-trend-print .chart-area {
-        height: 74mm !important;
-        min-height: 74mm !important;
-        max-height: 74mm !important;
-        flex: none !important;
-    }
 
-    body.trend-print.mobile-trend-print .chart-area canvas {
-        max-height: 74mm !important;
-    }
+.time-row {
+  display: grid;
+  grid-template-columns:
+    minmax(0, 1fr)
+    auto;
+  gap: 8px;
 }
 
-/* ===== 体調チェック右側の項目設定 ===== */
+/* 活動内容と定期的な活動ボタン */
 
-.condition-heading-row {
+.activity-label-row {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  min-height: 48px;
-  margin-bottom: 8px;
+  align-items: end;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 15px;
 }
 
-.condition-heading-row h2 {
-  margin: 0;
+.activity-label-row label {
+  margin: 0 0 7px;
 }
 
-.item-settings-button {
-  position: absolute;
-  right: 0;
-  top: 50%;
-  transform: translateY(-50%);
-  border: 1.5px solid #19365f;
-  border-radius: 10px;
-  background: #e7e6e6;
-  padding: 9px 12px;
-  font-size: 14px;
-  font-weight: bold;
-  white-space: nowrap;
+.routine-open-button {
+  margin-bottom: 7px;
+  padding: 6px 10px;
+  color: var(--main-dark);
+  background: var(--main-light);
+  border: 1px solid var(--main);
+  border-radius: 8px;
+  font-size: 0.86rem;
+  font-weight: 700;
 }
 
-@media (max-width: 420px) {
-  .condition-heading-row {
-    justify-content: flex-start;
-  }
+/* 定期的な活動の画面 */
 
-  .condition-heading-row h2 {
-    font-size: 18px;
-  }
-
-  .item-settings-button {
-    font-size: 12px;
-    padding: 8px 10px;
-  }
+.modal-open {
+  overflow: hidden;
 }
 
-/* ===== 共通設定ダイアログ ===== */
-
-.app-common-modal {
+.modal-backdrop {
   position: fixed;
   inset: 0;
-  z-index: 10010;
+  z-index: 100;
   display: grid;
   place-items: center;
   padding: 16px;
-  background: rgba(0, 0, 0, 0.45);
+  background: rgba(22, 40, 33, 0.48);
 }
 
-.app-common-panel {
-  width: min(440px, 100%);
-  max-height: 85dvh;
-  overflow: auto;
-  background: white;
-  border-radius: 18px;
+.routine-modal {
+  width: min(520px, 100%);
+  max-height:
+    min(720px, calc(100vh - 32px));
   padding: 20px;
-  box-shadow: 0 8px 30px #0003;
+  overflow-y: auto;
+  background: white;
+  border-radius: 16px;
+  box-shadow:
+    0 16px 45px rgba(0, 0, 0, 0.2);
 }
 
-.app-common-heading {
+.routine-modal-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 16px;
+  gap: 12px;
 }
 
-.app-common-heading h2 {
+.routine-modal-header h2 {
   margin: 0;
-  font-size: 23px;
 }
 
-.app-common-heading button {
-  border: 0;
-  background: #f1f1f1;
-  border-radius: 8px;
-  font-size: 24px;
+.modal-close-button {
   width: 40px;
   height: 40px;
+  padding: 0;
+  color: var(--muted);
+  background: #f3f6f4;
+  border: 0;
+  border-radius: 50%;
+  font-size: 1.6rem;
+  line-height: 1;
 }
 
-.app-common-option {
+.routine-help {
+  margin: 10px 0 14px;
+  color: var(--muted);
+  font-size: 0.88rem;
+}
+
+.routine-list {
+  display: grid;
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.routine-choice {
+  min-height: 48px;
+  padding: 9px 10px;
+  overflow-wrap: anywhere;
+  color: var(--main-dark);
+  background: var(--main-light);
+  border: 1px solid var(--main);
+  border-radius: 9px;
+  font-weight: 700;
+}
+
+.routine-empty {
+  grid-column: 1 / -1;
+  margin: 8px 0;
+  padding: 18px 8px;
+  color: var(--muted);
+  text-align: center;
+}
+
+.routine-settings-button {
+  width: 100%;
+  margin-top: 16px;
+}
+
+.routine-settings {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+}
+
+.routine-settings h3 {
+  margin: 0 0 10px;
+  font-size: 1rem;
+}
+
+.routine-add-row,
+.routine-edit-row {
+  display: grid;
+  grid-template-columns:
+    minmax(0, 1fr)
+    auto;
+  gap: 7px;
+}
+
+.routine-add-row button {
+  min-width: 72px;
+}
+
+.routine-edit-list {
+  display: grid;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.routine-edit-row button {
+  padding: 8px 11px;
+  color: var(--danger);
+  background: white;
+  border: 1px solid #dda7a7;
+  border-radius: 8px;
+  font-weight: 700;
+}
+
+/* 気分 */
+
+fieldset {
+  margin: 18px 0 0;
+  padding: 0;
+  border: 0;
+}
+
+fieldset legend {
+  padding: 0;
+}
+
+.mood-buttons {
+  display: grid;
+  grid-template-columns:
+    repeat(7, 1fr);
+  gap: 7px;
+}
+
+.mood-buttons button {
+  min-height: 46px;
+  padding: 6px 2px;
+  color: var(--text);
+  background: #f4f6f5;
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  font-weight: 700;
+}
+
+.mood-buttons button.selected {
+  color: white;
+  background: var(--main);
+  border-color: var(--main-dark);
+  transform: translateY(-2px);
+}
+
+.mood-guide {
+  margin: 8px 0 0;
+  color: var(--muted);
+  font-size: 0.78rem;
+}
+
+/* 共通ボタン */
+
+.primary-button,
+.secondary-button,
+.sub-button,
+.danger-button {
+  min-height: 46px;
+  padding: 10px 16px;
+  border-radius: 9px;
+  font-weight: 700;
+}
+
+.primary-button {
+  flex: 1;
+  color: white;
+  background: var(--main);
+  border: 0;
+}
+
+.primary-button:hover {
+  background: var(--main-dark);
+}
+
+.secondary-button,
+.sub-button {
+  color: var(--main-dark);
+  background: var(--main-light);
+  border: 1px solid var(--main);
+}
+
+.form-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 18px;
+}
+
+.message {
+  min-height: 1.4em;
+  margin: 12px 0 -8px;
+  color: var(--danger);
+  font-size: 0.9rem;
+}
+
+.message.success {
+  color: var(--main-dark);
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* 時系列 */
+
+.section-heading {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.section-heading h2 {
+  margin: 0;
+}
+
+.count-badge {
+  padding: 5px 10px;
+  color: var(--main-dark);
+  background: var(--main-light);
+  border-radius: 999px;
+  font-size: 0.85rem;
+}
+
+.timeline {
+  position: relative;
+  padding-left: 25px;
+}
+
+.timeline-print-pages {
+  display: none;
+}
+
+.timeline::before {
+  content: "";
+  position: absolute;
+  top: 9px;
+  bottom: 9px;
+  left: 8px;
+  width: 2px;
+  background: #abd3c3;
+}
+
+.timeline-item {
+  position: relative;
+  margin-bottom: 13px;
+  padding: 16px;
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+}
+
+.timeline-item::before {
+  content: "";
+  position: absolute;
+  top: 20px;
+  left: -23px;
+  width: 11px;
+  height: 11px;
+  background: var(--main);
+  border: 3px solid #f4f8f6;
+  border-radius: 50%;
+}
+
+.record-head {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.record-date {
+  color: var(--main-dark);
+  font-weight: 700;
+}
+
+.mood-badge {
+  flex: 0 0 auto;
+  padding: 5px 9px;
+  color: white;
+  border-radius: 999px;
+  font-size: 0.84rem;
+  font-weight: 700;
+}
+
+.activity-text {
+  margin: 12px 0;
+  line-height: 1.7;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
+
+.record-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 7px;
+}
+
+.record-actions button {
+  padding: 6px 11px;
+  color: var(--main-dark);
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 7px;
+}
+
+.record-actions .delete-button {
+  color: var(--danger);
+}
+
+.empty-message {
+  padding: 35px 12px;
+  color: var(--muted);
+  text-align: center;
+}
+
+.danger-button {
+  display: block;
+  margin: 25px auto 0;
+  color: var(--danger);
+  background: white;
+  border: 1px solid #dda7a7;
+}
+
+/* グラフ */
+
+.graph-card {
+  padding: 18px 12px;
+}
+
+.graph-card h2 {
+  margin-left: 8px;
+}
+
+.graph-note {
+  margin: -10px 8px 15px;
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
+.canvas-wrap {
+  position: relative;
   width: 100%;
-  min-height: 54px;
-  padding: 12px 14px;
-  margin: 9px 0;
-  border: 1px solid #bcc9db;
+  min-height: 360px;
+}
+
+#moodChart {
+  display: block;
+  width: 100%;
+  height: 360px;
+}
+
+/* 下部メニュー */
+
+.bottom-nav {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 20;
+  display: grid;
+  grid-template-columns:
+    repeat(5, minmax(0, 1fr));
+  background: white;
+  border-top: 1px solid var(--border);
+  box-shadow:
+    0 -3px 12px rgba(0, 0, 0, 0.08);
+}
+
+.nav-button {
+  min-height: 67px;
+  color: var(--muted);
+  background: white;
+  border: 0;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.nav-button span {
+  display: block;
+  margin-bottom: 2px;
+  font-size: 1.25rem;
+}
+
+.nav-button.active {
+  color: var(--main-dark);
+  background: var(--main-light);
+}
+
+/* 印刷ボタン */
+
+.print-button {
+  min-height: 46px;
+  padding: 10px 16px;
+  color: white;
+  background: #667b72;
+  border: 1px solid #667b72;
+  border-radius: 9px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.print-button:hover {
+  background: #50635b;
+}
+
+/* 印刷時の表示 */
+
+@media print {
+  @page {
+    size: A4 portrait;
+    margin: 8mm;
+  }
+
+  body.print-daily {
+    margin: 0;
+    min-width: 0;
+    background: white;
+  }
+
+  body.print-daily > .app-header,
+  body.print-daily > main,
+  body.print-daily > .bottom-nav,
+  body.print-daily > #printDialog {
+    display: none !important;
+  }
+
+  body.print-daily > #dailyPrintRoot {
+    display: block !important;
+  }
+
+  .daily-print-page {
+    display: grid;
+    grid-template-rows: 9mm 60mm 164mm 25mm;
+    gap: 3mm;
+    width: 194mm;
+    height: 268mm;
+    margin: 0 auto;
+    overflow: hidden;
+    color: #151515;
+    background: white;
+    break-after: page;
+    page-break-after: always;
+    box-sizing: border-box;
+  }
+
+  .daily-print-page:last-child {
+    break-after: auto;
+    page-break-after: auto;
+  }
+
+  .daily-print-page h1 {
+    margin: 0;
+    text-align: center;
+    font-size: 15pt;
+    font-weight: 500;
+    line-height: 9mm;
+  }
+
+  .daily-print-graph {
+    border: 1px solid #777;
+    padding: 2mm 4mm;
+    overflow: hidden;
+  }
+
+  .daily-print-graph h2 {
+    margin: 0;
+    text-align: center;
+    font-size: 11pt;
+    line-height: 5mm;
+  }
+
+  .daily-print-graph svg {
+    display: block;
+    width: 100%;
+    height: 49mm;
+  }
+
+  .daily-print-graph svg text {
+    fill: #333;
+    font-size: 12px;
+  }
+
+  .daily-print-columns {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 6mm;
+    min-height: 0;
+  }
+
+  .daily-print-column {
+    min-width: 0;
+    min-height: 0;
+    overflow: hidden;
+    border: 1px solid #777;
+    padding: 2mm 3mm;
+  }
+
+  .daily-print-column:first-child {
+    border-right: 1px solid #777;
+  }
+
+  .daily-print-list {
+    font-size: var(--daily-record-font, 8pt);
+    line-height: 1.15;
+  }
+
+  .daily-print-record {
+    box-sizing: border-box;
+    min-height: 7.5mm;
+    padding: 0.5mm 0;
+    border-bottom: 1px solid #ccc;
+    break-inside: avoid;
+  }
+
+  .daily-print-record-heading {
+    display: flex;
+    justify-content: space-between;
+    gap: 2mm;
+  }
+
+  .daily-print-record p {
+    margin: 1mm 0 0;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+  }
+
+  .daily-print-empty {
+    color: #555;
+    text-align: center;
+  }
+
+  .daily-print-memo {
+    min-height: 0;
+    overflow: hidden;
+    border: 1px solid #777;
+    padding: 2mm 3mm;
+  }
+
+  .daily-print-memo h2 {
+    margin: 0 0 1mm;
+    text-align: center;
+    font-size: 11pt;
+  }
+
+  .daily-print-memo p {
+    margin: 0;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    font-size: 8pt;
+    line-height: 1.2;
+  }
+}
+
+/* 日付フィルター */
+
+.date-filter {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  margin-bottom: 18px;
+  padding: 14px;
+  overflow: hidden;
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-sizing: border-box;
+}
+
+.filter-date-field {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}
+
+.filter-date-field label {
+  margin: 14px 0 6px;
+}
+
+.filter-actions {
+  display: flex;
+  width: 100%;
+  max-width: 100%;
+  margin-top: 16px;
+  gap: 7px;
+}
+
+.filter-actions button {
+  flex: 1 1 0;
+  min-width: 0;
+  padding: 10px 4px;
+  white-space: nowrap;
+}
+
+.filter-message {
+  margin: 8px 0 0;
+  color: var(--danger);
+  text-align: center;
+}
+
+/* 日付欄共通 */
+
+input[type="date"] {
+  display: block !important;
+  width: calc(100% - 6px) !important;
+  max-width: calc(100% - 6px) !important;
+  min-width: 0 !important;
+  margin-right: auto !important;
+  margin-left: auto !important;
+  padding: 10px !important;
+  box-sizing: border-box !important;
+  text-align: center !important;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+input[type="date"]::-webkit-date-and-time-value {
+  width: 100% !important;
+  min-width: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  text-align: center !important;
+}
+
+/* 活動内容の検索欄 */
+
+.activity-search {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  margin-bottom: 18px;
+  padding: 14px;
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-sizing: border-box;
+}
+
+.activity-search label {
+  margin: 0 0 7px;
+}
+
+.search-row {
+  display: grid;
+  grid-template-columns:
+    minmax(0, 1fr)
+    auto
+    auto;
+  gap: 7px;
+}
+
+.search-row input {
+  min-width: 0;
+}
+
+.search-row button {
+  min-width: 72px;
+}
+
+/* スマホ表示 */
+
+@media screen and (max-width: 900px) {
+  html,
+  body {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    overflow-x: hidden;
+  }
+
+  main {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+  }
+
+  .page,
+  .card,
+  .date-filter,
+  .filter-date-field {
+    max-width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+  }
+
+  .date-filter {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  input[type="date"] {
+    width: calc(100% - 6px) !important;
+    max-width: calc(100% - 6px) !important;
+    min-width: 0 !important;
+  }
+}
+
+@media screen and (max-width: 520px) {
+  main {
+    padding: 14px 10px 92px;
+  }
+
+  .card {
+    padding: 17px 13px;
+    border-radius: 12px;
+  }
+
+  .mood-buttons {
+    gap: 4px;
+  }
+
+  .mood-buttons button {
+    min-height: 43px;
+    font-size: 0.86rem;
+  }
+
+  .time-row {
+    grid-template-columns:
+      minmax(0, 1fr)
+      96px;
+  }
+
+  .sub-button {
+    padding: 8px;
+    font-size: 0.86rem;
+  }
+
+  .canvas-wrap,
+  #moodChart {
+    min-height: 330px;
+    height: 330px;
+  }
+
+  .routine-modal {
+    padding: 16px 12px;
+  }
+
+  .routine-list {
+    grid-template-columns: 1fr;
+  }
+
+  .routine-open-button {
+    padding: 6px 8px;
+    font-size: 0.8rem;
+  }
+
+  .activity-search {
+    padding: 11px 8px;
+  }
+
+  .search-row {
+    grid-template-columns:
+      minmax(0, 1fr)
+      62px
+      62px;
+    gap: 5px;
+  }
+
+  .search-row button {
+    min-width: 0;
+    padding: 8px 4px;
+  }
+}
+
+/* スマホ版：時系列の1件分を約75％に縮小 */
+
+@media screen and (max-width: 520px) {
+  .timeline {
+    padding-left: 21px;
+  }
+
+  .timeline::before {
+    left: 6px;
+  }
+
+  .timeline-item {
+    margin-bottom: 8px;
+    padding: 10px 11px;
+    border-radius: 9px;
+  }
+
+  .timeline-item::before {
+    top: 14px;
+    left: -19px;
+    width: 9px;
+    height: 9px;
+    border-width: 2px;
+  }
+
+  .record-head {
+    gap: 5px;
+  }
+
+  .record-date {
+    font-size: 0.78rem;
+    line-height: 1.2;
+  }
+
+  .mood-badge {
+    padding: 3px 7px;
+    font-size: 0.72rem;
+  }
+
+  .activity-text {
+    margin: 6px 0;
+    font-size: 0.86rem;
+    line-height: 1.35;
+  }
+
+  .record-actions {
+    gap: 5px;
+  }
+
+  .record-actions button {
+    min-height: 30px;
+    padding: 3px 9px;
+    font-size: 0.76rem;
+  }
+}
+
+/* 印刷時に活動内容をページ分割させない */
+
+@media print {
+  .timeline-print-flow {
+    column-count: 2 !important;
+    column-gap: 3mm !important;
+    column-fill: auto !important;
+  }
+
+  .timeline-print-item {
+    display: inline-block !important;
+    width: 100% !important;
+    height: auto !important;
+    margin: 0 0 1.5mm !important;
+    padding: 1.5mm 1.8mm !important;
+    overflow: visible !important;
+    vertical-align: top !important;
+    border: 0.25mm solid #aaa;
+    border-radius: 1.2mm;
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+    -webkit-column-break-inside: avoid !important;
+  }
+
+  .timeline-print-record-head,
+  .timeline-print-item time,
+  .timeline-print-item span,
+  .timeline-print-item p {
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+    -webkit-column-break-inside: avoid !important;
+  }
+
+  .timeline-print-item p {
+    display: block !important;
+    height: auto !important;
+    max-height: none !important;
+    margin: 1mm 0 0 !important;
+    overflow: visible !important;
+    white-space: pre-wrap !important;
+    -webkit-line-clamp: unset !important;
+    -webkit-box-orient: initial !important;
+  }
+
+  .timeline-print-date-group {
+    display: inline-block !important;
+    width: 100% !important;
+    margin: 0 0 2mm !important;
+    padding: 0 !important;
+    vertical-align: top !important;
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+    -webkit-column-break-inside: avoid !important;
+  }
+
+  .timeline-print-date-heading {
+    margin: 0 0 1mm !important;
+    padding: 1mm 1.5mm !important;
+    color: #222 !important;
+    background: #edf3f0 !important;
+    border-left: 1mm solid #58a98a !important;
+    font-size: 8pt !important;
+    font-weight: 700 !important;
+    line-height: 1.2 !important;
+    break-after: avoid !important;
+    page-break-after: avoid !important;
+  }
+
+  .timeline-print-date-records {
+    display: block !important;
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+    -webkit-column-break-inside: avoid !important;
+  }
+
+  .timeline-print-date-records
+  .timeline-print-item:last-child {
+    margin-bottom: 0 !important;
+  }
+}
+
+/* スマホ印刷もA4・左右2段組みに固定 */
+
+@media print {
+  @page {
+    size: A4 portrait;
+    margin: 7mm;
+  }
+
+  .timeline-print-document {
+    width: 100% !important;
+    max-width: none !important;
+  }
+
+  .timeline-print-flow {
+    display: block !important;
+    width: 100% !important;
+    column-count: 2 !important;
+    -webkit-column-count: 2 !important;
+    column-gap: 3mm !important;
+    -webkit-column-gap: 3mm !important;
+    column-fill: auto !important;
+    -webkit-column-fill: auto !important;
+    column-rule: 0.2mm solid #cccccc !important;
+    -webkit-column-rule: 0.2mm solid #cccccc !important;
+  }
+
+  .timeline-print-date-group {
+    display: inline-block !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    vertical-align: top !important;
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+    -webkit-column-break-inside: avoid !important;
+  }
+
+  .timeline-print-item {
+    display: inline-block !important;
+    width: 100% !important;
+    height: auto !important;
+    box-sizing: border-box !important;
+    vertical-align: top !important;
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+    -webkit-column-break-inside: avoid !important;
+  }
+}
+
+/* 時系列印刷 iPhone / Safari対応 2列固定版 */
+
+@media print {
+  @page {
+    size: A4 portrait;
+    margin: 7mm;
+  }
+
+  .timeline-print-page {
+    width: 100%;
+    height: auto;
+    min-height: 0;
+    margin: 0;
+    padding: 0;
+    overflow: visible;
+    box-sizing: border-box;
+    break-after: page;
+    page-break-after: always;
+  }
+
+  .timeline-print-page:last-child {
+    break-after: auto !important;
+    page-break-after: auto !important;
+  }
+
+  .timeline-print-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    height: 7mm;
+    margin: 0 0 2mm;
+    border-bottom: 0.3mm solid #777;
+    box-sizing: border-box;
+  }
+
+  .timeline-print-header h2 {
+    margin: 0;
+    font-size: 11pt;
+  }
+
+  .timeline-print-header span {
+    font-size: 7.5pt;
+  }
+
+  .timeline-print-columns {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: flex-start;
+    width: 100% !important;
+    gap: 3mm;
+    box-sizing: border-box;
+  }
+
+  .timeline-print-column {
+    display: block !important;
+    flex: 0 0 calc(50% - 1.5mm) !important;
+    width: calc(50% - 1.5mm) !important;
+    max-width: calc(50% - 1.5mm) !important;
+    min-width: 0 !important;
+    box-sizing: border-box;
+  }
+
+  .timeline-print-right {
+    padding-left: 3mm;
+    border-left: 0.2mm solid #ddd;
+  }
+
+  .timeline-print-date-group {
+    display: block;
+    width: 100%;
+    margin: 0 0 2mm;
+    break-inside: avoid;
+    page-break-inside: avoid;
+    box-sizing: border-box;
+  }
+
+  .timeline-print-date-heading {
+    width: 100%;
+    margin: 0 0 1mm;
+    padding: 1.2mm 1.8mm;
+    background: #edf4f1;
+    border-left: 1mm solid #58a98a;
+    font-size: 8pt;
+    line-height: 1.2;
+    box-sizing: border-box;
+    break-after: avoid;
+    page-break-after: avoid;
+  }
+
+  .timeline-print-date-records {
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .timeline-print-item {
+    display: block !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    margin: 0 0 1mm;
+    padding: 1.3mm 1.7mm;
+    overflow: visible !important;
+    border: 0.25mm solid #aaa;
+    border-radius: 1.2mm;
+    box-sizing: border-box;
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+    -webkit-column-break-inside: avoid;
+  }
+
+  .timeline-print-record-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1mm;
+    font-size: 6.5pt;
+    font-weight: 700;
+    line-height: 1.1;
+  }
+
+  .timeline-print-record-head span {
+    flex: 0 0 auto;
+  }
+
+  .timeline-print-item p {
+    display: block !important;
+    margin: 0.7mm 0 0;
+    overflow: visible !important;
+    font-size: 7pt;
+    line-height: 1.15;
+    overflow-wrap: anywhere;
+    white-space: pre-wrap;
+    -webkit-line-clamp: unset !important;
+    -webkit-box-orient: initial !important;
+  }
+
+  .timeline-print-empty {
+    margin: 20mm 0;
+    color: #555;
+    text-align: center;
+    font-size: 10pt;
+  }
+}
+
+@media screen and (max-width: 520px) {
+  .daily-memo-card,
+  .search-filter-card {
+    padding: 11px 8px;
+  }
+
+  .search-period {
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
+
+  .daily-memo-actions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .daily-memo-actions button {
+    width: 100%;
+  }
+
+  .nav-button {
+    padding-right: 2px;
+    padding-left: 2px;
+    font-size: 0.72rem;
+  }
+}
+
+@media print {
+  .daily-memo-card,
+  #searchPage {
+    display: none !important;
+  }
+
+  .timeline-print-memos {
+    display: block;
+    margin-top: 4mm;
+    padding-top: 3mm;
+    border-top: 0.3mm solid #777;
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  .timeline-print-memos h2 {
+    margin: 0 0 2mm;
+    font-size: 10pt;
+  }
+
+  .timeline-print-memo {
+    margin-bottom: 2mm;
+    padding: 2mm;
+    border: 0.25mm solid #aaa;
+    border-radius: 1.2mm;
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  .timeline-print-memo h3 {
+    margin: 0 0 1mm;
+    font-size: 7.5pt;
+  }
+
+  .timeline-print-memo p {
+    margin: 0;
+    font-size: 7.5pt;
+    line-height: 1.35;
+    overflow-wrap: anywhere;
+    white-space: pre-wrap;
+  }
+}
+
+/* 日付ごとのメモ */
+
+.daily-memo-card {
+  width: 100%;
+  margin-bottom: 18px;
+  padding: 14px;
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-sizing: border-box;
+}
+
+.daily-memo-card label {
+  margin: 0 0 7px;
+}
+
+#dailyMemo {
+  width: 100%;
+  min-height: 88px;
+  max-height: none;
+  overflow-y: hidden;
+  resize: none;
+  box-sizing: border-box;
+}
+
+#dailyMemo:disabled {
+  color: var(--muted);
+  background: #f1f4f2;
+}
+
+.daily-memo-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 9px;
+}
+
+.daily-memo-actions p {
+  min-height: 1.3em;
+  margin: 0;
+  color: var(--main-dark);
+  font-size: 0.88rem;
+}
+
+.daily-memo-actions button {
+  flex: 0 0 auto;
+}
+
+/* 検索画面 */
+
+.search-filter-card {
+  width: 100%;
+  margin-bottom: 18px;
+  padding: 14px;
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-sizing: border-box;
+}
+
+.search-period {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.search-filter-card > label {
+  margin: 0 0 7px;
+}
+
+.search-filter-card label[for="searchMood"] {
+  margin-top: 14px;
+}
+
+.search-filter-card input[type="search"],
+.search-filter-card select {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.search-filter-card select {
+  min-height: 44px;
+  padding: 10px;
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  font: inherit;
+}
+
+.search-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.search-result-item {
+  margin-bottom: 12px;
+  padding: 16px;
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+}
+
+@media screen and (max-width: 520px) {
+  .daily-memo-card,
+  .search-filter-card {
+    padding: 11px 8px;
+  }
+
+  .search-period {
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
+}
+
+.pending-plan {
+  border: 2px solid #d85050;
+  background: #fff3f2;
+}
+
+.pending-plan::before {
+  background: #d85050 !important;
+}
+
+.plan-badge {
+  color: #aa2929;
+  background: #ffe0de;
+  border-radius: 8px;
+  padding: 4px 10px;
+  font-weight: 700;
+}
+
+.plan-list-item {
+  padding: 12px;
+  margin: 10px 0;
+  border: 1px solid #e4b5b2;
   border-radius: 10px;
-  background: #f8fbff;
-  text-align: left;
+  overflow-wrap: anywhere;
+}
+
+.plan-list-item p {
+  margin: 6px 0;
+}
+
+#planPage select,
+#completePanel select,
+#planTime,
+#completeTime {
+  width: 100%;
+  min-height: 44px;
+  padding: 10px;
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  background: white;
+  font: inherit;
+  box-sizing: border-box;
+}
+
+.complete-activity {
+  margin: 8px 0 14px;
+  font-weight: 700;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
+
+#planPage #planTime {
+  display: block !important;
+  width: calc(100% - 6px) !important;
+  max-width: calc(100% - 6px) !important;
+  min-width: 0 !important;
+  margin-right: auto !important;
+  margin-left: auto !important;
+  padding: 10px !important;
+  box-sizing: border-box !important;
+  text-align: center !important;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+#planPage #planTime::-webkit-date-and-time-value {
+  width: 100% !important;
+  min-width: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  text-align: center !important;
+}
+
+#planPage label,
+#completePanel label {
+  display: block;
+  margin-top: 14px;
+}
+
+#completePanel {
+  margin: 15px 0;
+}
+
+@media print {
+  #planPage,
+  #completePanel {
+    display: none !important;
+  }
+}
+
+/* 期間指定の1日1ページ印刷 */
+
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+}
+
+.header-print-button {
+  padding: 7px 12px;
+  border: 1px solid white;
+  border-radius: 8px;
+  background: white;
+  color: var(--main-dark);
+  font-weight: 700;
+}
+
+.print-dialog-card {
+  width: min(420px, calc(100vw - 28px));
+  padding: 22px;
+  background: white;
+  border-radius: 14px;
+  box-shadow: var(--shadow);
+}
+
+.print-dialog-card label {
+  margin-top: 14px;
+}
+
+.print-dialog-card .form-actions {
+  margin-top: 16px;
+}
+
+#dailyPrintRoot {
+  display: none;
+}
+
+@media print {
+  @page {
+    size: A4 portrait;
+    margin: 8mm;
+  }
+
+  body.print-daily {
+    margin: 0;
+    min-width: 0;
+    background: white;
+  }
+
+  body.print-daily > .app-header,
+  body.print-daily > main,
+  body.print-daily > .bottom-nav,
+  body.print-daily > #printDialog {
+    display: none !important;
+  }
+
+  body.print-daily > #dailyPrintRoot {
+    display: block !important;
+  }
+
+  .daily-print-page {
+    display: grid;
+    grid-template-rows: 9mm 60mm minmax(0, 1fr) 29mm;
+    gap: 3mm;
+    width: 194mm;
+    height: 268mm;
+    margin: 0 auto;
+    overflow: hidden;
+    color: #151515;
+    background: white;
+    break-after: page;
+    page-break-after: always;
+    box-sizing: border-box;
+  }
+
+  .daily-print-page:last-child {
+    break-after: auto;
+    page-break-after: auto;
+  }
+
+  .daily-print-page h1 {
+    margin: 0;
+    text-align: center;
+    font-size: 15pt;
+    font-weight: 500;
+    line-height: 9mm;
+  }
+
+  .daily-print-graph {
+    border: 1px solid #777;
+    padding: 2mm 4mm;
+    overflow: hidden;
+  }
+
+  .daily-print-graph h2 {
+    margin: 0;
+    text-align: center;
+    font-size: 11pt;
+    line-height: 5mm;
+  }
+
+  .daily-print-graph svg {
+    display: block;
+    width: 100%;
+    height: 49mm;
+  }
+
+  .daily-print-graph svg text {
+    fill: #333;
+    font-size: 12px;
+  }
+
+  .daily-print-columns {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 6mm;
+    min-height: 0;
+  }
+
+  .daily-print-column {
+    min-width: 0;
+    min-height: 0;
+    overflow: hidden;
+    border: 1px solid #777;
+    padding: 2mm 3mm;
+  }
+
+  .daily-print-column:first-child {
+    border-right: 1px solid #777;
+  }
+
+  .daily-print-list {
+    font-size: var(--daily-record-font, 8pt);
+    line-height: 1.15;
+  }
+
+  .daily-print-record {
+    padding: 0.8mm 0;
+    border-bottom: 1px solid #ccc;
+    break-inside: avoid;
+  }
+
+  .daily-print-record-heading {
+    display: flex;
+    justify-content: space-between;
+    gap: 2mm;
+  }
+
+  .daily-print-record p {
+    margin: 1mm 0 0;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+  }
+
+  .daily-print-empty {
+    color: #555;
+    text-align: center;
+  }
+
+  .daily-print-memo {
+    min-height: 0;
+    overflow: hidden;
+    border: 1px solid #777;
+    padding: 2mm 3mm;
+  }
+
+  .daily-print-memo h2 {
+    margin: 0 0 1mm;
+    text-align: center;
+    font-size: 11pt;
+  }
+
+  .daily-print-memo p {
+    margin: 0;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    font-size: 8pt;
+    line-height: 1.2;
+  }
+}
+
+/* ヘッダーとデータ移行 */
+
+.app-header {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr) minmax(0, 1fr);
+  gap: 0;
+  padding: 10px 12px;
+  text-align: center;
+}
+
+.app-header h1 {
+  min-width: 0;
+  font-size: clamp(1rem, 4vw, 1.35rem);
+  white-space: nowrap;
+  align-self: center;
+}
+
+.header-print-button,
+.header-transfer-button {
+  width: calc(100% - 6px);
+  min-width: 0;
+  margin: 0 auto;
+  padding: 8px 2px;
+  border: 1px solid white;
+  border-radius: 8px;
+  background: white;
+  color: var(--main-dark);
+  font-weight: 700;
+}
+
+.transfer-dialog-card {
+  position: relative;
+  width: min(460px, calc(100vw - 28px));
+  max-height: calc(100vh - 32px);
+  overflow-y: auto;
+  padding: 22px;
+  background: white;
+  border-radius: 14px;
+  box-shadow: var(--shadow);
+}
+
+.transfer-dialog-card h2 {
+  padding-right: 28px;
+}
+
+.transfer-dialog-card p {
+  line-height: 1.6;
+}
+
+.transfer-close-button {
+  position: absolute;
+  top: 12px;
+  right: 14px;
+  border: 0;
+  background: transparent;
+  color: var(--text);
+  font-size: 1.7rem;
+  line-height: 1;
+}
+
+@media print {
+  #transferDialog {
+    display: none !important;
+  }
+}
+
+
+/* お知らせポップアップ */
+
+.notice-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.notice-panel {
+  width: min(480px, 100%);
+  max-height: 85vh;
+  overflow-y: auto;
+  padding: 22px;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.2);
+}
+
+.notice-panel > h2 {
+  margin: 0 0 18px;
+  text-align: center;
+  font-size: 1.3rem;
+}
+
+.notice-item {
+  padding: 15px 0;
+  border-top: 1px solid #ddd;
+}
+
+.notice-item h3 {
+  margin: 0 0 12px;
+  font-size: 1.05rem;
+}
+
+.notice-item p {
+  margin: 0 0 18px;
+  line-height: 1.7;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.notice-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+
+.notice-actions button {
+  min-height: 44px;
+  padding: 10px;
+  border-radius: 9px;
   font-weight: bold;
 }
 
-.app-common-option span {
-  font-size: 22px;
+.notice-actions button:first-child {
+  color: #397c65;
+  background: #e9f5f0;
+  border: 1px solid #58a98a;
 }
 
-#app-share-url {
+.notice-actions button:last-child {
+  color: white;
+  background: #58a98a;
+  border: 1px solid #58a98a;
+}
+
+
+/* =========================================
+   気分設定・入力方法
+========================================= */
+
+/* 気分のタイトルと設定ボタン */
+.mood-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.mood-title-row legend {
+  margin: 0;
+  padding: 0;
+  font-weight: 700;
+}
+
+.mood-title-row .secondary-button {
+  flex: 0 0 auto;
+  min-height: 38px;
+  padding: 7px 12px;
+  font-size: 0.85rem;
+}
+
+/* 気分設定パネル */
+.mood-settings-panel {
+  margin-top: 16px;
+  padding: 18px;
+  background: #f8fcfa;
+  border: 1px solid #b9d8cb;
+  border-radius: 14px;
+}
+
+.mood-settings-panel h3 {
+  margin: 0 0 16px;
+  font-size: 1.1rem;
+  color: var(--main-dark);
+}
+
+/* 最小値・最大値・間隔 */
+.mood-setting-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.mood-setting-grid label {
+  min-width: 0;
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.mood-setting-grid input {
   width: 100%;
-  min-height: 42px;
-  padding: 8px;
-  border: 1px solid #9faec3;
-  border-radius: 8px;
-  font-size: 13px;
+  min-width: 0;
+  margin-top: 7px;
+  padding: 10px 8px;
+  font-size: 1rem;
 }
 
-.app-common-qr {
+/* 入力方法の選択 */
+#moodMethod {
   display: block;
-  width: 200px;
-  height: 200px;
-  max-width: 100%;
-  margin: 14px auto;
+  width: 100%;
+  min-height: 46px;
+  margin-top: 8px;
+  padding: 10px 12px;
+  color: var(--text);
+  background: white;
+  border: 1.5px solid #b9c9c2;
+  border-radius: 9px;
+  font: inherit;
+}
+
+/* =========================================
+   ボタン形式
+========================================= */
+
+#moodButtons.mood-buttons {
+  display: grid;
+  grid-template-columns: repeat(
+    auto-fit,
+    minmax(55px, 1fr)
+  );
+  gap: 8px;
+  width: 100%;
+}
+
+#moodButtons.mood-buttons button {
+  min-height: 46px;
+  padding: 8px 5px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  border-radius: 9px;
+  overflow-wrap: anywhere;
+}
+
+#moodButtons.mood-buttons button.selected {
+  color: white;
+  background: var(--main);
+  border-color: var(--main-dark);
+}
+
+/* =========================================
+   キーボード入力
+========================================= */
+
+#moodButtons .mood-number-input {
+  width: 100%;
+  min-height: 48px;
+  padding: 12px;
+  font-size: 1.1rem;
+  text-align: center;
+  border: 1.5px solid #b9c9c2;
+  border-radius: 9px;
+}
+
+#moodButtons .mood-number-input:focus {
+  border-color: var(--main);
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(88,169,138,0.15);
+}
+
+/* =========================================
+   プルダウン形式
+========================================= */
+
+#moodButtons .mood-select {
+  width: 100%;
+  min-height: 48px;
+  padding: 10px 12px;
+  font-size: 1rem;
+  color: var(--text);
+  background: white;
+  border: 1.5px solid #b9c9c2;
+  border-radius: 9px;
+}
+
+/* =========================================
+   スライダー形式
+========================================= */
+
+#moodButtons .mood-slider-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  padding: 10px 0;
+}
+
+#moodButtons .mood-slider {
+  width: 100%;
+  height: 10px;
+  accent-color: var(--main);
+  cursor: pointer;
+}
+
+#moodButtons .mood-slider-value {
+  font-size: 1.2rem;
+  font-weight: 700;
+  text-align: center;
+  color: var(--main-dark);
+}
+
+#moodButtons .mood-slider-range {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+/* =========================================
+   気分の説明・エラー
+========================================= */
+
+#moodGuide {
+  margin: 10px 0 0;
+  font-size: 0.85rem;
+  line-height: 1.6;
+  color: var(--muted);
+}
+
+#moodSettingsError {
+  margin: 12px 0 0;
+  min-height: 1.2em;
+  color: var(--danger);
+  font-size: 0.85rem;
+}
+
+/* =========================================
+   グラフの表示方式切り替え
+========================================= */
+
+#moodGraphMode {
+  display: block;
+  width: 100%;
+  min-height: 46px;
+  margin: 8px 0 12px;
+  padding: 10px 12px;
+  font: inherit;
+  color: var(--text);
+  background: white;
+  border: 1.5px solid #b9c9c2;
+  border-radius: 9px;
+}
+
+/* =========================================
+   検索画面の気分入力
+========================================= */
+
+#searchMood {
+  width: 100%;
+  min-height: 46px;
+  padding: 10px 12px;
+  font-size: 1rem;
+}
+
+/* =========================================
+   スマートフォン向け
+========================================= */
+
+@media (max-width: 480px) {
+  .mood-settings-panel {
+    padding: 14px;
+  }
+
+  .mood-setting-grid {
+    gap: 7px;
+  }
+
+  .mood-setting-grid input {
+    padding: 9px 6px;
+    font-size: 0.95rem;
+  }
+
+  #moodButtons.mood-buttons {
+    grid-template-columns: repeat(
+      auto-fit,
+      minmax(48px, 1fr)
+    );
+    gap: 6px;
+  }
+
+  #moodButtons.mood-buttons button {
+    min-height: 44px;
+    font-size: 0.9rem;
+  }
+}
+
+/* 印刷時は設定パネルを非表示 */
+@media print {
+  .mood-settings-panel,
+  .mood-title-row .secondary-button,
+  #moodGraphMode {
+    display: none !important;
+  }
+}
+
+/* 予定完了時の気分入力 */
+
+#completeMoodContainer {
+  margin-top: 10px;
+}
+
+#completeMoodContainer.mood-single-input {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+#completeMoodContainer.mood-single-input input,
+#completeMoodContainer.mood-single-input select {
+  flex: 1;
+  min-width: 0;
+}
+
+#completeMoodContainer output {
+  min-width: 50px;
+  font-weight: 700;
+  text-align: center;
+}
+
+/* =========================================
+   お知らせ
+========================================= */
+
+.notices-panel {
+  margin: 0 0 18px;
+}
+
+.notice-item {
+  margin-bottom: 10px;
+  padding: 14px 16px;
+  background: #fff8e6;
+  border: 1px solid #e9d397;
+  border-left: 5px solid #d5a33d;
+  border-radius: 10px;
+}
+
+.notice-item h3 {
+  margin: 0 0 7px;
+  font-size: 1rem;
+  color: #805b16;
+}
+
+.notice-item p {
+  margin: 0;
+  font-size: 0.9rem;
+  line-height: 1.7;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+@media print {
+  .notices-panel {
+    display: none !important;
+  }
+}
+
+/* =========================================
+   気分入力欄の拡大
+   プルダウン・キーボード・スライダー
+========================================= */
+
+/* 1つの入力欄を横幅いっぱいに表示 */
+#moodButtons.mood-single-input,
+#completeMoodContainer.mood-single-input {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  min-height: 64px;
+}
+
+/* プルダウン・キーボード入力 */
+#moodButtons.mood-single-input input:not([type="range"]),
+#moodButtons.mood-single-input select,
+#completeMoodContainer.mood-single-input input:not([type="range"]),
+#completeMoodContainer.mood-single-input select {
+  flex: 1;
+  width: 100%;
+  min-width: 0;
+  height: 56px;
+  padding: 10px 14px;
+  font-size: 20px;
+  border-radius: 12px;
+}
+
+/* スライダー本体 */
+#moodButtons input[type="range"],
+#completeMoodContainer input[type="range"] {
+  flex: 1;
+  width: 100%;
+  min-width: 0;
+  height: 56px;
+  padding: 0;
+  margin: 0;
+  border: none;
+  background: transparent;
+  box-shadow: none;
+  accent-color: #397c65;
+  cursor: pointer;
+  touch-action: pan-x;
+}
+
+/* スライダーのつまみ（Chrome・Safari・iPhone） */
+#moodButtons input[type="range"]::-webkit-slider-thumb,
+#completeMoodContainer input[type="range"]::-webkit-slider-thumb {
+  width: 32px;
+  height: 32px;
+}
+
+/* スライダーのつまみ（Firefox） */
+#moodButtons input[type="range"]::-moz-range-thumb,
+#completeMoodContainer input[type="range"]::-moz-range-thumb {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #397c65;
+  border: 2px solid white;
+}
+
+/* スライダーの数値表示 */
+#moodButtons output,
+#completeMoodContainer output {
+  flex: 0 0 72px;
+  min-width: 72px;
+  padding: 10px 4px;
+  font-size: 22px;
+  font-weight: 700;
+  text-align: center;
+  border-radius: 10px;
+  background: #e9f5f0;
+  color: #397c65;
+}
+
+/* ========================================
+   共通設定画面
+======================================== */
+
+.app-settings-list {
+  display: grid;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.app-settings-item {
+  display: grid;
+  grid-template-columns: 36px minmax(0, 1fr) 14px;
+  align-items: center;
+  gap: 10px;
+
+  width: 100%;
+  min-height: 76px;
+  padding: 12px;
+
+  text-align: left;
+  color: var(--text);
+  background: #f7faf8;
+
+  border: 1px solid var(--border);
+  border-radius: 12px;
+
+  font-weight: 700;
+}
+
+.app-settings-item small {
+  display: block;
+  margin-top: 4px;
+
+  color: var(--muted);
+  font-size: 0.76rem;
+  font-weight: 400;
+}
+
+.app-settings-symbol {
+  font-size: 1.5rem;
+  color: var(--main-dark);
+  text-align: center;
+}
+
+.app-settings-card .form-actions {
+  flex-wrap: wrap;
+}
+
+.app-settings-card .form-actions button {
+  flex: 1 1 125px;
+}
+
+/* QRコード */
+.app-share-qr {
+  display: flex;
+  justify-content: center;
+  margin-top: 18px;
+}
+
+.app-share-qr img {
+  width: min(220px, 100%);
+  aspect-ratio: 1;
   object-fit: contain;
 }
 
-/* 共通アプリ一覧の右下固定ボタンを隠す */
+/* 共通アプリ一覧の右下ボタンを隠す */
 #shared-app-menu-button {
   display: none !important;
 }
 
+/* 印刷時は設定画面を表示しない */
 @media print {
-  .app-common-modal,
+  #appSettingsDialog,
+  #appShareDialog,
   #shared-app-menu-root {
     display: none !important;
   }
-}
-
-/* 体調チェックの見出し位置を調整 */
-
-.condition-heading-row {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
-    align-items: center;
-    gap: 8px;
-}
-
-.condition-heading-row h2 {
-    grid-column: 1;
-    text-align: center;
-    margin: 0;
-}
-
-.item-settings-button {
-    position: static;
-    transform: none;
-    grid-column: 2;
-    justify-self: end;
-}
-/* アプリ2：時計と設定ボタンの配置 */
-.record-title-row {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
-    align-items: center;
-    gap: 8px;
-    margin: 10px 0 20px;
-}
-
-/* 淡いラベンダー色のデジタル時計 */
-.record-title-row #current-clock {
-    grid-column: 1;
-    justify-self: center;
-
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-
-    width: fit-content;
-    max-width: 100%;
-    min-width: 0;
-    margin: 0;
-    padding: 12px 16px;
-
-    background: linear-gradient(145deg, #faf8ff, #eae6f7);
-    border: 1px solid #d2cbe6;
-    border-radius: 14px;
-
-    color: #68618d;
-    font-family: "Consolas", "Courier New", monospace;
-    font-size: clamp(24px, 6vw, 44px);
-    font-weight: bold;
-    font-variant-numeric: tabular-nums;
-    letter-spacing: 0.04em;
-    line-height: 1.2;
-    text-align: center;
-    white-space: nowrap;
-
-    text-shadow: 0 0 8px rgba(150, 132, 195, 0.18);
-
-    box-shadow:
-        inset 0 1px 3px rgba(255, 255, 255, 0.9),
-        0 3px 8px rgba(105, 90, 145, 0.1);
-}
-
-.record-title-row .settings-button {
-    grid-column: 2;
-    position: static;
-    transform: none;
-    margin: 0;
-}
-
-@media screen and (max-width: 600px) {
-    .record-title-row {
-        margin: 2px 0 18px;
-    }
-
-    .record-title-row #current-clock {
-        padding: 10px;
-    }
-}
-/* 時計の上に日付を表示 */
-.record-title-row #current-clock {
-    flex-direction: column;
-    gap: 5px;
-}
-
-#current-clock .clock-date {
-    font-family: sans-serif;
-    font-size: 14px;
-    font-weight: 500;
-    letter-spacing: 0.02em;
-    line-height: 1.4;
-}
-
-#current-clock .clock-time {
-    display: block;
-    line-height: 1.2;
-}
-
-@media screen and (max-width: 600px) {
-    #current-clock .clock-date {
-        font-size: 12px;
-    }
-}
-/* 日付と時刻を横一列に表示 */
-.record-title-row #current-clock {
-    flex-direction: row;
-    flex-wrap: nowrap;
-    gap: 8px;
-    padding: 12px 10px;
-    white-space: nowrap;
-}
-
-#current-clock .clock-date {
-    font-size: clamp(10px, 2.5vw, 16px);
-}
-
-#current-clock .clock-time {
-    font-size: clamp(16px, 4vw, 32px);
-    letter-spacing: 0;
 }
