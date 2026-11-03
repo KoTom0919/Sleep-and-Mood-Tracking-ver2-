@@ -1814,3 +1814,14 @@ body.record-view .app {
         white-space: normal;
     }
 }
+
+/* 時計の枠を横に広げる */
+.record-title-row #current-clock {
+    width: 100%;
+    justify-self: stretch;
+}
+
+/* 時計と設定ボタンの間に少し余白をつける */
+.record-title-row {
+    column-gap: 7px;
+}
