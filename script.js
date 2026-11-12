@@ -1584,21 +1584,13 @@ document.addEventListener("DOMContentLoaded", function () {
     open("app-share-modal");
   });
 
-  // ほかのアプリを探す
+
+    // ほかのアプリを探す
   byId("app-other-apps").addEventListener("click", () => {
     close("app-settings-modal");
-
-    const button = byId("shared-app-menu-button");
-
-    if (button) {
-      button.click();
-    } else {
-      alert(
-        "アプリ一覧を読み込めませんでした。" +
-        "App-menuの公開状態を確認してください。"
-      );
-    }
+    window.location.assign("https://kotom0919.github.io/App-menu/");
   });
+
 
   // データを書き出す
   byId("app-export").addEventListener("click", () => {
