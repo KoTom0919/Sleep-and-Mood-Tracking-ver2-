@@ -2,68 +2,93 @@ document.addEventListener("DOMContentLoaded", function () {
     const STORAGE_KEY = "sleepRecords";
     const SETTINGS_KEY = "conditionChecklistSettings";
 
-    const defaultChecklistSettings = {
-        categoryA: {
-            name: "カテゴリーA",
-            items: Array.from({ length: 10 }, function (_, index) {
-                return `項目${index + 1}`;
-            })
-        },
-        categoryB: {
-            name: "カテゴリーB",
-            items: Array.from({ length: 10 }, function (_, index) {
-                return `項目${index + 1}`;
-            })
-        }
-    };
+        function legacyCategory(letter, saved) {
+        return {
+            id: `category-${letter}`,
+            name: saved?.name || `カテゴリー${letter.toUpperCase()}`,
+            items: Array.from({ length: 10 }, (_, index) => ({
+                id: `${letter}${index + 1}`,
+                name: saved?.items?.[index] || `項目${index + 1}`
+            }))
+        };
+    }
 
     function readChecklistSettings() {
+        let saved;
         try {
-            const saved = JSON.parse(localStorage.getItem(SETTINGS_KEY));
-            if (saved && saved.categoryA && saved.categoryB) {
-                return saved;
-            }
+            saved = JSON.parse(localStorage.getItem(SETTINGS_KEY));
         } catch (error) {
             console.error("設定を読み込めませんでした。", error);
         }
-        return JSON.parse(JSON.stringify(defaultChecklistSettings));
+
+        if (Array.isArray(saved?.categories) &&
+            Array.isArray(saved?.standaloneItems)) {
+            return saved;
+        }
+
+        return {
+            categories: [
+                legacyCategory("a", saved?.categoryA),
+                legacyCategory("b", saved?.categoryB)
+            ],
+            standaloneItems: []
+        };
     }
 
     let checklistSettings = readChecklistSettings();
+    const checklistContainer = document.querySelector(".condition-categories");
 
     function renderChecklist() {
-        ["A", "B"].forEach(function (letter) {
-            const lowerLetter = letter.toLowerCase();
-            const category = checklistSettings[`category${letter}`];
-            const list = document.getElementById(
-                `category-${lowerLetter}-list`
-            );
+        checklistContainer.replaceChildren();
 
-            document.getElementById(
-                `category-${lowerLetter}-heading`
-            ).textContent = category.name;
+        function appendGroup(name, items) {
+            const section = document.createElement("section");
+            section.className = "condition-category";
 
-            document.getElementById(
-                `list-category-${lowerLetter}-heading`
-            ).textContent = category.name;
+            const heading = document.createElement("h3");
+            heading.textContent = name;
 
-            list.innerHTML = "";
+            const list = document.createElement("div");
+            list.className = "condition-checklist";
 
-            category.items.forEach(function (itemName, index) {
+            for (const item of items) {
                 const label = document.createElement("label");
                 label.className = "symptom-item";
 
-                const span = document.createElement("span");
-                span.textContent = itemName;
+                const text = document.createElement("span");
+                text.textContent = item.name;
 
                 const input = document.createElement("input");
                 input.type = "checkbox";
-                input.dataset.condition = `${lowerLetter}${index + 1}`;
+                input.dataset.condition = item.id;
 
-                label.append(span, input);
-                list.appendChild(label);
-            });
-        });
+                label.append(text, input);
+                list.append(label);
+            }
+
+            section.append(heading, list);
+            checklistContainer.append(section);
+        }
+
+        for (const category of checklistSettings.categories) {
+            if (!category.archived) appendGroup(category.name, category.items);
+        }
+
+        const standaloneItems = checklistSettings.standaloneItems.filter(
+            item => !item.archived
+        );
+        if (standaloneItems.length) appendGroup("体調項目", standaloneItems);
+    }
+
+    function categoryScore(category, condition) {
+        const hasRecord = category.items.some(
+            item => Object.hasOwn(condition, item.id)
+        );
+        if (!hasRecord) return null;
+
+        return category.items.filter(
+            item => conditionIsChecked(condition[item.id])
+        ).length;
     }
 
     renderChecklist();
@@ -415,7 +440,7 @@ document.addEventListener("DOMContentLoaded", function () {
     function saveRecord() {
         records = readRecords();
 
-        const condition = {};
+                const condition = { ...records[selectedDate]?.condition };
         conditionInputs.forEach(function (input) {
             condition[input.dataset.condition] =
                 input.checked ? "○" : "";
@@ -579,6 +604,47 @@ document.addEventListener("DOMContentLoaded", function () {
         listEndDate.value = formatDate(today);
     }
 
+        function updateConditionColumns(dates) {
+        const table = document.getElementById("records-table");
+        const header = table.tHead.rows[0];
+        const colgroup = table.querySelector("colgroup");
+
+        header.querySelectorAll(
+            "#list-category-a-heading, #list-category-b-heading, [data-condition-column]"
+        ).forEach(cell => cell.remove());
+
+        colgroup.querySelectorAll(".condition-column").forEach(col => col.remove());
+
+        function appearsInPeriod(itemIds) {
+            return dates.some(date => {
+                const condition = records[date]?.condition || {};
+                return itemIds.some(id => Object.hasOwn(condition, id));
+            });
+        }
+
+        const categories = checklistSettings.categories.filter(category =>
+            !category.archived || appearsInPeriod(category.items.map(item => item.id))
+        );
+        const standaloneItems = checklistSettings.standaloneItems.filter(item =>
+            !item.archived || appearsInPeriod([item.id])
+        );
+
+        for (const item of [...categories, ...standaloneItems]) {
+            const cell = document.createElement("th");
+            cell.scope = "col";
+            cell.dataset.conditionColumn = "";
+            cell.textContent = item.name;
+            header.insertBefore(cell, header.lastElementChild);
+
+            const col = document.createElement("col");
+            col.className = "condition-column";
+            colgroup.insertBefore(col, colgroup.lastElementChild);
+        }
+
+        return { categories, standaloneItems };
+    }
+
+
     function renderRecordsTable() {
         records = readRecords();
 
@@ -602,6 +668,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 );
             })
             .sort();
+                    const { categories, standaloneItems } = updateConditionColumns(dates);
 
         if (dates.length === 0) {
             noRecordsMessage.textContent =
@@ -630,26 +697,16 @@ document.addEventListener("DOMContentLoaded", function () {
                 record.mood === 0 || record.mood ? record.mood : ""
             );
 
-            const categoryACount = Array.from(
-                { length: 10 },
-                function (_, index) {
-                    return `a${index + 1}`;
-                }
-            ).filter(function (name) {
-                return conditionIsChecked(condition[name]);
-            }).length;
+                        for (const category of categories) {
+                createTableCell(row, categoryScore(category, condition) ?? "");
+            }
 
-            const categoryBCount = Array.from(
-                { length: 10 },
-                function (_, index) {
-                    return `b${index + 1}`;
-                }
-            ).filter(function (name) {
-                return conditionIsChecked(condition[name]);
-            }).length;
-
-            createTableCell(row, categoryACount);
-            createTableCell(row, categoryBCount);
+            for (const item of standaloneItems) {
+                createTableCell(
+                    row,
+                    conditionIsChecked(condition[item.id]) ? "○" : ""
+                );
+            }
             createTableCell(row, record.memo || "", "memo-cell");
 
             recordsTableBody.appendChild(row);
@@ -854,43 +911,31 @@ document.addEventListener("DOMContentLoaded", function () {
             return convertSatisfactionToNumber(record.sleepSatisfaction);
         });
 
-        const categoryAValues = dates.map(function (date) {
-            const record = records[date] || {};
-            const condition = record.condition || {};
+                const categoryDatasets = checklistSettings.categories.flatMap(
+            (category, index) => {
+                const data = dates.map(date =>
+                    categoryScore(category, records[date]?.condition || {})
+                );
 
-            return checklistSettings.categoryA.items.reduce(
-                function (total, itemName, index) {
-                    const key = `a${index + 1}`;
-                    return total + (
-                        conditionIsChecked(condition[key]) ? 1 : 0
-                    );
-                },
-                0
-            );
-        });
+                if (category.archived && data.every(value => value === null)) {
+                    return [];
+                }
 
-        const categoryBValues = dates.map(function (date) {
-            const record = records[date] || {};
-            const condition = record.condition || {};
-
-            return checklistSettings.categoryB.items.reduce(
-                function (total, itemName, index) {
-                    const key = `b${index + 1}`;
-                    return total + (
-                        conditionIsChecked(condition[key]) ? 1 : 0
-                    );
-                },
-                0
-            );
-        });
-
-        const categoryMaximum = Math.max(
-            1,
-            checklistSettings.categoryA.items.length,
-            checklistSettings.categoryB.items.length,
-            ...categoryAValues,
-            ...categoryBValues
+                const color = `hsl(${Math.round(index * 137.508) % 360}, 64%, 40%)`;
+                return [{
+                    label: category.name,
+                    data,
+                    borderColor: color,
+                    backgroundColor: color,
+                    borderWidth: 3,
+                    pointRadius: 4,
+                    pointHoverRadius: 6,
+                    tension: 0.15,
+                    spanGaps: false
+                }];
+            }
         );
+
 
         destroyTrendCharts();
 
@@ -980,47 +1025,19 @@ document.addEventListener("DOMContentLoaded", function () {
             options: createChartOptions(0, 3, 1, "睡眠満足度")
         });
 
-        const categoryOptions = createChartOptions(
-            0,
-            categoryMaximum,
-            1,
-            "チェック数"
-        );
-
+                const categoryOptions = createChartOptions(0, 10, 1, "合計点");
         categoryOptions.plugins.legend.display = true;
         categoryOptions.plugins.tooltip.displayColors = true;
 
         categoryChart = new Chart(categoryChartCanvas, {
             type: "line",
             data: {
-                labels: labels,
-                datasets: [
-                    {
-                        label: checklistSettings.categoryA.name,
-                        data: categoryAValues,
-                        borderColor: "#4472c4",
-                        backgroundColor: "#4472c4",
-                        borderWidth: 3,
-                        pointRadius: 4,
-                        pointHoverRadius: 6,
-                        tension: 0.15,
-                        spanGaps: false
-                    },
-                    {
-                        label: checklistSettings.categoryB.name,
-                        data: categoryBValues,
-                        borderColor: "#ed7d31",
-                        backgroundColor: "#ed7d31",
-                        borderWidth: 3,
-                        pointRadius: 4,
-                        pointHoverRadius: 6,
-                        tension: 0.15,
-                        spanGaps: false
-                    }
-                ]
+                labels,
+                datasets: categoryDatasets
             },
             options: categoryOptions
         });
+
 
         return true;
     }
@@ -1077,36 +1094,104 @@ document.addEventListener("DOMContentLoaded", function () {
         window.scrollTo(0, 0);
     }
 
+        const checklistEditor = settingsModal.querySelector(".settings-categories");
+    let draftChecklistSettings;
+
     function fillSettingsForm() {
-        categoryAName.value = checklistSettings.categoryA.name;
-        categoryBName.value = checklistSettings.categoryB.name;
+        draftChecklistSettings = JSON.parse(JSON.stringify(checklistSettings));
+        renderChecklistEditor();
+    }
 
-        const categories = [
-            [categoryASettings, checklistSettings.categoryA],
-            [categoryBSettings, checklistSettings.categoryB]
-        ];
+    function renderChecklistEditor() {
+        checklistEditor.replaceChildren();
 
-        categories.forEach(function (categoryData) {
-            const container = categoryData[0];
-            const category = categoryData[1];
+        function addButton(parent, text, onClick) {
+            const button = document.createElement("button");
+            button.type = "button";
+            button.textContent = text;
+            button.addEventListener("click", onClick);
+            parent.append(button);
+        }
 
-            container.innerHTML = "";
+        function addNameInput(parent, labelText, item, maxLength = 40) {
+            const label = document.createElement("label");
+            label.textContent = labelText;
 
-            category.items.forEach(function (itemName, index) {
-                const label = document.createElement("label");
-                label.className = "item-setting";
-
-                const number = document.createElement("span");
-                number.textContent = `${index + 1}.`;
-
-                const input = document.createElement("input");
-                input.type = "text";
-                input.maxLength = 40;
-                input.value = itemName;
-
-                label.append(number, input);
-                container.appendChild(label);
+            const input = document.createElement("input");
+            input.type = "text";
+            input.maxLength = maxLength;
+            input.value = item.name;
+            input.addEventListener("input", () => {
+                item.name = input.value;
             });
+
+            label.append(input);
+            parent.append(label);
+        }
+
+        function addEditorSection() {
+            const section = document.createElement("section");
+            section.className = "settings-category";
+            checklistEditor.append(section);
+            return section;
+        }
+
+        function removeFromInput(item) {
+            item.archived = true;
+            renderChecklistEditor();
+        }
+
+        for (const category of draftChecklistSettings.categories) {
+            if (category.archived) continue;
+
+            const section = addEditorSection();
+            addNameInput(section, "カテゴリー名", category, 30);
+
+            const items = document.createElement("div");
+            items.className = "item-settings";
+
+            category.items.forEach((item, index) => {
+                addNameInput(items, `項目${index + 1}`, item);
+            });
+
+            section.append(items);
+            addButton(section, "このカテゴリーを削除", () => {
+                removeFromInput(category);
+            });
+        }
+
+        const standaloneSection = addEditorSection();
+        const heading = document.createElement("h3");
+        heading.textContent = "単独の体調項目";
+        standaloneSection.append(heading);
+
+        for (const item of draftChecklistSettings.standaloneItems) {
+            if (item.archived) continue;
+
+            const row = document.createElement("div");
+            addNameInput(row, "体調名", item);
+            addButton(row, "削除", () => removeFromInput(item));
+            standaloneSection.append(row);
+        }
+
+        addButton(standaloneSection, "単独項目を追加", () => {
+            draftChecklistSettings.standaloneItems.push({
+                id: crypto.randomUUID(),
+                name: ""
+            });
+            renderChecklistEditor();
+        });
+
+        addButton(addEditorSection(), "カテゴリーを追加", () => {
+            draftChecklistSettings.categories.push({
+                id: crypto.randomUUID(),
+                name: "新しいカテゴリー",
+                items: Array.from({ length: 10 }, (_, index) => ({
+                    id: crypto.randomUUID(),
+                    name: `項目${index + 1}`
+                }))
+            });
+            renderChecklistEditor();
         });
     }
 
@@ -1114,59 +1199,55 @@ document.addEventListener("DOMContentLoaded", function () {
         settingsModal.hidden = true;
     }
 
-    settingsButton.addEventListener("click", function () {
+    settingsButton.addEventListener("click", () => {
         fillSettingsForm();
         settingsModal.hidden = false;
     });
 
     settingsCancel.addEventListener("click", closeSettings);
 
-    settingsModal.addEventListener("click", function (event) {
-        if (event.target === settingsModal) {
-            closeSettings();
-        }
+    settingsModal.addEventListener("click", event => {
+        if (event.target === settingsModal) closeSettings();
     });
 
-    settingsSave.addEventListener("click", function () {
-        function getItems(container) {
-            return [...container.querySelectorAll("input")].map(
-                function (input, index) {
-                    return input.value.trim() || `項目${index + 1}`;
-                }
-            );
+    settingsSave.addEventListener("click", () => {
+        for (const category of draftChecklistSettings.categories) {
+            if (category.archived) continue;
+            category.name = category.name.trim() || "カテゴリー";
+            category.items.forEach((item, index) => {
+                item.name = item.name.trim() || `項目${index + 1}`;
+            });
         }
 
-        checklistSettings = {
-            categoryA: {
-                name: categoryAName.value.trim() || "カテゴリーA",
-                items: getItems(categoryASettings)
-            },
-            categoryB: {
-                name: categoryBName.value.trim() || "カテゴリーB",
-                items: getItems(categoryBSettings)
-            }
-        };
+        const standaloneItems = draftChecklistSettings.standaloneItems.filter(
+            item => !item.archived
+        );
+        if (standaloneItems.some(item => !item.name.trim())) {
+            alert("単独項目の体調名を入力してください。");
+            return;
+        }
+        standaloneItems.forEach(item => {
+            item.name = item.name.trim();
+        });
 
         try {
             localStorage.setItem(
                 SETTINGS_KEY,
-                JSON.stringify(checklistSettings)
+                JSON.stringify(draftChecklistSettings)
             );
         } catch (error) {
-            showMessage("設定を保存できませんでした", "error");
+            alert("設定を保存できませんでした。");
             return;
         }
 
+        checklistSettings = draftChecklistSettings;
         renderChecklist();
-
-        conditionInputs = [
-            ...document.querySelectorAll("[data-condition]")
-        ];
-
+        conditionInputs = [...checklistContainer.querySelectorAll("[data-condition]")];
         loadSelectedRecord();
         closeSettings();
         showMessage("設定を保存しました");
     });
+
 
     editDateButton.addEventListener("click", function () {
         const willOpen = dateMenu.hidden;
@@ -1655,9 +1736,16 @@ document.addEventListener("DOMContentLoaded", function () {
         (
           data.conditionChecklistSettings !== null &&
           (
-            typeof data.conditionChecklistSettings !== "object" ||
-            !data.conditionChecklistSettings.categoryA ||
-            !data.conditionChecklistSettings.categoryB
+                        !(
+              (
+                Array.isArray(data.conditionChecklistSettings?.categoryA?.items) &&
+                Array.isArray(data.conditionChecklistSettings?.categoryB?.items)
+              ) ||
+              (
+                Array.isArray(data.conditionChecklistSettings?.categories) &&
+                Array.isArray(data.conditionChecklistSettings?.standaloneItems)
+              )
+            )
           )
         )
       ) {
