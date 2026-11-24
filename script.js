@@ -1,6 +1,8 @@
 const MOOD_SETTINGS_KEY = "sleepMoodSettings";
 const DEFAULT_MOOD_SETTINGS = { min: -3, max: 3, method: "buttons" };
 const MAX_MOOD_CHOICES = 201;
+const LEGACY_MOOD_SCALE = { min: -3, max: 3 };
+const LEGACY_CATEGORY_TOTAL = 10;
 
 function moodSettingsError(settings) {
     if (!Number.isSafeInteger(settings?.min) || !Number.isSafeInteger(settings?.max) ||
@@ -121,7 +123,8 @@ document.addEventListener("DOMContentLoaded", function () {
         const itemIds = record?.conditionCategoryItems?.[category.id];
         if (!Array.isArray(itemIds) || itemIds.length === 0 ||
             !itemIds.every(id => typeof id === "string" && Object.hasOwn(condition, id))) {
-            return { checked: categoryScore(category, condition), total: null };
+            const checked = categoryScore(category, condition);
+            return { checked, total: LEGACY_CATEGORY_TOTAL, usedDefault: checked !== null };
         }
         return {
             checked: itemIds.filter(id => conditionIsChecked(condition[id])).length,
@@ -1027,20 +1030,22 @@ document.addEventListener("DOMContentLoaded", function () {
         });
 
         const categoryPercentMode = categoryChartMode.value === "percent";
-        let unknownCategoryCount = 0;
+        let defaultCategoryCount = 0;
+        let outOfRangeCategoryCount = 0;
         let highestCategoryTotal = 0;
         const categoryDatasets = checklistSettings.categories.flatMap((category, index) => {
             const points = dates.map(date => categoryGraphPoint(category, records[date]));
             if (category.archived && points.every(point => point.checked === null)) return [];
 
-            const data = points.map(({ checked, total }) => {
+            const data = points.map(({ checked, total, usedDefault }) => {
                 if (checked === null) return null;
                 highestCategoryTotal = Math.max(highestCategoryTotal, checked);
                 if (!categoryPercentMode) return checked;
-                if (total === null) {
-                    unknownCategoryCount++;
+                if (checked > total) {
+                    outOfRangeCategoryCount++;
                     return null;
                 }
+                if (usedDefault) defaultCategoryCount++;
                 return checked / total * 100;
             });
             const color = `hsl(${Math.round(index * 137.508) % 360}, 64%, 40%)`;
@@ -1057,9 +1062,15 @@ document.addEventListener("DOMContentLoaded", function () {
                 spanGaps: false
             }];
         });
-        categoryChartNote.hidden = !categoryPercentMode || unknownCategoryCount === 0;
-        categoryChartNote.textContent = categoryChartNote.hidden ? "" :
-            `当時の項目数が不明な記録が${unknownCategoryCount}点あります。「合計点」で確認できます。`;
+        const categoryNotes = [];
+        if (defaultCategoryCount) {
+            categoryNotes.push(`範囲の記録がない${defaultCategoryCount}点は、0〜10項目として換算しています。`);
+        }
+        if (outOfRangeCategoryCount) {
+            categoryNotes.push(`範囲外の${outOfRangeCategoryCount}点は「合計点」で確認できます。`);
+        }
+        categoryChartNote.hidden = categoryNotes.length === 0;
+        categoryChartNote.textContent = categoryNotes.join(" ");
 
         destroyTrendCharts();
 
@@ -1110,14 +1121,24 @@ document.addEventListener("DOMContentLoaded", function () {
         });
 
         const percentMode = moodChartMode.value === "percent";
-        const moodScales = dates.map(date => records[date]?.moodScale);
+        const savedMoodScales = dates.map(date => records[date]?.moodScale);
+        const moodScales = savedMoodScales.map(scale => scale ?? LEGACY_MOOD_SCALE);
         const percentages = moodValues.map((value, index) => moodPercentage(value, moodScales[index]));
-        const unknownScaleCount = moodValues.filter((value, index) =>
+        const defaultMoodCount = percentages.filter((value, index) =>
+            value !== null && savedMoodScales[index] == null
+        ).length;
+        const outOfRangeMoodCount = moodValues.filter((value, index) =>
             Number.isFinite(value) && percentages[index] === null
         ).length;
-        moodChartNote.hidden = !percentMode || unknownScaleCount === 0;
-        moodChartNote.textContent = moodChartNote.hidden ? "" :
-            `割合で表示できない記録が${unknownScaleCount}件あります。当時の範囲が不明な記録は「記録値」で確認できます。`;
+        const moodNotes = [];
+        if (percentMode && defaultMoodCount) {
+            moodNotes.push(`範囲の記録がない${defaultMoodCount}件は、−3〜3として換算しています。`);
+        }
+        if (percentMode && outOfRangeMoodCount) {
+            moodNotes.push(`換算できない${outOfRangeMoodCount}件は「記録値」で確認できます。`);
+        }
+        moodChartNote.hidden = moodNotes.length === 0;
+        moodChartNote.textContent = moodNotes.join(" ");
 
         const recordedMoods = moodValues.filter(Number.isFinite);
         const moodMin = recordedMoods.reduce((min, value) => Math.min(min, value), moodSettings.min);
@@ -1134,8 +1155,9 @@ document.addEventListener("DOMContentLoaded", function () {
                     const value = moodValues[dataIndex];
                     const scale = moodScales[dataIndex];
                     const percent = percentages[dataIndex];
-                    if (percent === null) return `気分 ${value}（当時の範囲は不明）`;
-                    const raw = `気分 ${value}（${scale.min}〜${scale.max}）`;
+                    if (percent === null) return `気分 ${value}（割合は換算対象外）`;
+                    const scaleLabel = savedMoodScales[dataIndex] == null ? "既定 " : "";
+                    const raw = `気分 ${value}（${scaleLabel}${scale.min}〜${scale.max}）`;
                     return percentMode ? `${Number(percent.toFixed(1))}% ｜ ${raw}` : raw;
                 }
             }
@@ -1193,8 +1215,10 @@ document.addEventListener("DOMContentLoaded", function () {
         }
         categoryOptions.plugins.tooltip.callbacks = {
             label: ({ dataset, dataIndex, parsed }) => {
-                const { checked, total } = dataset.points[dataIndex];
-                const count = total === null ? `${checked}点（当時の項目数は不明）` : `${checked} / ${total}項目`;
+                const { checked, total, usedDefault } = dataset.points[dataIndex];
+                const count = usedDefault && !categoryPercentMode
+                    ? `${checked}点`
+                    : `${checked} / ${total}項目${usedDefault ? "（既定の範囲）" : ""}`;
                 const value = categoryPercentMode ? `${Number(parsed.y.toFixed(1))}% ｜ ${count}` : count;
                 return `${dataset.label}：${value}`;
             }
