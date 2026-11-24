@@ -1825,3 +1825,461 @@ body.record-view .app {
 .record-title-row {
     column-gap: 7px;
 }
+
+/* 気分の入力と設定 */
+#mood-menu {
+    max-height: min(45vh, 280px);
+    overflow: auto;
+}
+
+.mood-field {
+    box-sizing: border-box;
+    width: 100%;
+    min-width: 0;
+    min-height: 44px;
+    padding: 6px 10px;
+    border: 1px solid #aaa;
+    border-radius: 8px;
+    background: #fff;
+    font: inherit;
+}
+
+.mood-entry {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.mood-entry input[type="range"] {
+    padding: 0;
+}
+
+.mood-entry button,
+.mood-clear {
+    flex-shrink: 0;
+    min-height: 36px;
+    padding: 4px 8px;
+    border: 1px solid #aaa;
+    border-radius: 8px;
+    background: #fff;
+}
+
+.mood-hint {
+    margin: 6px 0;
+    font-size: 0.85em;
+    overflow-wrap: anywhere;
+}
+
+.mood-settings-form {
+    display: grid;
+    gap: 12px;
+}
+
+.mood-settings-form label {
+    display: grid;
+    gap: 4px;
+}
+
+.mood-settings-error {
+    margin: 0;
+    color: #aa2020;
+}
+
+/* 時計と設定ボタンの高さを揃える */
+.record-title-row {
+    --header-control-height: 78px;
+}
+
+.record-title-row #current-clock,
+.record-title-row .settings-button {
+    height: var(--header-control-height);
+}
+
+.record-title-row #current-clock {
+    padding-block: 0;
+}
+
+@media screen and (max-width: 600px) {
+    .record-title-row {
+        --header-control-height: 63px;
+    }
+
+    .record-title-row #current-clock {
+        gap: 2px;
+    }
+
+    #current-clock .clock-date {
+        font-size: clamp(13px, 3.75vw, 16px);
+    }
+
+    #current-clock .clock-time {
+        font-size: clamp(24px, 6vw, 30px);
+        line-height: 1.1;
+    }
+}
+
+/* 記録画面：4つの区画 */
+#record-page .record-card {
+    --section-bg: #edf4ec;
+    --section-edge: #729574;
+    margin: 0 0 8px;
+    padding: 9px 10px;
+    background: var(--section-bg);
+    border-inline-start: 3px solid var(--section-edge);
+    border-radius: 8px;
+    color: #232e45;
+}
+
+#record-page .record-sleep-card {
+    --section-bg: #eaf1fc;
+    --section-edge: #6d8db8;
+}
+
+#record-page .record-condition-card {
+    --section-bg: #f1ebf8;
+    --section-edge: #9276ad;
+}
+
+#record-page .record-memo-card {
+    --section-bg: #faf1e3;
+    --section-edge: #b59565;
+}
+
+#record-page .record-card > h2 {
+    margin: 0 0 6px;
+    padding: 0;
+    color: inherit;
+    text-align: left;
+    font-size: 16px;
+    line-height: 1.4;
+}
+
+#record-page .record-card h3 {
+    margin: 0 0 4px;
+    color: inherit;
+    font-size: 14px;
+    line-height: 1.4;
+    text-align: left;
+}
+
+#record-page .date-navigation {
+    grid-template-columns: 44px minmax(0, 1fr) 44px;
+    gap: 8px;
+}
+
+#record-page .arrow-button,
+#record-page .date-button,
+#record-page .time-display-button,
+#record-page .choice-button,
+#record-page .mood-field:not([type="range"]) {
+    height: 44px;
+    min-height: 44px;
+    border: 1px solid #aebdd4;
+    border-radius: 9px;
+    background: #fff;
+    color: #232e45;
+    font-size: 16px;
+}
+
+#record-page .arrow-button {
+    clip-path: none;
+    padding: 0;
+    font-size: 24px;
+    line-height: 1;
+}
+
+#record-page .record-sleep-times {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    margin: 0 0 8px;
+}
+
+#record-page .time-popup {
+    width: min(260px, calc(100vw - 44px));
+}
+
+#record-page #wake-time-menu {
+    left: auto;
+}
+
+#record-page .record-mood-heading {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 2px 8px;
+    margin-bottom: 4px;
+}
+
+#record-page .record-mood-heading h3,
+#record-page .record-mood-heading .mood-hint {
+    margin: 0;
+}
+
+#record-page .record-mood-heading .mood-hint {
+    color: #526079;
+}
+
+#record-page .mood-clear {
+    margin-top: 4px;
+}
+
+#record-page .record-condition-card .condition-section {
+    margin: 8px 0 0;
+    padding: 7px 0 0;
+    border-top: 1px solid #d5c8e5;
+}
+
+#record-page .record-condition-card .condition-heading-row {
+    margin: 0 0 4px;
+}
+
+#record-page .record-condition-card .condition-categories {
+    gap: 8px;
+    padding: 0;
+    background: transparent;
+}
+
+#record-page .record-memo-card {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 4px 8px;
+}
+
+#record-page .record-memo-card > h2 {
+    display: block;
+    margin: 0;
+    grid-column: 1;
+    grid-row: 1;
+}
+
+#record-page .record-memo-card .memo-open-button {
+    grid-column: 2;
+    grid-row: 1;
+    width: auto;
+    min-height: 36px;
+    padding: 4px 10px;
+    border: 1px solid #aebdd4;
+    border-radius: 8px;
+    background: #fff;
+    color: #232e45;
+    font-size: 14px;
+}
+
+#record-page .record-memo-card .memo-display {
+    grid-column: 1 / -1;
+    margin: 0;
+    padding: 2px 0;
+    border: 0;
+    background: transparent;
+    color: #526079;
+    font-size: 14px;
+}
+
+/* 日付と時刻を同じ書体・サイズで表示 */
+#record-page .record-title-row {
+    margin: 4px 0 10px;
+}
+
+#record-page .record-title-row #current-clock {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-content: center;
+    gap: 2px 10px;
+    padding: 4px 8px;
+    border: 1px solid #c9c9c9;
+    border-radius: 12px;
+    background: #efefef;
+    box-shadow: none;
+    text-shadow: none;
+    color: #303030;
+    font-family: inherit;
+    font-size: clamp(14px, 3.8vw, 19px);
+    font-weight: 650;
+    line-height: 1.3;
+    letter-spacing: 0;
+}
+
+#record-page #current-clock .clock-date,
+#record-page #current-clock .clock-time {
+    font: inherit;
+    letter-spacing: inherit;
+    white-space: nowrap;
+}
+
+/* 体調チェックの項目設定 */
+#settings-modal .checklist-settings-panel {
+    width: min(530px, 100%);
+    padding: 16px;
+}
+
+.checklist-settings-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.checklist-settings-header h2 {
+    flex: 1;
+    min-width: 0;
+    margin: 0;
+    font-size: 19px;
+    text-align: left;
+    overflow-wrap: anywhere;
+}
+
+.checklist-settings-rows,
+.checklist-settings-form {
+    display: grid;
+    gap: 8px;
+}
+
+.checklist-settings-row,
+.checklist-small-button {
+    min-height: 44px;
+    padding: 6px 10px;
+    border: 1px solid #aebdd4;
+    border-radius: 8px;
+    background: #fff;
+    color: #232e45;
+}
+
+.checklist-settings-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    text-align: left;
+    overflow-wrap: anywhere;
+}
+
+.checklist-settings-row [aria-hidden] {
+    flex-shrink: 0;
+}
+
+#checklist-root .checklist-settings-row {
+    background: #f1ebf8;
+    border-inline-start: 3px solid #9276ad;
+}
+
+#checklist-root .checklist-standalone-row {
+    background: #eaf1fc;
+    border-inline-start-color: #6d8db8;
+}
+
+.checklist-add-row {
+    border-style: dashed;
+}
+
+.checklist-settings-form label {
+    display: grid;
+    gap: 4px;
+}
+
+.checklist-settings-form input {
+    min-width: 0;
+    width: 100%;
+    min-height: 44px;
+    padding: 6px 8px;
+    border: 1px solid #aebdd4;
+    border-radius: 8px;
+    font-size: 16px;
+}
+
+.checklist-settings-form fieldset {
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+}
+
+.checklist-settings-form legend {
+    margin-bottom: 5px;
+}
+
+#checklist-item-add {
+    margin-top: 8px;
+}
+
+.checklist-item-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 6px;
+}
+
+.checklist-settings-actions {
+    display: flex;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.checklist-settings-actions .checklist-delete {
+    margin-inline-end: auto;
+}
+
+.checklist-delete {
+    border-color: #c99199;
+    color: #8e2633;
+}
+
+.checklist-save {
+    border-color: #554171;
+    background: #554171;
+    color: #fff;
+}
+
+.checklist-status {
+    margin: 8px 0 0;
+    text-align: left;
+    color: #465676;
+    font-size: 14px;
+}
+
+/* 気分グラフの表示形式 */
+.mood-chart-heading {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 4px 8px;
+    margin-bottom: 8px;
+}
+
+.mood-chart-heading h2 {
+    flex-basis: 100%;
+    margin-bottom: 0;
+}
+
+.mood-chart-heading label,
+.mood-chart-note {
+    color: #465676;
+    font-size: 14px;
+}
+
+#mood-chart-mode,
+#category-chart-mode {
+    min-height: 44px;
+    padding: 5px 8px;
+    border: 1px solid #aebdd4;
+    border-radius: 8px;
+    background: white;
+    color: #232e45;
+    font: inherit;
+}
+
+.mood-chart-note {
+    margin: 2px 0 8px;
+    text-align: center;
+}
+
+@media print {
+    .mood-chart-heading label,
+    #mood-chart-mode,
+    #category-chart-mode,
+    .mood-chart-note {
+        display: none;
+    }
+}

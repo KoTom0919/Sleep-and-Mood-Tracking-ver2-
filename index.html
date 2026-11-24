@@ -6,25 +6,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>睡眠＆体調記録アプリ</title>
 
-    <link rel="stylesheet" href="style.css?v=20261015-settings">
-
-
-    <!-- アプリアイコン -->
+    <link rel="stylesheet" href="style.css?v=20261124-condition-graph">
     <link rel="icon" type="image/png" href="./icon.png">
     <link rel="apple-touch-icon" href="./icon.png">
-
 </head>
 
 <body>
     <main class="app">
-
         <!-- 記録ページ -->
         <section id="record-page" class="page">
             <div class="record-title-row">
                 <h1 class="main-title" id="current-clock" aria-label="現在時刻"></h1>
 
                 <button type="button" id="app-settings-button" class="settings-button">
-
                     <svg class="button-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
                         stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                         <path d="m9 3-1 3-3 1v4l-2 1 2 2v3l3 1 1 3h6l1-3 3-1v-3l2-2-2-1V7l-3-1-1-3Z" />
@@ -34,16 +28,13 @@
                 </button>
             </div>
 
-            <section class="date-section">
-                <h2>編集する日付</h2>
+            <section class="date-section record-card record-date-card" aria-labelledby="record-date-title">
+                <h2 id="record-date-title">記録日</h2>
 
                 <div class="date-navigation">
-                    <button type="button" id="previous-day" class="arrow-button previous-button" aria-label="前日">
-                    </button>
-                    <button type="button" id="edit-date-button" class="date-button">
-                    </button>
-                    <button type="button" id="next-day" class="arrow-button next-button" aria-label="翌日">
-                    </button>
+                    <button type="button" id="previous-day" class="arrow-button previous-button" aria-label="前日">‹</button>
+                    <button type="button" id="edit-date-button" class="date-button"></button>
+                    <button type="button" id="next-day" class="arrow-button next-button" aria-label="翌日">›</button>
                 </div>
 
                 <div id="date-menu" class="popup" hidden>
@@ -56,21 +47,18 @@
                     </div>
 
                     <div class="popup-actions">
-                        <button type="button" id="date-cancel" class="cancel-button">
-                            キャンセル
-                        </button>
-                        <button type="button" id="date-confirm" class="confirm-button">
-                            決定
-                        </button>
+                        <button type="button" id="date-cancel" class="cancel-button">キャンセル</button>
+                        <button type="button" id="date-confirm" class="confirm-button">決定</button>
                     </div>
                 </div>
             </section>
 
-            <!-- 就寝・起床時刻 -->
-            <section class="sleep-section">
-                <div class="two-column">
+            <!-- 睡眠 -->
+            <section class="sleep-section record-card record-sleep-card" aria-labelledby="record-sleep-title">
+                <h2 id="record-sleep-title">睡眠</h2>
+                <div class="two-column record-sleep-times">
                     <div class="time-field">
-                        <h2>昨夜の就寝時刻</h2>
+                        <h3>昨夜の就寝時刻</h3>
                         <button type="button" id="bedtime-button" class="time-display-button bedtime-button">
                             ○○：○○
                         </button>
@@ -80,23 +68,17 @@
                             <input type="text" id="bedtime-input" class="time-input" inputmode="numeric" maxlength="5"
                                 placeholder="例：23:00" autocomplete="off">
 
-                            <button type="button" id="bedtime-now" class="now-button">
-                                現在時刻を入力
-                            </button>
+                            <button type="button" id="bedtime-now" class="now-button">現在時刻を入力</button>
 
                             <div class="time-popup-actions">
-                                <button type="button" id="bedtime-cancel" class="cancel-button">
-                                    キャンセル
-                                </button>
-                                <button type="button" id="bedtime-confirm" class="confirm-button">
-                                    決定
-                                </button>
+                                <button type="button" id="bedtime-cancel" class="cancel-button">キャンセル</button>
+                                <button type="button" id="bedtime-confirm" class="confirm-button">決定</button>
                             </div>
                         </div>
                     </div>
 
                     <div class="time-field">
-                        <h2>本日の起床時刻</h2>
+                        <h3>本日の起床時刻</h3>
                         <button type="button" id="wake-time-button" class="time-display-button wake-button">
                             ○○：○○
                         </button>
@@ -106,97 +88,79 @@
                             <input type="text" id="wake-time-input" class="time-input" inputmode="numeric" maxlength="5"
                                 placeholder="例：07:00" autocomplete="off">
 
-                            <button type="button" id="wake-time-now" class="now-button">
-                                現在時刻を入力
-                            </button>
+                            <button type="button" id="wake-time-now" class="now-button">現在時刻を入力</button>
 
                             <div class="time-popup-actions">
-                                <button type="button" id="wake-time-cancel" class="cancel-button">
-                                    キャンセル
-                                </button>
-                                <button type="button" id="wake-time-confirm" class="confirm-button">
-                                    決定
-                                </button>
+                                <button type="button" id="wake-time-cancel" class="cancel-button">キャンセル</button>
+                                <button type="button" id="wake-time-confirm" class="confirm-button">決定</button>
                             </div>
                         </div>
                     </div>
                 </div>
-            </section>
 
-            <!-- 睡眠満足度・気分 -->
-            <div class="two-column status-row">
-                <section class="choice-section">
-                    <h2>睡眠満足度</h2>
-                    <button type="button" id="satisfaction-button" class="choice-button">
-                        －
-                    </button>
+                <section class="choice-section record-satisfaction">
+                    <h3>睡眠満足度</h3>
+                    <button type="button" id="satisfaction-button" class="choice-button">－</button>
 
                     <div id="satisfaction-menu" class="choice-menu" hidden>
-                        <button type="button" data-value="とてもよく眠れた">
-                            とてもよく眠れた
-                        </button>
-                        <button type="button" data-value="よく眠れた">
-                            よく眠れた
-                        </button>
-                        <button type="button" data-value="あまり眠れていない">
-                            あまり眠れていない
-                        </button>
-                        <button type="button" data-value="ほとんど眠れていない">
-                            ほとんど眠れていない
-                        </button>
+                        <button type="button" data-value="とてもよく眠れた">とてもよく眠れた</button>
+                        <button type="button" data-value="よく眠れた">よく眠れた</button>
+                        <button type="button" data-value="あまり眠れていない">あまり眠れていない</button>
+                        <button type="button" data-value="ほとんど眠れていない">ほとんど眠れていない</button>
                     </div>
                 </section>
 
-                <section class="choice-section">
-                    <h2>気分</h2>
-                    <button type="button" id="mood-button" class="choice-button">
-                        －
-                    </button>
+            </section>
 
-                    <div id="mood-menu" class="choice-menu mood-menu" hidden>
-                        <button type="button" data-value="3">3</button>
-                        <button type="button" data-value="2">2</button>
-                        <button type="button" data-value="1">1</button>
-                        <button type="button" data-value="0">0</button>
-                        <button type="button" data-value="-1">-1</button>
-                        <button type="button" data-value="-2">-2</button>
-                        <button type="button" data-value="-3">-3</button>
+            <!-- 気分・体調 -->
+            <section class="record-card record-condition-card" aria-labelledby="record-condition-title">
+                <h2 id="record-condition-title">気分・体調</h2>
+                <section class="choice-section record-mood">
+                    <div class="record-mood-heading">
+                        <h3>気分</h3>
+                        <p id="mood-range" class="mood-hint"></p>
+                    </div>
+                    <button type="button" id="mood-button" class="choice-button" aria-controls="mood-menu"
+                        aria-expanded="false">－</button>
+                    <div id="mood-menu" class="choice-menu mood-menu" hidden></div>
+                    <select id="mood-select" class="mood-field" aria-label="気分" hidden></select>
+
+                    <form id="mood-entry" class="mood-entry" hidden>
+                        <input id="mood-value" class="mood-field" aria-label="気分" aria-describedby="mood-range" required>
+                        <output id="mood-preview" for="mood-value" hidden></output>
+                        <button type="submit">決定</button>
+                    </form>
+
+                    <button type="button" id="mood-clear" class="mood-clear" hidden>気分を未入力にする</button>
+                </section>
+
+                <section class="condition-section">
+                    <div class="condition-heading-row">
+                        <h3>体調チェック</h3>
+                        <button type="button" id="settings-button" class="item-settings-button">項目設定</button>
+                    </div>
+
+                    <div class="condition-categories">
+                        <div class="condition-category">
+                            <h3 id="category-a-heading">カテゴリーA</h3>
+                            <div id="category-a-list" class="condition-checklist"></div>
+                        </div>
+
+                        <div class="condition-category">
+                            <h3 id="category-b-heading">カテゴリーB</h3>
+                            <div id="category-b-list" class="condition-checklist"></div>
+                        </div>
                     </div>
                 </section>
-            </div>
-
-            <!-- 体調チェック -->
-            <section class="condition-section">
-
-                <div class="condition-heading-row">
-                    <h2>体調チェック</h2>
-                    <button type="button" id="settings-button" class="item-settings-button">
-                        項目設定
-                    </button>
-                </div>
-
-
-                <div class="condition-categories">
-                    <div class="condition-category">
-                        <h3 id="category-a-heading">カテゴリーA</h3>
-                        <div id="category-a-list" class="condition-checklist"></div>
-                    </div>
-
-                    <div class="condition-category">
-                        <h3 id="category-b-heading">カテゴリーB</h3>
-                        <div id="category-b-list" class="condition-checklist"></div>
-                    </div>
-                </div>
             </section>
 
             <!-- メモ -->
-            <section class="memo-section">
+            <section class="memo-section record-card record-memo-card" aria-label="メモ">
                 <h2 id="memo-placeholder">メモ</h2>
                 <textarea id="memo-input" aria-label="メモ"></textarea>
             </section>
 
-            <p id="save-message" class="save-message" role="status" aria-live="polite">
-            </p>
+            <p id="save-message" class="save-message" role="status" aria-live="polite"></p>
 
             <!-- クリア・更新 -->
             <div id="record-action-bar" class="record-action-bar">
@@ -250,9 +214,7 @@
                         <input type="date" id="list-end-date">
                     </label>
 
-                    <button type="button" id="update-list-button" class="update-list-button">
-                        表示
-                    </button>
+                    <button type="button" id="update-list-button" class="update-list-button">表示</button>
                 </div>
             </section>
 
@@ -288,9 +250,7 @@
                 </table>
             </div>
 
-            <p id="no-records-message" class="no-records-message" hidden>
-                記録はありません
-            </p>
+            <p id="no-records-message" class="no-records-message" hidden>記録はありません</p>
         </section>
 
         <!-- 推移ページ -->
@@ -323,9 +283,7 @@
                         <input type="date" id="trend-end-date">
                     </label>
 
-                    <button type="button" id="update-trend-button" class="update-trend-button">
-                        表示
-                    </button>
+                    <button type="button" id="update-trend-button" class="update-trend-button">表示</button>
                 </div>
             </section>
 
@@ -341,14 +299,30 @@
             </section>
 
             <section class="trend-block">
-                <h2>気分の推移</h2>
+                <div class="mood-chart-heading">
+                    <h2>気分の推移</h2>
+                    <label for="mood-chart-mode">表示形式</label>
+                    <select id="mood-chart-mode">
+                        <option value="raw">記録値</option>
+                        <option value="percent">尺度内の位置（％）</option>
+                    </select>
+                </div>
+                <p id="mood-chart-note" class="mood-chart-note" role="status" hidden></p>
                 <div class="chart-area">
                     <canvas id="mood-chart"></canvas>
                 </div>
             </section>
 
             <section class="trend-block">
-                <h2>体調チェック合計値の推移</h2>
+                <div class="mood-chart-heading">
+                    <h2>体調チェックの推移</h2>
+                    <label for="category-chart-mode">表示形式</label>
+                    <select id="category-chart-mode">
+                        <option value="raw">合計点</option>
+                        <option value="percent">チェック割合（％）</option>
+                    </select>
+                </div>
+                <p id="category-chart-note" class="mood-chart-note" role="status" hidden></p>
                 <div class="chart-area">
                     <canvas id="category-chart"></canvas>
                 </div>
@@ -356,37 +330,41 @@
         </section>
     </main>
 
-    <!-- 体調チェック設定 -->
+    <!-- 体調チェックの項目設定 -->
     <div id="settings-modal" class="settings-modal" hidden>
-        <div class="settings-panel" role="dialog" aria-modal="true" aria-labelledby="settings-title">
-            <h2 id="settings-title">体調チェックの設定</h2>
-
-            <div class="settings-categories">
-                <section class="settings-category">
-                    <label>
-                        カテゴリー名
-                        <input type="text" id="category-a-name" maxlength="30">
-                    </label>
-                    <div id="category-a-settings" class="item-settings"></div>
-                </section>
-
-                <section class="settings-category">
-                    <label>
-                        カテゴリー名
-                        <input type="text" id="category-b-name" maxlength="30">
-                    </label>
-                    <div id="category-b-settings" class="item-settings"></div>
-                </section>
+        <div class="settings-panel checklist-settings-panel" role="dialog" aria-modal="true" aria-labelledby="settings-title">
+            <div class="checklist-settings-header">
+                <button type="button" id="checklist-back" class="checklist-small-button" hidden>‹ 戻る</button>
+                <h2 id="settings-title" tabindex="-1">項目設定</h2>
+                <button type="button" id="checklist-close" class="checklist-small-button" aria-label="閉じる">×</button>
             </div>
-
-            <div class="settings-actions">
-                <button type="button" id="settings-cancel" class="cancel-button">
-                    キャンセル
+            <div id="checklist-root" class="checklist-settings-rows">
+                <button type="button" id="checklist-categories-open" class="checklist-settings-row">
+                    カテゴリーの編集 <span aria-hidden="true">›</span>
                 </button>
-                <button type="button" id="settings-save" class="confirm-button">
-                    保存
+                <button type="button" id="checklist-standalone-open" class="checklist-settings-row checklist-standalone-row">
+                    単独項目の編集 <span aria-hidden="true">›</span>
                 </button>
             </div>
+            <div id="checklist-list" class="checklist-settings-rows" hidden></div>
+            <form id="checklist-form" class="checklist-settings-form" hidden>
+                <label><span id="checklist-name-label">名前</span>
+                    <input type="text" id="checklist-name" maxlength="40" required>
+                </label>
+                <fieldset id="checklist-category-fields">
+                    <legend>カテゴリー内の項目</legend>
+                    <div id="checklist-item-rows" class="checklist-settings-rows"></div>
+                    <button type="button" id="checklist-item-add" class="checklist-settings-row checklist-add-row">
+                        ＋ カテゴリー内の項目を追加
+                    </button>
+                </fieldset>
+                <div class="checklist-settings-actions">
+                    <button type="button" id="checklist-entry-delete" class="checklist-small-button checklist-delete" hidden>削除</button>
+                    <button type="button" id="settings-cancel" class="checklist-small-button">キャンセル</button>
+                    <button type="submit" id="settings-save" class="checklist-small-button checklist-save">保存</button>
+                </div>
+            </form>
+            <p id="checklist-status" class="checklist-status" role="status" hidden></p>
         </div>
     </div>
 
@@ -397,6 +375,9 @@
                 <h2 id="app-settings-title">設定</h2>
                 <button type="button" id="app-settings-close" aria-label="閉じる">×</button>
             </div>
+            <button type="button" id="mood-settings-open" class="app-common-option">
+                気分の設定 <span>›</span>
+            </button>
             <button type="button" id="app-data-transfer" class="app-common-option">
                 データの移行 <span>›</span>
             </button>
@@ -404,8 +385,43 @@
                 アプリをシェア <span>›</span>
             </button>
             <button type="button" id="app-other-apps" class="app-common-option">
-                ほかのアプリを探す <span>›</span>
+                ホームページに移動 <span>›</span>
             </button>
+        </div>
+    </div>
+
+    <!-- 気分の設定 -->
+    <div id="mood-settings-modal" class="app-common-modal" hidden>
+        <div class="app-common-panel" role="dialog" aria-modal="true" aria-labelledby="mood-settings-title">
+            <div class="app-common-heading">
+                <h2 id="mood-settings-title">気分の設定</h2>
+                <button type="button" id="mood-settings-close" aria-label="設定に戻る">×</button>
+            </div>
+
+            <form id="mood-settings-form" class="mood-settings-form">
+                <label>
+                    最小値
+                    <input class="mood-field" type="number" id="mood-min" step="1" required>
+                </label>
+
+                <label>
+                    最大値
+                    <input class="mood-field" type="number" id="mood-max" step="1" required>
+                </label>
+
+                <label>
+                    入力方式
+                    <select class="mood-field" id="mood-method">
+                        <option value="buttons">ボタン式</option>
+                        <option value="select">プルダウン式</option>
+                        <option value="slider">スライダー式</option>
+                        <option value="keyboard">キーボード式</option>
+                    </select>
+                </label>
+
+                <p id="mood-settings-error" class="mood-settings-error" role="alert" hidden></p>
+                <button type="submit" class="app-common-option">保存</button>
+            </form>
         </div>
     </div>
 
@@ -417,12 +433,8 @@
                 <button type="button" data-close-app-modal="app-transfer-modal" aria-label="閉じる">×</button>
             </div>
             <p>睡眠・体調の記録と体調チェックの項目設定をまとめて移行します。</p>
-            <button type="button" id="app-export" class="app-common-option">
-                データを書き出す
-            </button>
-            <button type="button" id="app-import" class="app-common-option">
-                データを読み込む
-            </button>
+            <button type="button" id="app-export" class="app-common-option">データを書き出す</button>
+            <button type="button" id="app-import" class="app-common-option">データを読み込む</button>
             <input type="file" id="app-import-file" accept=".json,application/json" hidden>
             <p id="app-transfer-status" role="status"></p>
         </div>
@@ -436,12 +448,8 @@
                 <button type="button" data-close-app-modal="app-share-modal" aria-label="閉じる">×</button>
             </div>
             <input id="app-share-url" type="text" readonly aria-label="共有URL">
-            <button type="button" id="app-copy-url" class="app-common-option">
-                URLをコピー
-            </button>
-            <button type="button" id="app-native-share" class="app-common-option">
-                共有する
-            </button>
+            <button type="button" id="app-copy-url" class="app-common-option">URLをコピー</button>
+            <button type="button" id="app-native-share" class="app-common-option">共有する</button>
             <img id="app-share-qr" class="app-common-qr" alt="アプリのQRコード">
             <p id="app-share-status" role="status"></p>
         </div>
@@ -476,11 +484,9 @@
         </button>
     </nav>
 
-
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://kotom0919.github.io/App-menu/app-menu.js?v=4"></script>
-    <script src="script.js?v=20261103-memo-fix1"></script>
-
+    <script src="script.js?v=20261124-condition-graph"></script>
     <script defer src="https://kotom0919.github.io/App-menu/notices.js"></script>
 </body>
 

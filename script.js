@@ -1,3 +1,39 @@
+const MOOD_SETTINGS_KEY = "sleepMoodSettings";
+const DEFAULT_MOOD_SETTINGS = { min: -3, max: 3, method: "buttons" };
+const MAX_MOOD_CHOICES = 201;
+
+function moodSettingsError(settings) {
+    if (!Number.isSafeInteger(settings?.min) || !Number.isSafeInteger(settings?.max) ||
+        settings.min >= settings.max) {
+        return "最小値と最大値は整数で入力し、最小値を最大値より小さくしてください。";
+    }
+    if (settings.method === "buttons" || settings.method === "select") {
+        return settings.max - settings.min >= MAX_MOOD_CHOICES
+            ? "ボタン式とプルダウン式は201個まで選べます。範囲を狭めるか、入力方式を変更してください。"
+            : "";
+    }
+    return ["slider", "keyboard"].includes(settings.method) ? "" : "入力方式を選んでください。";
+}
+
+function readMoodSettings() {
+    try {
+        const settings = JSON.parse(localStorage.getItem(MOOD_SETTINGS_KEY));
+        if (!moodSettingsError(settings)) return settings;
+    } catch {
+        // 保存済みの設定を読み込めないときは初期設定を使う。
+    }
+    return DEFAULT_MOOD_SETTINGS;
+}
+
+function moodPercentage(value, scale) {
+    if (!Number.isFinite(value) || !Number.isSafeInteger(scale?.min) ||
+        !Number.isSafeInteger(scale?.max) || scale.min >= scale.max ||
+        value < scale.min || value > scale.max) {
+        return null;
+    }
+    return (value - scale.min) / (scale.max - scale.min) * 100;
+}
+
 document.addEventListener("DOMContentLoaded", function () {
     const STORAGE_KEY = "sleepRecords";
     const SETTINGS_KEY = "conditionChecklistSettings";
@@ -71,13 +107,26 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         for (const category of checklistSettings.categories) {
-            if (!category.archived) appendGroup(category.name, category.items);
+            if (!category.archived) appendGroup(category.name, category.items.filter(item => !item.archived));
         }
 
         const standaloneItems = checklistSettings.standaloneItems.filter(
             item => !item.archived
         );
         if (standaloneItems.length) appendGroup("体調項目", standaloneItems);
+    }
+
+    function categoryGraphPoint(category, record) {
+        const condition = record?.condition || {};
+        const itemIds = record?.conditionCategoryItems?.[category.id];
+        if (!Array.isArray(itemIds) || itemIds.length === 0 ||
+            !itemIds.every(id => typeof id === "string" && Object.hasOwn(condition, id))) {
+            return { checked: categoryScore(category, condition), total: null };
+        }
+        return {
+            checked: itemIds.filter(id => conditionIsChecked(condition[id])).length,
+            total: itemIds.length
+        };
     }
 
     function categoryScore(category, condition) {
@@ -128,6 +177,64 @@ document.addEventListener("DOMContentLoaded", function () {
     const satisfactionMenu = document.getElementById("satisfaction-menu");
     const moodButton = document.getElementById("mood-button");
     const moodMenu = document.getElementById("mood-menu");
+    const moodSelect = document.getElementById("mood-select");
+    const moodEntry = document.getElementById("mood-entry");
+    const moodValue = document.getElementById("mood-value");
+    const moodPreview = document.getElementById("mood-preview");
+    const moodRange = document.getElementById("mood-range");
+    const moodClear = document.getElementById("mood-clear");
+    let moodSettings = readMoodSettings();
+
+    function renderMoodChoices() {
+        const { min, max, method } = moodSettings;
+        moodMenu.replaceChildren();
+        moodSelect.replaceChildren(new Option("－", ""));
+        if (method !== "buttons" && method !== "select") return;
+        for (let value = max; value >= min; value--) {
+            if (method === "select") {
+                moodSelect.add(new Option(value, value));
+            } else {
+                const button = document.createElement("button");
+                button.type = "button";
+                button.dataset.value = value;
+                button.textContent = value;
+                moodMenu.append(button);
+            }
+        }
+    }
+
+    function renderMoodInput() {
+        const { min, max, method } = moodSettings;
+        const saved = selectedMood === null ? null : Number(selectedMood);
+        const inRange = Number.isInteger(saved) && saved >= min && saved <= max;
+        const rangeText = min + " ～ " + max;
+        moodButton.hidden = method !== "buttons";
+        moodButton.textContent = selectedMood ?? "－";
+        moodSelect.hidden = method !== "select";
+        moodSelect.value = inRange ? String(saved) : "";
+        moodEntry.hidden = method !== "slider" && method !== "keyboard";
+        moodClear.hidden = selectedMood === null;
+        moodValue.type = method === "slider" ? "range" : "number";
+        moodValue.min = min;
+        moodValue.max = max;
+        moodValue.step = 1;
+        moodValue.value = inRange ? String(saved) : method === "slider" ? String(min) : "";
+        moodPreview.hidden = method !== "slider";
+        moodPreview.value = moodValue.value;
+        moodRange.textContent = saved !== null && !inRange
+            ? "記録済み " + saved + "（現在の範囲 " + rangeText + "）"
+            : rangeText;
+        if (method === "slider" && saved === null) {
+            moodRange.textContent += " ・ 未入力";
+        }
+    }
+
+    function commitMood(value) {
+        selectedMood = value === "" ? null : String(value);
+        closeAllMenus();
+        renderMoodInput();
+        saveRecord({ moodEdited: true });
+    }
 
     let conditionInputs = [
         ...document.querySelectorAll("[data-condition]")
@@ -135,14 +242,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const settingsButton = document.getElementById("settings-button");
     const settingsModal = document.getElementById("settings-modal");
-    const settingsCancel = document.getElementById("settings-cancel");
-    const settingsSave = document.getElementById("settings-save");
-
-    const categoryAName = document.getElementById("category-a-name");
-    const categoryBName = document.getElementById("category-b-name");
-    const categoryASettings = document.getElementById("category-a-settings");
-    const categoryBSettings = document.getElementById("category-b-settings");
-
     const memoInput = document.getElementById("memo-input");
 
     /* メモの文字表示と高さの自動調整 */
@@ -202,8 +301,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const sleepChartCanvas = document.getElementById("sleep-chart");
     const moodChartCanvas = document.getElementById("mood-chart");
+    const moodChartMode = document.getElementById("mood-chart-mode");
+    const moodChartNote = document.getElementById("mood-chart-note");
     const satisfactionChartCanvas = document.getElementById("satisfaction-chart");
     const categoryChartCanvas = document.getElementById("category-chart");
+    const categoryChartMode = document.getElementById("category-chart-mode");
+    const categoryChartNote = document.getElementById("category-chart-note");
 
     function readRecords() {
         try {
@@ -301,8 +404,7 @@ document.addEventListener("DOMContentLoaded", function () {
             selectedMood = null;
         }
 
-        moodButton.textContent =
-            selectedMood === null ? "－" : selectedMood;
+        renderMoodInput();
 
         conditionInputs.forEach(function (input) {
             const conditionName = input.dataset.condition;
@@ -411,6 +513,7 @@ document.addEventListener("DOMContentLoaded", function () {
         wakeTimeMenu.hidden = true;
         satisfactionMenu.hidden = true;
         moodMenu.hidden = true;
+        moodButton.setAttribute("aria-expanded", "false");
     }
 
     function showMessage(message, type = "save") {
@@ -437,7 +540,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }, 250);
     }
 
-    function saveRecord() {
+    function saveRecord({ moodEdited = false, editedConditionId = null } = {}) {
         records = readRecords();
 
                 const condition = { ...records[selectedDate]?.condition };
@@ -457,7 +560,15 @@ document.addEventListener("DOMContentLoaded", function () {
             wakeTime = null;
         }
 
-        const previousRecord = records[selectedDate] || {};
+        const previousRecord = records[selectedDate];
+        const conditionCategoryItems = { ...previousRecord?.conditionCategoryItems };
+        for (const category of checklistSettings.categories) {
+            if (category.archived) continue;
+            const itemIds = category.items.filter(item => !item.archived).map(item => item.id);
+            if (itemIds.length && (!previousRecord || itemIds.includes(editedConditionId))) {
+                conditionCategoryItems[category.id] = itemIds;
+            }
+        }
 
         records[selectedDate] = {
             ...previousRecord,
@@ -467,7 +578,11 @@ document.addEventListener("DOMContentLoaded", function () {
             wakeTime: wakeTime,
             sleepSatisfaction: selectedSatisfaction,
             mood: selectedMood === null ? null : Number(selectedMood),
-            condition: condition,
+            moodScale: moodEdited
+                ? (selectedMood === null ? null : { min: moodSettings.min, max: moodSettings.max })
+                : previousRecord?.moodScale,
+            condition,
+            conditionCategoryItems,
             memo: memoInput.value.trim()
         };
 
@@ -911,31 +1026,40 @@ document.addEventListener("DOMContentLoaded", function () {
             return convertSatisfactionToNumber(record.sleepSatisfaction);
         });
 
-                const categoryDatasets = checklistSettings.categories.flatMap(
-            (category, index) => {
-                const data = dates.map(date =>
-                    categoryScore(category, records[date]?.condition || {})
-                );
+        const categoryPercentMode = categoryChartMode.value === "percent";
+        let unknownCategoryCount = 0;
+        let highestCategoryTotal = 0;
+        const categoryDatasets = checklistSettings.categories.flatMap((category, index) => {
+            const points = dates.map(date => categoryGraphPoint(category, records[date]));
+            if (category.archived && points.every(point => point.checked === null)) return [];
 
-                if (category.archived && data.every(value => value === null)) {
-                    return [];
+            const data = points.map(({ checked, total }) => {
+                if (checked === null) return null;
+                highestCategoryTotal = Math.max(highestCategoryTotal, checked);
+                if (!categoryPercentMode) return checked;
+                if (total === null) {
+                    unknownCategoryCount++;
+                    return null;
                 }
-
-                const color = `hsl(${Math.round(index * 137.508) % 360}, 64%, 40%)`;
-                return [{
-                    label: category.name,
-                    data,
-                    borderColor: color,
-                    backgroundColor: color,
-                    borderWidth: 3,
-                    pointRadius: 4,
-                    pointHoverRadius: 6,
-                    tension: 0.15,
-                    spanGaps: false
-                }];
-            }
-        );
-
+                return checked / total * 100;
+            });
+            const color = `hsl(${Math.round(index * 137.508) % 360}, 64%, 40%)`;
+            return [{
+                label: category.name,
+                data,
+                points,
+                borderColor: color,
+                backgroundColor: color,
+                borderWidth: 3,
+                pointRadius: 4,
+                pointHoverRadius: 6,
+                tension: 0.15,
+                spanGaps: false
+            }];
+        });
+        categoryChartNote.hidden = !categoryPercentMode || unknownCategoryCount === 0;
+        categoryChartNote.textContent = categoryChartNote.hidden ? "" :
+            `当時の項目数が不明な記録が${unknownCategoryCount}点あります。「合計点」で確認できます。`;
 
         destroyTrendCharts();
 
@@ -985,13 +1109,44 @@ document.addEventListener("DOMContentLoaded", function () {
             options: sleepOptions
         });
 
+        const percentMode = moodChartMode.value === "percent";
+        const moodScales = dates.map(date => records[date]?.moodScale);
+        const percentages = moodValues.map((value, index) => moodPercentage(value, moodScales[index]));
+        const unknownScaleCount = moodValues.filter((value, index) =>
+            Number.isFinite(value) && percentages[index] === null
+        ).length;
+        moodChartNote.hidden = !percentMode || unknownScaleCount === 0;
+        moodChartNote.textContent = moodChartNote.hidden ? "" :
+            `割合で表示できない記録が${unknownScaleCount}件あります。当時の範囲が不明な記録は「記録値」で確認できます。`;
+
+        const recordedMoods = moodValues.filter(Number.isFinite);
+        const moodMin = recordedMoods.reduce((min, value) => Math.min(min, value), moodSettings.min);
+        const moodMax = recordedMoods.reduce((max, value) => Math.max(max, value), moodSettings.max);
+        const moodOptions = percentMode
+            ? createChartOptions(0, 100, 25, "尺度内の位置（％）")
+            : createChartOptions(moodMin, moodMax, moodMax - moodMin <= 20 ? 1 : undefined, "気分");
+        if (percentMode) {
+            moodOptions.scales.y.ticks.callback = value => value + "%";
+        }
+        moodOptions.plugins.tooltip = {
+            callbacks: {
+                label: ({ dataIndex }) => {
+                    const value = moodValues[dataIndex];
+                    const scale = moodScales[dataIndex];
+                    const percent = percentages[dataIndex];
+                    if (percent === null) return `気分 ${value}（当時の範囲は不明）`;
+                    const raw = `気分 ${value}（${scale.min}〜${scale.max}）`;
+                    return percentMode ? `${Number(percent.toFixed(1))}% ｜ ${raw}` : raw;
+                }
+            }
+        };
         moodChart = new Chart(moodChartCanvas, {
             type: "line",
             data: {
                 labels: labels,
                 datasets: [
                     {
-                        data: moodValues,
+                        data: percentMode ? percentages : moodValues,
                         borderColor: "#70ad47",
                         backgroundColor: "#70ad47",
                         borderWidth: 3,
@@ -1002,7 +1157,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     }
                 ]
             },
-            options: createChartOptions(-3, 3, 1, "気分")
+            options: moodOptions
         });
 
         satisfactionChart = new Chart(satisfactionChartCanvas, {
@@ -1025,9 +1180,25 @@ document.addEventListener("DOMContentLoaded", function () {
             options: createChartOptions(0, 3, 1, "睡眠満足度")
         });
 
-                const categoryOptions = createChartOptions(0, 10, 1, "合計点");
+        const categoryMaximum = Math.max(1, highestCategoryTotal,
+            ...checklistSettings.categories.filter(category => !category.archived)
+                .map(category => category.items.filter(item => !item.archived).length));
+        const categoryOptions = categoryPercentMode
+            ? createChartOptions(0, 100, 25, "チェック割合（％）")
+            : createChartOptions(0, categoryMaximum, categoryMaximum <= 20 ? 1 : undefined, "合計点");
         categoryOptions.plugins.legend.display = true;
         categoryOptions.plugins.tooltip.displayColors = true;
+        if (categoryPercentMode) {
+            categoryOptions.scales.y.ticks.callback = value => value + "%";
+        }
+        categoryOptions.plugins.tooltip.callbacks = {
+            label: ({ dataset, dataIndex, parsed }) => {
+                const { checked, total } = dataset.points[dataIndex];
+                const count = total === null ? `${checked}点（当時の項目数は不明）` : `${checked} / ${total}項目`;
+                const value = categoryPercentMode ? `${Number(parsed.y.toFixed(1))}% ｜ ${count}` : count;
+                return `${dataset.label}：${value}`;
+            }
+        };
 
         categoryChart = new Chart(categoryChartCanvas, {
             type: "line",
@@ -1094,160 +1265,200 @@ document.addEventListener("DOMContentLoaded", function () {
         window.scrollTo(0, 0);
     }
 
-        const checklistEditor = settingsModal.querySelector(".settings-categories");
-    let draftChecklistSettings;
+    const checklistTitle = document.getElementById("settings-title");
+    const checklistRoot = document.getElementById("checklist-root");
+    const checklistList = document.getElementById("checklist-list");
+    const checklistForm = document.getElementById("checklist-form");
+    const checklistBack = document.getElementById("checklist-back");
+    const checklistName = document.getElementById("checklist-name");
+    const checklistStatus = document.getElementById("checklist-status");
+    const categoryFields = document.getElementById("checklist-category-fields");
+    const itemRows = document.getElementById("checklist-item-rows");
+    const addItemButton = document.getElementById("checklist-item-add");
+    const deleteEntryButton = document.getElementById("checklist-entry-delete");
+    let checklistGroup = "categories";
+    let editingEntry = null;
 
-    function fillSettingsForm() {
-        draftChecklistSettings = JSON.parse(JSON.stringify(checklistSettings));
-        renderChecklistEditor();
+    function checklistGroupLabel() {
+        return checklistGroup === "categories" ? "カテゴリー" : "単独項目";
     }
 
-    function renderChecklistEditor() {
-        checklistEditor.replaceChildren();
+    function setChecklistStatus(message) {
+        checklistStatus.textContent = message;
+        checklistStatus.hidden = !message;
+    }
 
-        function addButton(parent, text, onClick) {
-            const button = document.createElement("button");
-            button.type = "button";
-            button.textContent = text;
-            button.addEventListener("click", onClick);
-            parent.append(button);
+    function showChecklistView(view, title) {
+        checklistRoot.hidden = view !== checklistRoot;
+        checklistList.hidden = view !== checklistList;
+        checklistForm.hidden = view !== checklistForm;
+        checklistBack.hidden = view === checklistRoot;
+        checklistTitle.textContent = title;
+        setChecklistStatus("");
+        checklistTitle.focus();
+    }
+
+    function addChecklistListButton(label, action, isAdd = false) {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = isAdd ? "checklist-settings-row checklist-add-row" : "checklist-settings-row";
+        const text = document.createElement("span");
+        text.textContent = label;
+        const arrow = document.createElement("span");
+        arrow.textContent = "›";
+        arrow.setAttribute("aria-hidden", "true");
+        button.append(text, arrow);
+        button.addEventListener("click", action);
+        checklistList.append(button);
+    }
+
+    function showChecklistList(group = checklistGroup) {
+        checklistGroup = group;
+        checklistList.replaceChildren();
+        for (const entry of checklistSettings[group]) {
+            if (!entry.archived) addChecklistListButton(entry.name, () => openChecklistEntry(entry));
         }
+        addChecklistListButton("＋ " + checklistGroupLabel() + "の追加", () => openChecklistEntry(null), true);
+        showChecklistView(checklistList, checklistGroupLabel() + "の編集");
+    }
 
-        function addNameInput(parent, labelText, item, maxLength = 40) {
-            const label = document.createElement("label");
-            label.textContent = labelText;
+    function addChecklistItemRow(item = { id: crypto.randomUUID(), name: "" }) {
+        const row = document.createElement("div");
+        row.className = "checklist-item-row";
+        const input = document.createElement("input");
+        input.type = "text";
+        input.name = "itemName";
+        input.maxLength = 40;
+        input.placeholder = "項目名";
+        input.setAttribute("aria-label", "カテゴリー内の項目名");
+        input.dataset.itemId = item.id;
+        input.value = item.name;
 
-            const input = document.createElement("input");
-            input.type = "text";
-            input.maxLength = maxLength;
-            input.value = item.name;
-            input.addEventListener("input", () => {
-                item.name = input.value;
-            });
-
-            label.append(input);
-            parent.append(label);
-        }
-
-        function addEditorSection() {
-            const section = document.createElement("section");
-            section.className = "settings-category";
-            checklistEditor.append(section);
-            return section;
-        }
-
-        function removeFromInput(item) {
-            item.archived = true;
-            renderChecklistEditor();
-        }
-
-        for (const category of draftChecklistSettings.categories) {
-            if (category.archived) continue;
-
-            const section = addEditorSection();
-            addNameInput(section, "カテゴリー名", category, 30);
-
-            const items = document.createElement("div");
-            items.className = "item-settings";
-
-            category.items.forEach((item, index) => {
-                addNameInput(items, `項目${index + 1}`, item);
-            });
-
-            section.append(items);
-            addButton(section, "このカテゴリーを削除", () => {
-                removeFromInput(category);
-            });
-        }
-
-        const standaloneSection = addEditorSection();
-        const heading = document.createElement("h3");
-        heading.textContent = "単独の体調項目";
-        standaloneSection.append(heading);
-
-        for (const item of draftChecklistSettings.standaloneItems) {
-            if (item.archived) continue;
-
-            const row = document.createElement("div");
-            addNameInput(row, "体調名", item);
-            addButton(row, "削除", () => removeFromInput(item));
-            standaloneSection.append(row);
-        }
-
-        addButton(standaloneSection, "単独項目を追加", () => {
-            draftChecklistSettings.standaloneItems.push({
-                id: crypto.randomUUID(),
-                name: ""
-            });
-            renderChecklistEditor();
+        const remove = document.createElement("button");
+        remove.type = "button";
+        remove.className = "checklist-small-button checklist-delete";
+        remove.textContent = "削除";
+        remove.setAttribute("aria-label", "このカテゴリー内の項目を削除");
+        remove.addEventListener("click", () => {
+            const neighbor = row.nextElementSibling ?? row.previousElementSibling;
+            row.remove();
+            (neighbor?.querySelector("input") ?? addItemButton).focus();
         });
 
-        addButton(addEditorSection(), "カテゴリーを追加", () => {
-            draftChecklistSettings.categories.push({
-                id: crypto.randomUUID(),
-                name: "新しいカテゴリー",
-                items: Array.from({ length: 10 }, (_, index) => ({
-                    id: crypto.randomUUID(),
-                    name: `項目${index + 1}`
-                }))
-            });
-            renderChecklistEditor();
-        });
+        row.append(input, remove);
+        itemRows.append(row);
+        return input;
+    }
+
+    function openChecklistEntry(entry) {
+        editingEntry = entry;
+        const isCategory = checklistGroup === "categories";
+        const groupLabel = checklistGroupLabel();
+        document.getElementById("checklist-name-label").textContent = groupLabel + "名";
+        checklistName.maxLength = isCategory ? 30 : 40;
+        checklistName.value = entry?.name ?? "";
+        checklistName.setCustomValidity("");
+        categoryFields.hidden = !isCategory;
+        itemRows.replaceChildren();
+        if (isCategory) {
+            for (const item of entry?.items ?? []) {
+                if (!item.archived) addChecklistItemRow(item);
+            }
+            if (!entry) addChecklistItemRow();
+        }
+        deleteEntryButton.hidden = !entry;
+        deleteEntryButton.textContent = groupLabel + "を削除";
+        showChecklistView(checklistForm, entry?.name ?? groupLabel + "の追加");
+        checklistName.focus();
+    }
+
+    function saveChecklistEntry(entry, message) {
+        // 設定を保存する直前に読み直し、別の画面で更新された他の項目を保持する。
+        const next = readChecklistSettings();
+        const entries = next[checklistGroup];
+        const index = entries.findIndex(item => item.id === entry.id);
+        if (index < 0) entries.push(entry);
+        else entries[index] = entry;
+
+        try {
+            localStorage.setItem(SETTINGS_KEY, JSON.stringify(next));
+        } catch {
+            setChecklistStatus("設定を保存できませんでした。");
+            return;
+        }
+
+        checklistSettings = next;
+        renderChecklist();
+        conditionInputs = [...checklistContainer.querySelectorAll("[data-condition]")];
+        loadSelectedRecord();
+        showChecklistList();
+        setChecklistStatus(message);
     }
 
     function closeSettings() {
         settingsModal.hidden = true;
+        settingsButton.focus();
     }
 
     settingsButton.addEventListener("click", () => {
-        fillSettingsForm();
+        closeAllMenus();
+        checklistSettings = readChecklistSettings();
         settingsModal.hidden = false;
+        showChecklistView(checklistRoot, "項目設定");
     });
 
-    settingsCancel.addEventListener("click", closeSettings);
-
+    document.getElementById("checklist-close").addEventListener("click", closeSettings);
+    document.getElementById("checklist-categories-open").addEventListener("click", () => showChecklistList("categories"));
+    document.getElementById("checklist-standalone-open").addEventListener("click", () => showChecklistList("standaloneItems"));
+    document.getElementById("settings-cancel").addEventListener("click", () => showChecklistList());
+    checklistBack.addEventListener("click", () => {
+        if (!checklistForm.hidden) showChecklistList();
+        else showChecklistView(checklistRoot, "項目設定");
+    });
     settingsModal.addEventListener("click", event => {
         if (event.target === settingsModal) closeSettings();
     });
-
-    settingsSave.addEventListener("click", () => {
-        for (const category of draftChecklistSettings.categories) {
-            if (category.archived) continue;
-            category.name = category.name.trim() || "カテゴリー";
-            category.items.forEach((item, index) => {
-                item.name = item.name.trim() || `項目${index + 1}`;
-            });
-        }
-
-        const standaloneItems = draftChecklistSettings.standaloneItems.filter(
-            item => !item.archived
-        );
-        if (standaloneItems.some(item => !item.name.trim())) {
-            alert("単独項目の体調名を入力してください。");
-            return;
-        }
-        standaloneItems.forEach(item => {
-            item.name = item.name.trim();
-        });
-
-        try {
-            localStorage.setItem(
-                SETTINGS_KEY,
-                JSON.stringify(draftChecklistSettings)
-            );
-        } catch (error) {
-            alert("設定を保存できませんでした。");
-            return;
-        }
-
-        checklistSettings = draftChecklistSettings;
-        renderChecklist();
-        conditionInputs = [...checklistContainer.querySelectorAll("[data-condition]")];
-        loadSelectedRecord();
-        closeSettings();
-        showMessage("設定を保存しました");
+    settingsModal.addEventListener("keydown", event => {
+        if (event.key === "Escape") closeSettings();
     });
 
+    addItemButton.addEventListener("click", () => addChecklistItemRow().focus());
+    checklistName.addEventListener("input", () => checklistName.setCustomValidity(""));
+    checklistForm.addEventListener("submit", event => {
+        event.preventDefault();
+        const name = checklistName.value.trim();
+        if (!name) {
+            checklistName.setCustomValidity("名前を入力してください。");
+            checklistName.reportValidity();
+            return;
+        }
+
+        const entry = { ...editingEntry, id: editingEntry?.id ?? crypto.randomUUID(), name };
+        if (checklistGroup === "categories") {
+            const items = [...itemRows.querySelectorAll("input")]
+                .map(input => ({ id: input.dataset.itemId, name: input.value.trim() }));
+            const blankIndex = items.findIndex(item => !item.name);
+            if (blankIndex !== -1) {
+                itemRows.querySelectorAll("input")[blankIndex].focus();
+                setChecklistStatus("項目名を入力するか、空欄の項目を削除してください。");
+                return;
+            }
+            const activeIds = new Set(items.map(item => item.id));
+            // 履歴集計に使う削除済み項目のIDを保持する。
+            const archived = (editingEntry?.items ?? [])
+                .filter(item => !activeIds.has(item.id))
+                .map(item => ({ ...item, archived: true }));
+            entry.items = [...items, ...archived];
+        }
+        saveChecklistEntry(entry, "設定を保存しました。");
+    });
+
+    deleteEntryButton.addEventListener("click", () => {
+        if (!editingEntry) return;
+        const detail = checklistGroup === "categories" ? "と、その中の項目" : "";
+        if (!confirm("「" + editingEntry.name + "」" + detail + "を記録画面から削除しますか？")) return;
+        saveChecklistEntry({ ...editingEntry, archived: true }, "記録画面から削除しました。");
+    });
 
     editDateButton.addEventListener("click", function () {
         const willOpen = dateMenu.hidden;
@@ -1378,6 +1589,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const willOpen = moodMenu.hidden;
         closeAllMenus();
         moodMenu.hidden = !willOpen;
+        moodButton.setAttribute("aria-expanded", String(willOpen));
     });
 
     moodMenu.addEventListener("click", function (event) {
@@ -1387,10 +1599,67 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
 
-        selectedMood = option.dataset.value;
-        moodButton.textContent = selectedMood;
-        moodMenu.hidden = true;
-        hideMessage();
+        commitMood(option.dataset.value);
+    });
+
+    moodSelect.addEventListener("change", () => commitMood(moodSelect.value));
+    moodValue.addEventListener("input", () => { moodPreview.value = moodValue.value; });
+    moodEntry.addEventListener("submit", event => {
+        event.preventDefault();
+        if (moodEntry.reportValidity()) commitMood(moodValue.value);
+    });
+    moodClear.addEventListener("click", () => commitMood(""));
+
+    const appSettings = document.getElementById("app-settings-modal");
+    const moodSettingsModal = document.getElementById("mood-settings-modal");
+    const moodSettingsOpen = document.getElementById("mood-settings-open");
+    const minInput = document.getElementById("mood-min");
+    const maxInput = document.getElementById("mood-max");
+    const methodInput = document.getElementById("mood-method");
+    const settingsError = document.getElementById("mood-settings-error");
+
+    function closeMoodSettings() {
+        moodSettingsModal.hidden = true;
+        appSettings.hidden = false;
+        moodSettingsOpen.focus();
+    }
+
+    moodSettingsOpen.addEventListener("click", () => {
+        minInput.value = moodSettings.min;
+        maxInput.value = moodSettings.max;
+        methodInput.value = moodSettings.method;
+        settingsError.hidden = true;
+        appSettings.hidden = true;
+        moodSettingsModal.hidden = false;
+        minInput.focus();
+    });
+    document.getElementById("mood-settings-close").addEventListener("click", closeMoodSettings);
+    moodSettingsModal.addEventListener("click", event => {
+        if (event.target === moodSettingsModal) closeMoodSettings();
+    });
+    moodSettingsModal.addEventListener("keydown", event => {
+        if (event.key === "Escape") closeMoodSettings();
+    });
+    document.getElementById("mood-settings-form").addEventListener("submit", event => {
+        event.preventDefault();
+        const settings = { min: minInput.valueAsNumber, max: maxInput.valueAsNumber, method: methodInput.value };
+        const error = moodSettingsError(settings);
+        if (error) {
+            settingsError.textContent = error;
+            settingsError.hidden = false;
+            return;
+        }
+        try {
+            localStorage.setItem(MOOD_SETTINGS_KEY, JSON.stringify(settings));
+        } catch {
+            settingsError.textContent = "気分の設定を保存できませんでした。";
+            settingsError.hidden = false;
+            return;
+        }
+        moodSettings = settings;
+        renderMoodChoices();
+        renderMoodInput();
+        closeMoodSettings();
     });
 
     clearButton.addEventListener("click", clearSelectedRecord);
@@ -1410,6 +1679,14 @@ document.addEventListener("DOMContentLoaded", function () {
             window.print();
         });
     }
+
+    moodChartMode.addEventListener("change", renderTrendCharts);
+    categoryChartMode.addEventListener("change", renderTrendCharts);
+    recordPage.addEventListener("change", event => {
+        if (event.target.matches("input[data-condition]")) {
+            saveRecord({ editedConditionId: event.target.dataset.condition });
+        }
+    });
 
     if (updateTrendButton) {
         updateTrendButton.addEventListener("click", renderTrendCharts);
@@ -1590,6 +1867,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 
+    renderMoodChoices();
     changeSelectedDate(selectedDate);
     showRecordPage();
 });
@@ -1683,6 +1961,7 @@ document.addEventListener("DOMContentLoaded", function () {
         sleepRecords: JSON.parse(
           localStorage.getItem("sleepRecords") || "{}"
         ),
+        moodSettings: readMoodSettings(),
         conditionChecklistSettings: JSON.parse(
           localStorage.getItem("conditionChecklistSettings") || "null"
         )
@@ -1754,8 +2033,12 @@ document.addEventListener("DOMContentLoaded", function () {
         );
       }
 
+      if (data.moodSettings != null && moodSettingsError(data.moodSettings)) {
+        throw new Error("バックアップ内の気分の設定が無効です。");
+      }
+
       const confirmed = confirm(
-        "現在の睡眠・体調記録と項目設定を" +
+        "現在の睡眠・体調記録と設定を" +
         "バックアップの内容で置き換えます。" +
         "元に戻せません。続けますか？"
       );
@@ -1774,6 +2057,10 @@ document.addEventListener("DOMContentLoaded", function () {
         );
       } else {
         localStorage.removeItem("conditionChecklistSettings");
+      }
+
+      if (data.moodSettings) {
+        localStorage.setItem(MOOD_SETTINGS_KEY, JSON.stringify(data.moodSettings));
       }
 
       alert("読み込みました。画面を更新します。");
@@ -1897,27 +2184,10 @@ document.addEventListener("DOMContentLoaded", function () {
         );
     });
 
-    // 睡眠満足度・気分：選択後に保存
-    ["satisfaction-menu", "mood-menu"].forEach(function (menuId) {
-        document.getElementById(menuId).addEventListener(
-            "click",
-            function (event) {
-                if (event.target.closest("button[data-value]")) {
-                    autoSave();
-                }
-            }
-        );
+    // 睡眠満足度：選択後に保存
+    document.getElementById("satisfaction-menu").addEventListener("click", event => {
+        if (event.target.closest("button[data-value]")) autoSave();
     });
-
-    // 体調チェック：項目設定で再生成されたチェックにも対応
-    document.getElementById("record-page").addEventListener(
-        "change",
-        function (event) {
-            if (event.target.matches("input[data-condition]")) {
-                autoSave();
-            }
-        }
-    );
 
     /* メモ表示欄と入力ボタン */
     const memoHeading = memoSection.querySelector("h2");
@@ -2022,13 +2292,12 @@ document.addEventListener("DOMContentLoaded", function () {
         memoDialog.close();
     });
 
-    // 日付移動・クリア・項目設定後に表示を同期
+    // 日付移動・クリア後に表示を同期
     [
         "previous-day",
         "next-day",
         "date-confirm",
-        "clear-button",
-        "settings-save"
+        "clear-button"
     ].forEach(function (buttonId) {
         document.getElementById(buttonId).addEventListener(
             "click",
