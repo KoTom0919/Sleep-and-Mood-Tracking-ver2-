@@ -903,13 +903,11 @@ document.addEventListener("DOMContentLoaded", function () {
         );
     }
 
-    function createChartOptions(minimum, maximum, stepSize, yAxisTitle) {
+    function createChartOptions(minimum, maximum, stepSize, yAxisTitle, forPrint) {
         return {
             responsive: true,
             maintainAspectRatio: false,
-            animation: {
-                duration: 300
-            },
+            animation: forPrint ? false : { duration: 300 },
             interaction: {
                 mode: "nearest",
                 intersect: false
@@ -970,7 +968,11 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
-    function renderTrendCharts(startDate = trendStartDate.value, endDate = trendEndDate.value) {
+    function renderTrendCharts(
+        startDate = trendStartDate.value,
+        endDate = trendEndDate.value,
+        forPrint = false
+    ) {
         if (typeof Chart === "undefined") {
             window.alert(
                 "グラフ機能を読み込めませんでした。通信環境を確認してください。"
@@ -1068,7 +1070,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         destroyTrendCharts();
 
-        const sleepOptions = createChartOptions(12, 36, 1, "時刻");
+        const sleepOptions = createChartOptions(12, 36, 1, "時刻", forPrint);
         sleepOptions.plugins.legend.display = true;
         sleepOptions.scales.y.ticks.callback = function (value) {
             return formatClockHours(value);
@@ -1138,8 +1140,8 @@ document.addEventListener("DOMContentLoaded", function () {
         const moodMin = recordedMoods.reduce((min, value) => Math.min(min, value), moodSettings.min);
         const moodMax = recordedMoods.reduce((max, value) => Math.max(max, value), moodSettings.max);
         const moodOptions = percentMode
-            ? createChartOptions(0, 100, 25, "尺度内の位置（％）")
-            : createChartOptions(moodMin, moodMax, moodMax - moodMin <= 20 ? 1 : undefined, "気分");
+            ? createChartOptions(0, 100, 25, "尺度内の位置（％）", forPrint)
+            : createChartOptions(moodMin, moodMax, moodMax - moodMin <= 20 ? 1 : undefined, "気分", forPrint);
         if (percentMode) {
             moodOptions.scales.y.ticks.callback = value => value + "%";
         }
@@ -1193,15 +1195,15 @@ document.addEventListener("DOMContentLoaded", function () {
                     }
                 ]
             },
-            options: createChartOptions(0, 3, 1, "睡眠満足度")
+            options: createChartOptions(0, 3, 1, "睡眠満足度", forPrint)
         });
 
         const categoryMaximum = Math.max(1, highestCategoryTotal,
             ...checklistSettings.categories.filter(category => !category.archived)
                 .map(category => category.items.filter(item => !item.archived).length));
         const categoryOptions = categoryPercentMode
-            ? createChartOptions(0, 100, 25, "チェック割合（％）")
-            : createChartOptions(0, categoryMaximum, categoryMaximum <= 20 ? 1 : undefined, "合計点");
+            ? createChartOptions(0, 100, 25, "チェック割合（％）", forPrint)
+            : createChartOptions(0, categoryMaximum, categoryMaximum <= 20 ? 1 : undefined, "合計点", forPrint);
         categoryOptions.plugins.legend.display = true;
         categoryOptions.plugins.tooltip.displayColors = true;
         if (categoryPercentMode) {
@@ -1732,7 +1734,7 @@ document.addEventListener("DOMContentLoaded", function () {
         document.body.classList.toggle("print-without-memo", !printIncludeMemo.checked);
 
         try {
-            if (!renderTrendCharts(...selectedPrintPeriod)) {
+            if (!renderTrendCharts(...selectedPrintPeriod, true)) {
                 clearCombinedPrint();
                 return;
             }
@@ -1742,6 +1744,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 const area = chart.canvas.parentElement;
                 chart.resize(area.clientWidth - 2, area.clientHeight - 2);
                 chart.update("none");
+                // Draw before reading the canvas, even if the browser has not painted a frame yet.
+                chart.draw();
                 const image = document.createElement("img");
                 image.className = "print-chart-image";
                 image.alt = "";
