@@ -1214,6 +1214,7 @@ body.record-view .app {
     body.combined-print #trend-page {
         display: block !important;
         break-before: page;
+        break-inside: avoid;
         width: 100%;
     }
 
@@ -1230,13 +1231,13 @@ body.record-view .app {
     }
 
     body.combined-print .trend-block {
-        width: 100%;
-        margin: 0 0 2mm;
+        margin-bottom: 2mm;
         break-inside: avoid;
     }
 
     body.combined-print .trend-block h2 {
         margin: 0 0 1mm;
+        text-align: center;
         font-size: 12px;
     }
 
@@ -2266,10 +2267,15 @@ body.record-view .app {
     display: none;
 }
 
+body.combined-print #trend-page .trend-block {
+    width: calc(100% * 2 / 3);
+    margin-inline: auto;
+}
+
 body.combined-print #trend-page .chart-area {
     box-sizing: border-box;
     width: 100%;
-    height: 82mm;
+    height: calc(82mm * 2 / 3);
     min-height: 0;
     max-height: none;
     padding: 1px;
