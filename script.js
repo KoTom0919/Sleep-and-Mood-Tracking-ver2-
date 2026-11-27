@@ -763,11 +763,8 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
 
-    function renderRecordsTable() {
+    function renderRecordsTable(startDate = listStartDate.value, endDate = listEndDate.value) {
         records = readRecords();
-
-        const startDate = listStartDate.value;
-        const endDate = listEndDate.value;
 
         recordsTableBody.innerHTML = "";
 
@@ -973,7 +970,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
-    function renderTrendCharts() {
+    function renderTrendCharts(startDate = trendStartDate.value, endDate = trendEndDate.value) {
         if (typeof Chart === "undefined") {
             window.alert(
                 "グラフ機能を読み込めませんでした。通信環境を確認してください。"
@@ -982,9 +979,6 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         records = readRecords();
-
-        const startDate = trendStartDate.value;
-        const endDate = trendEndDate.value;
 
         if (startDate && endDate && startDate > endDate) {
             window.alert("開始日は終了日以前に設定してください");
@@ -1694,18 +1688,11 @@ document.addEventListener("DOMContentLoaded", function () {
     trendNavButton.addEventListener("click", showTrendPage);
 
     if (updateListButton) {
-        updateListButton.addEventListener("click", renderRecordsTable);
+        updateListButton.addEventListener("click", () => renderRecordsTable());
     }
 
-    if (printButton) {
-        printButton.addEventListener("click", function () {
-            renderRecordsTable();
-            window.print();
-        });
-    }
-
-    moodChartMode.addEventListener("change", renderTrendCharts);
-    categoryChartMode.addEventListener("change", renderTrendCharts);
+    moodChartMode.addEventListener("change", () => renderTrendCharts());
+    categoryChartMode.addEventListener("change", () => renderTrendCharts());
     recordPage.addEventListener("change", event => {
         if (event.target.matches("input[data-condition]")) {
             saveRecord({ editedConditionId: event.target.dataset.condition });
@@ -1713,163 +1700,77 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     if (updateTrendButton) {
-        updateTrendButton.addEventListener("click", renderTrendCharts);
+        updateTrendButton.addEventListener("click", () => renderTrendCharts());
     }
 
-    if (trendPrintButton) {
-        trendPrintButton.addEventListener("click", function () {
-            const rendered = renderTrendCharts();
+    const printDialog = document.getElementById("combined-print-dialog");
+    const printPeriod = document.getElementById("combined-print-period");
+    const printIncludeMemo = document.getElementById("print-include-memo");
+    let selectedPrintPeriod;
 
-            if (!rendered) {
-                return;
-            }
-
-            document.body.classList.add("trend-print");
-            document.body.classList.toggle(
-                "mobile-trend-print",
-                window.matchMedia("(max-width: 768px)").matches
-            );
-
-            let pageStyle = document.getElementById(
-                "trend-print-page-style"
-            );
-
-            if (!pageStyle) {
-                pageStyle = document.createElement("style");
-                pageStyle.id = "trend-print-page-style";
-                document.head.appendChild(pageStyle);
-            }
-
-            pageStyle.textContent = `
-                @page {
-                    size: A4 portrait;
-                    margin: 4mm;
-                }
-
-                @media print {
-                    body.trend-print.mobile-trend-print,
-                    body.trend-print.mobile-trend-print .app,
-                    body.trend-print.mobile-trend-print #trend-page {
-                        width: 100% !important;
-                        height: auto !important;
-                        min-height: 0 !important;
-                        margin: 0 !important;
-                        padding: 0 !important;
-                        overflow: visible !important;
-                    }
-
-                    body.trend-print.mobile-trend-print #trend-page {
-                        display: block !important;
-                    }
-
-                    body.trend-print.mobile-trend-print .trend-header {
-                        margin: 0 0 0.5mm !important;
-                        padding: 0 !important;
-                    }
-
-                    body.trend-print.mobile-trend-print .trend-main-title {
-                        margin: 0 !important;
-                        font-size: 12px !important;
-                        line-height: 1 !important;
-                    }
-
-                    body.trend-print.mobile-trend-print .trend-block {
-                        width: 100% !important;
-                        margin: 0 0 4mm !important;
-                        padding: 0 !important;
-                        break-inside: avoid !important;
-                        page-break-inside: avoid !important;
-                    }
-
-                    body.trend-print.mobile-trend-print .trend-block:last-child {
-                        margin-bottom: 0 !important;
-                    }
-
-                    body.trend-print.mobile-trend-print .trend-block h2 {
-                        margin: 0 0 0.25mm !important;
-                        font-size: 8px !important;
-                        line-height: 1 !important;
-                    }
-
-                    body.trend-print.mobile-trend-print .chart-area {
-                        display: block !important;
-                        width: 100% !important;
-                        height: 68mm !important;
-                        min-height: 68mm !important;
-                        max-height: 68mm !important;
-                        margin: 0 !important;
-                        padding: 1px !important;
-                        overflow: hidden !important;
-                    }
-
-                    body.trend-print.mobile-trend-print .chart-area canvas {
-                        display: block !important;
-                        width: 100% !important;
-                        height: 100% !important;
-                        max-width: 100% !important;
-                        max-height: 100% !important;
-                    }
-
-                    body.trend-print.mobile-trend-print .satisfaction-note {
-                        display: grid !important;
-                        grid-template-columns: repeat(4, 1fr) !important;
-                        gap: 0.5mm !important;
-                        margin: 0.25mm 0 0 !important;
-                        padding: 0 !important;
-                        font-size: 5px !important;
-                        line-height: 1 !important;
-                    }
-                }
-            `;
-
-            window.setTimeout(function () {
-                if (sleepChart) {
-                    sleepChart.resize();
-                }
-                if (moodChart) {
-                    moodChart.resize();
-                }
-                if (satisfactionChart) {
-                    satisfactionChart.resize();
-                }
-                if (categoryChart) {
-                    categoryChart.resize();
-                }
-
-                window.setTimeout(function () {
-                    window.print();
-                }, 150);
-            }, 150);
-        });
-    }
-
-    window.addEventListener("afterprint", function () {
-        document.body.classList.remove("trend-print");
-        document.body.classList.remove("mobile-trend-print");
-
-        const pageStyle = document.getElementById(
-            "trend-print-page-style"
-        );
-
-        if (pageStyle) {
-            pageStyle.remove();
+    function openPrintDialog(startDate, endDate) {
+        if (startDate && endDate && startDate > endDate) {
+            window.alert("開始日は終了日以前に設定してください");
+            return;
         }
 
-        window.setTimeout(function () {
-            if (sleepChart) {
-                sleepChart.resize();
+        selectedPrintPeriod = [startDate, endDate];
+        printPeriod.textContent = `表示期間　${startDate || "指定なし"} ～ ${endDate || "指定なし"}`;
+        printDialog.returnValue = "";
+        printDialog.showModal();
+    }
+
+    printButton.addEventListener("click", () => openPrintDialog(listStartDate.value, listEndDate.value));
+    trendPrintButton.addEventListener("click", () => openPrintDialog(trendStartDate.value, trendEndDate.value));
+
+    printDialog.addEventListener("close", () => {
+        if (printDialog.returnValue !== "print") {
+            return;
+        }
+
+        document.body.classList.add("combined-print");
+        document.body.classList.toggle("print-without-memo", !printIncludeMemo.checked);
+
+        try {
+            if (!renderTrendCharts(...selectedPrintPeriod)) {
+                clearCombinedPrint();
+                return;
             }
-            if (moodChart) {
-                moodChart.resize();
+            renderRecordsTable(...selectedPrintPeriod);
+
+            for (const chart of [sleepChart, moodChart, categoryChart]) {
+                const area = chart.canvas.parentElement;
+                chart.resize(area.clientWidth - 2, area.clientHeight - 2);
+                chart.update("none");
+                const image = document.createElement("img");
+                image.className = "print-chart-image";
+                image.alt = "";
+                image.src = chart.toBase64Image();
+                area.appendChild(image);
             }
-            if (satisfactionChart) {
-                satisfactionChart.resize();
-            }
-            if (categoryChart) {
-                categoryChart.resize();
-            }
-        }, 100);
+
+            // Wait for the images before opening the browser's print preview.
+            const images = trendPage.querySelectorAll(".print-chart-image");
+            Promise.all(Array.from(images, image => image.decode()))
+                .then(() => window.print())
+                .catch(handlePrintError);
+        } catch (error) {
+            handlePrintError(error);
+        }
     });
+
+    function handlePrintError(error) {
+        console.error(error);
+        clearCombinedPrint();
+        window.alert("印刷の準備ができませんでした。もう一度お試しください。");
+    }
+
+    function clearCombinedPrint() {
+        document.body.classList.remove("combined-print", "print-without-memo");
+        trendPage.querySelectorAll(".print-chart-image").forEach(image => image.remove());
+    }
+
+    window.addEventListener("afterprint", clearCombinedPrint);
 
     document.addEventListener("click", function (event) {
         const clickedInside =

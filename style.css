@@ -1168,136 +1168,82 @@ body.record-view .app {
     .mood-column { width: 7.5%; }
     .memo-column { width: 27.9%; }
 
-    body.trend-print {
-        width: 100%;
-        margin: 0 !important;
-        padding: 0 !important;
+    body.combined-print {
+        page: combined-report;
+        margin: 0;
+        padding: 0;
         background: #fff;
     }
 
-    body.trend-print #record-page,
-    body.trend-print #list-page,
-    body.trend-print .bottom-nav,
-    body.trend-print .record-action-bar,
-    body.trend-print .trend-period-section,
-    body.trend-print .trend-print-button {
+    body.combined-print .app {
+        min-height: 0;
+    }
+
+    body.combined-print .records-header {
+        margin-bottom: 3mm;
+    }
+
+    body.combined-print .records-table th,
+    body.combined-print .records-table td {
+        height: 32px;
+        min-height: 0;
+    }
+
+    body.combined-print .records-table col {
+        width: auto;
+    }
+
+    body.combined-print .records-table .memo-column {
+        width: 28%;
+    }
+
+    body.print-without-memo .records-table .memo-column,
+    body.print-without-memo .records-table .memo-cell,
+    body.print-without-memo .records-table thead th:last-child {
+        display: none;
+    }
+
+    body.combined-print .trend-period-section,
+    body.combined-print .trend-print-button,
+    body.combined-print .satisfaction-trend-block,
+    body.combined-print #trend-page canvas,
+    #combined-print-dialog {
         display: none !important;
     }
 
-    body.trend-print #trend-page {
+    body.combined-print #trend-page {
         display: block !important;
+        break-before: page;
         width: 100%;
-        break-inside: avoid;
-        page-break-inside: avoid;
     }
 
-    body.trend-print #trend-page,
-    body.trend-print .app {
-        height: auto !important;
-        min-height: 0 !important;
-        margin: 0 !important;
-        padding: 0 !important;
-        overflow: visible !important;
-    }
-
-    body.trend-print .trend-header {
+    body.combined-print .trend-header {
         display: block;
-        margin: 0 0 1mm !important;
+        margin: 0 0 2mm;
     }
 
-    body.trend-print .trend-main-title {
-        margin: 0 !important;
+    body.combined-print .trend-main-title {
         color: #000;
+        font-size: 20px;
         text-align: center;
-        font-size: 15px !important;
-        line-height: 1.1 !important;
+        margin: 0;
     }
 
-    body.trend-print .trend-block {
+    body.combined-print .trend-block {
+        width: 100%;
+        margin: 0 0 2mm;
+        break-inside: avoid;
+    }
+
+    body.combined-print .trend-block h2 {
+        margin: 0 0 1mm;
+        font-size: 12px;
+    }
+
+    body.combined-print .print-chart-image {
         display: block;
-        width: 100% !important;
-        margin: 0 0 1mm !important;
-        padding: 0 !important;
-        break-inside: avoid !important;
-        page-break-inside: avoid !important;
-    }
-
-    body.trend-print .trend-block:last-child {
-        margin-bottom: 0 !important;
-    }
-
-    body.trend-print .satisfaction-trend-block {
-        display: none !important;
-    }
-
-    body.trend-print .trend-block h2 {
-        margin: 0 0 .5mm !important;
-        text-align: center;
-        font-size: 9px !important;
-        line-height: 1.1 !important;
-    }
-
-    body.trend-print .chart-area,
-    body.trend-print.mobile-trend-print .chart-area {
-        width: 100% !important;
-        height: 84mm !important;
-        min-height: 84mm !important;
-        max-height: 84mm !important;
-        margin: 0 !important;
-        padding: 1px !important;
-        border: .5px solid #777 !important;
-        background: #fff;
-    }
-
-    body.trend-print .chart-area canvas,
-    body.trend-print.mobile-trend-print .chart-area canvas {
-        width: 100% !important;
-        height: 100% !important;
-        max-width: 100% !important;
-        max-height: 100% !important;
-    }
-
-    body.trend-print .satisfaction-note {
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        border: none;
-        background: #fff;
-    }
-
-    body.trend-print .satisfaction-note,
-    body.trend-print.mobile-trend-print .satisfaction-note {
-        gap: .5mm !important;
-        margin: .25mm 0 0 !important;
-        padding: 0 !important;
-        font-size: 5px !important;
-        line-height: 1 !important;
-    }
-
-    body.trend-print.mobile-trend-print .trend-header {
-        margin-bottom: .3mm !important;
-    }
-
-    body.trend-print.mobile-trend-print .trend-block {
-        margin-bottom: .3mm !important;
-    }
-
-    body.trend-print.mobile-trend-print .trend-block h2 {
-        margin-bottom: .2mm !important;
-    }
-
-    body.trend-print.mobile-trend-print .satisfaction-note {
-        margin-top: .2mm !important;
-    }
-
-    body.trend-print.mobile-trend-print .chart-area {
-        height: 74mm !important;
-        min-height: 74mm !important;
-        max-height: 74mm !important;
-        flex: none !important;
-    }
-
-    body.trend-print.mobile-trend-print .chart-area canvas {
-        max-height: 74mm !important;
+        width: 100%;
+        height: 100%;
     }
 }
 
@@ -2281,5 +2227,61 @@ body.record-view .app {
     #category-chart-mode,
     .mood-chart-note {
         display: none;
+    }
+}
+
+
+@page combined-report {
+    size: A4 portrait;
+    margin: 8mm;
+}
+
+#combined-print-dialog {
+    max-width: calc(100% - 32px);
+    border: 1px solid #19365f;
+    border-radius: 12px;
+    padding: 20px;
+}
+
+#combined-print-dialog h2 {
+    margin: 0;
+    font-size: 1.2rem;
+}
+
+.combined-print-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top: 16px;
+}
+
+.combined-print-actions button {
+    padding: 6px 12px;
+    border: 1px solid #19365f;
+    border-radius: 6px;
+    background: #fff;
+}
+
+.print-chart-image {
+    display: none;
+}
+
+body.combined-print #trend-page .chart-area {
+    box-sizing: border-box;
+    width: 100%;
+    height: 82mm;
+    min-height: 0;
+    max-height: none;
+    padding: 1px;
+}
+
+@media screen {
+    body.combined-print #trend-page {
+        display: block !important;
+        position: fixed;
+        top: 0;
+        left: -10000px;
+        width: 194mm;
+        visibility: hidden;
     }
 }

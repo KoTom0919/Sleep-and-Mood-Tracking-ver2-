@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>睡眠＆体調記録アプリ</title>
 
-    <link rel="stylesheet" href="style.css?v=20261124-condition-graph">
+    <link rel="stylesheet" href="style.css?v=20261127-combined-print">
     <link rel="icon" type="image/png" href="./icon.png">
     <link rel="apple-touch-icon" href="./icon.png">
 </head>
@@ -194,7 +194,7 @@
                         stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                         <path d="M6 9V3h12v6M6 18H3V9h18v9h-3M6 14h12v7H6Z" />
                     </svg>
-                    <span>PDFで印刷</span>
+                    <span>表とグラフを印刷</span>
                 </button>
             </div>
 
@@ -263,7 +263,7 @@
                         stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                         <path d="M6 9V3h12v6M6 18H3V9h18v9h-3M6 14h12v7H6Z" />
                     </svg>
-                    <span>PDFで印刷</span>
+                    <span>表とグラフを印刷</span>
                 </button>
             </div>
 
@@ -329,6 +329,21 @@
             </section>
         </section>
     </main>
+
+    <dialog id="combined-print-dialog" aria-labelledby="combined-print-title">
+        <form method="dialog">
+            <h2 id="combined-print-title">表とグラフを印刷</h2>
+            <p id="combined-print-period"></p>
+            <label>
+                <input type="checkbox" id="print-include-memo" checked>
+                表のメモ欄を印刷する
+            </label>
+            <div class="combined-print-actions">
+                <button value="cancel">キャンセル</button>
+                <button value="print">印刷</button>
+            </div>
+        </form>
+    </dialog>
 
     <!-- 体調チェックの項目設定 -->
     <div id="settings-modal" class="settings-modal" hidden>
@@ -486,7 +501,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://kotom0919.github.io/App-menu/app-menu.js?v=4"></script>
-    <script src="script.js?v=20261124-legacy-percent"></script>
+    <script src="script.js?v=20261127-combined-print"></script>
     <script defer src="https://kotom0919.github.io/App-menu/notices.js"></script>
 </body>
 
